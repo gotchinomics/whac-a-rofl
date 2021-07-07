@@ -20,6 +20,7 @@ export const BG = 'bg';
 export const FULLSCREEN = 'fullscreen';
 export const LEFT_CHEVRON = 'left_chevron';
 export const CLICK = 'click';
+export const ROFL = 'rofl';
 
 // Save all in game assets in the public folder
 export const assets: Array<Asset | SpritesheetAsset> = [
@@ -38,4 +39,13 @@ export const assets: Array<Asset | SpritesheetAsset> = [
     src: 'assets/sounds/click.mp3',
     type: 'AUDIO',
   },
+  {
+    key: ROFL,
+    src: 'assets/sprites/rofl.png',
+    type: 'SPRITESHEET',
+    data: {
+      frameWidth: 553 / 1,
+      frameHeight: 553 / 1,
+    }
+  }
 ];

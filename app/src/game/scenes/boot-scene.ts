@@ -168,6 +168,7 @@ export class BootScene extends Phaser.Scene {
   ) => {
     const svg = gotchiObject.svg;
     const spriteMatrix = [
+      /*
       [
         customiseSVG(svg, { removeBg: true }),
         customiseSVG(svg, {
@@ -177,6 +178,27 @@ export class BootScene extends Phaser.Scene {
           removeBg: true,
         }),
       ],
+      */
+      // Idle animation [0]
+      [
+        customiseSVG(svg, { removeBg: true }),
+      ],
+      // Jumping animation [2,3]
+      [
+        customiseSVG(svg, {
+          eyes: "happy",
+          armsUp: true,
+          removeBg: true,
+          removeShadow: true
+        }),
+        customiseSVG(svg, { 
+          //armsUp: true,
+          eyes: "happy",
+          removeBg: true,
+          removeShadow: true }),
+      ],
+      
+
     ];
 
     const { src, dimensions } = await constructSpritesheet(spriteMatrix);
