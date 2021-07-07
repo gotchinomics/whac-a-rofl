@@ -22,59 +22,19 @@ export class GameScene extends Phaser.Scene {
   // Sounds
   private back?: Phaser.Sound.BaseSound;
 
+  // Score
+  private score = 0;
+  private scoreText?: Phaser.GameObjects.Text;
+
   // Rofls
   private addRofls = () =>{
      const size = getGameHeight(this) / 7;
      const x = getGameWidth(this)  / 2;
      const y = getGameHeight(this) / 2;
-     const velocityY = -getGameHeight(this) / 4;
+     const velocityY = -getGameHeight(this) *  0.75 ;
      const position = Math.floor(Math.random() * 6) + 1;
-    
-     // 1: x = W * 1/5 ; y = H * 6/8
-     // 2: x = W * 1/10 ; y = H * 3/5
-     // 3: x = W * 3/10 ; y = H * 4/10
-     
-     /*
-     if (position == 1){
-       const x = getGameWidth(this)  * ( 2 / 10 );
-       const y = getGameHeight(this) * ( 6 / 8 );
-     }
-     if (position == 2){
-      const x = getGameWidth(this)  * ( 1 / 10 );
-      const y = getGameHeight(this) * ( 6 / 10 );
-     }
-     if (position == 3){
-      const x = getGameWidth(this)  * ( 3 / 10 );
-      const y = getGameHeight(this) * ( 4 / 10 );
-     } else {
-      const x = getGameWidth(this)  / 2;
-      const y = getGameHeight(this) / 2;
-     }
-     
 
-     switch (true) {
-      case position == 1:
-        const x = getGameWidth(this)  * ( 2 / 10 );
-        const y = getGameHeight(this) * ( 6 / 8 );
-        break;
-      case position == 2:
-        const x = getGameWidth(this)  * ( 2 / 10 );
-        const y = getGameHeight(this) * ( 6 / 8 );
-        break;
-        
-      default: const x = getGameWidth(this)  * ( 3 / 10 );
-      const y = getGameHeight(this) * ( 4 / 10 );
-    }
- 
-     */
-
-    
-    for (let i = 0; i < 6; i++){
-      if (i == position) {
-        this.addRofl(x, y, position, velocityY );
-      }
-     }
-
+     this.addRofl(x, y, position, velocityY );
 
   };
 
@@ -115,6 +75,15 @@ export class GameScene extends Phaser.Scene {
       key: this.selectedGotchi?.spritesheetKey || ''
     });
 
+    this.scoreText = this.add
+    .text(getGameWidth(this) / 2, getGameHeight(this) / 2 - getRelative(190, this), this.score.toString(), {
+      color: '#FFFFFF',
+    })
+    .setFontSize(getRelative(94, this))
+    .setOrigin(0.5)
+    .setDepth(1);
+
+
     // Add Rofl group for pooling
     this.rofls = this.add.group({
       maxSize: 10,
@@ -132,11 +101,14 @@ export class GameScene extends Phaser.Scene {
         loop: true,
      });
 
-
-
   }
 
-
+  private addScore = () => {
+    if (this.scoreText) {
+      this.score += 1;
+      this.scoreText.setText(this.score.toString());
+    }
+  };
 
 
 

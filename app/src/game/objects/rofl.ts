@@ -2,6 +2,7 @@ import { getGameHeight , getGameWidth } from '../helpers';
 import { ROFL } from 'game/assets';
 
 export class Rofl extends Phaser.GameObjects.Image {
+  private health = 200;
   private yOrigin = 0;
   private isWaiting = false;
 
@@ -13,6 +14,8 @@ export class Rofl extends Phaser.GameObjects.Image {
 
    // physics
    this.scene.physics.world.enable(this);
+   (this.body as Phaser.Physics.Arcade.Body).setGravityY(getGameHeight(this.scene) * 2);
+
 
    this.scene.add.existing(this);
  }
@@ -31,21 +34,34 @@ export class Rofl extends Phaser.GameObjects.Image {
 
   public getRandomLocation (){
     const positionIndex = Math.floor(Math.random() * 6) + 1;
-    const x = getGameWidth(this.scene)  * ( 3 / 10 );
-    const y = getGameHeight(this.scene) * ( 4 / 10 )
     
+
     switch (true) {
       case positionIndex == 1:
-         this.x = getGameWidth(this.scene)  * ( 2 / 10 );
-         this.y = getGameHeight(this.scene) * ( 6 / 8 );
+         this.x = getGameWidth(this.scene)  * ( 0.215-0.034 );
+         this.y = getGameHeight(this.scene) * ( 0.89-0.062  );
         break;
       case positionIndex == 2:
-         this.x = getGameWidth(this.scene)  * ( 2 / 10 );
-         this.y = getGameHeight(this.scene) * ( 6 / 8 );
+         this.x = getGameWidth(this.scene)  * ( 0.145-0.034 );
+         this.y = getGameHeight(this.scene) * ( 0.672-0.062 );
+        break;
+      case positionIndex == 3:
+          this.x = getGameWidth(this.scene)  * ( 0.332-0.034 );
+          this.y = getGameHeight(this.scene) * ( 0.517-0.062 );
+        break;
+      case positionIndex == 4:
+          this.x = getGameWidth(this.scene)  * ( 0.797-0.034 );
+          this.y = getGameHeight(this.scene) * ( 0.89-0.062  );
+        break;
+      case positionIndex == 5:
+          this.x = getGameWidth(this.scene)  * ( 0.854-0.034 );
+          this.y = getGameHeight(this.scene) * ( 0.672-0.062 );
+         break;
+      case positionIndex >= 6:
+          this.x = getGameWidth(this.scene)  * ( 0.671-0.034 );
+          this.y = getGameHeight(this.scene) * ( 0.517-0.062 );
         break;
         
-      default:  this.x = getGameWidth(this.scene)  * ( 3 / 10 );
-       this.y = getGameHeight(this.scene) * ( 4 / 10 );
     }
 
     this.setPosition(this.x, this.y);
@@ -53,13 +69,14 @@ export class Rofl extends Phaser.GameObjects.Image {
   }
 
   public update = () => {
-      if (this.y < this.yOrigin-100){
-        (this.body as Phaser.Physics.Arcade.Body).setVelocityY( getGameHeight(this.scene)/2 );
-      }
+     // if (this.y < this.yOrigin-100){
+       //(this.body as Phaser.Physics.Arcade.Body).setVelocityY( getGameHeight(this.scene)/2 );
+     // }
 
       
       if (this.y > this.yOrigin && this.isWaiting == false ){
         (this.body as Phaser.Physics.Arcade.Body).setVelocityY( 0 );  
+        (this.body as Phaser.Physics.Arcade.Body).setGravityY( 0 );
         
         this.isWaiting = true;
       }

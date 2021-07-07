@@ -186,14 +186,16 @@ export class BootScene extends Phaser.Scene {
       // Jumping animation [2,3]
       [
         customiseSVG(svg, {
-          eyes: "happy",
+          eyes: "mad",
+          mouth: "neutral",
           armsUp: true,
           removeBg: true,
           removeShadow: true
         }),
         customiseSVG(svg, { 
           //armsUp: true,
-          eyes: "happy",
+          eyes: "mad",
+          mouth: "neutral",
           removeBg: true,
           removeShadow: true }),
       ],
