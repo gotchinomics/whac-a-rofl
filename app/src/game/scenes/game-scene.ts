@@ -1,4 +1,4 @@
-import {   LEFT_CHEVRON, BG, CLICK , POP , GONE , GAMETUNE } from 'game/assets';
+import {   LEFT_CHEVRON, BG, CLICK , POP , GONE , SQUASH, GAMETUNE } from 'game/assets';
 import { AavegotchiGameObject } from 'types';
 import { getGameWidth, getGameHeight, getRelative } from '../helpers';
 import { Player , Rofl } from 'game/objects';
@@ -21,19 +21,24 @@ export class GameScene extends Phaser.Scene {
   private back?: Phaser.Sound.BaseSound;
   private pop?: Phaser.Sound.BaseSound;
   private gone?: Phaser.Sound.BaseSound;
+  private squash?: Phaser.Sound.BaseSound;
   private gametune?: Phaser.Sound.BaseSound;
 
   // Score
   private score = 0;
+  private lives?: number;
+  private roflCount = 0;
   private scoreText?: Phaser.GameObjects.Text;
+  private livesText?: Phaser.GameObjects.Text;
+
+  // Active scoring elements
+  private countActive = 0;
 
   // Timer Settings
-  private addTimer = 3000;
-  private deleteTimer = 5000;
-  private addDelta = 200;
-  private deleteDelta = 100; 
-  private currentAddTimer = this.addTimer;
-  private currentDeleteTimer = this.deleteTimer;
+  private popTimerIni = 3000;
+  private goneTimerIni = 5000;
+  private popTimer?: number;//= this.popTimerIni;
+  private goneTimer?: number;// = this.goneTimerIni;
 
 
   // Rofls
@@ -44,29 +49,38 @@ export class GameScene extends Phaser.Scene {
      const velocityY = -getGameHeight(this) *  0.75 ;
      const position = Math.floor(Math.random() * 6) + 1;
 
+     this.roflCount += 1;
+
      this.addRofl(x, y, position, velocityY );
 
-    
-     this.currentAddTimer = this.currentAddTimer - this.addDelta;     
+    this.updateTimers(); 
+    //this.updateGoneTimer();
 
   };
 
   // Add Rofl
   private addRofl = (x: number, y: number, position: number, velocityY: number) : void =>{
     const rofl: Rofl = this.rofls?.get();
+
     rofl.activate(x, y, position, velocityY);
+
     this.pop?.play();
      
-    // adding killer timer
-     this.time.addEvent({
-      delay: this.currentDeleteTimer,
-      callback: rofl.timeOut,
+    // adding TimeOut and Next timer
+    this.time.addEvent({
+      delay: this.goneTimer,
+      callback: this.roflTimeOut, 
+      args: [rofl as Rofl],
       loop: false,
     });
-  };
 
-  public roflGone= () => {
-    this.addCrazyScore();
+    this.time.addEvent({
+      delay: this.popTimer,
+      callback: this.addRofls,
+      callbackScope: this,
+      loop: false,
+    });
+
   };
 
   constructor() {
@@ -83,6 +97,7 @@ export class GameScene extends Phaser.Scene {
     this.back = this.sound.add(CLICK, { loop: false });
     this.pop = this.sound.add(POP, { loop: false });
     this.gone = this.sound.add(GONE, { loop: false });
+    this.squash = this.sound.add(SQUASH, { loop: false });
     this.gametune = this.sound.add(GAMETUNE, { loop: true });
     this.createBackButton();
 
@@ -97,13 +112,22 @@ export class GameScene extends Phaser.Scene {
       key: this.selectedGotchi?.spritesheetKey || ''
     });
 
+    // Initializing lives counter
+    this.lives = this.player.getLives();
+
+    // Score & Lives boards
     this.scoreText = this.add
-    .text(getGameWidth(this) / 2, getGameHeight(this) / 2 - getRelative(190, this), this.score.toString(), {
-      color: '#FFFFFF',
-    })
+    .text(getGameWidth(this) / 2, getGameHeight(this) / 2 - getRelative(190, this), this.score.toString(), { color: '#FFFFFF',   })
     .setFontSize(getRelative(94, this))
     .setOrigin(0.5)
     .setDepth(1);
+
+    this.livesText = this.add
+    .text(getGameWidth(this) * 0.95, getGameHeight(this) * 0.05, this.lives.toString(), { color: '#FFFFFF',  })
+    .setFontSize(getRelative(94, this))
+    .setOrigin(0.5)
+    .setDepth(1);
+
 
 
     // Add Rofl group for pooling
@@ -112,33 +136,80 @@ export class GameScene extends Phaser.Scene {
       classType: Rofl,
       runChildUpdate: true,
      });
-
-     this.addRofls();
-
      
-     // Adding Rofl to the scene
-     this.time.addEvent({
-        delay: this.currentAddTimer,
-        callback: this.addRofls,
-        callbackScope: this,
-        loop: true,
-     });
+     this.addRofls();
 
   }
 
-  public addScore = () => {
+  // score-related functions
+  private addScore = () => {
     if (this.scoreText) {
       this.score += 1;
       this.scoreText.setText(this.score.toString());
     }
   };
 
-  public addCrazyScore = () => {
-    if (this.scoreText) {
-      this.score -= 100;
-      this.scoreText.setText(this.score.toString());
-    }
+  // methods related to rolf interactions
+  private squashRofl = (rofl : Rofl) => {
+    this.squash?.play();
+    rofl.setDead(true);
+    this.addScore();
   };
+
+  private roflTimeOut = (rofl : Rofl) => {
+
+    if (!rofl.isDead && this.player != undefined){
+      
+      this.player.removeLife();
+      
+      this.updateLivesCounter();
+      /*
+      if ( this.livesText != undefined){ //this.lives != undefined &&
+          this.lives = this.player.getLives();
+          this.livesText.setText( this.lives.toString() );
+      }
+      */
+
+      this.gone?.play();
+      rofl.setDead(true);
+    }
+
+  };
+
+  // Updating live counter
+  private updateLivesCounter= () => {
+    if ( this.player != undefined && this.livesText != undefined){ //
+      this.lives = this.player.getLives();
+      this.livesText.setText( this.lives.toString() );
+   }
+  };
+
+
+  // timer settings
+  // reference (negative exponential model): y = t0* ( exp(-a*x+log(1-b)) +b ) = t0*(exp(alpha)+b)
+  private updateTimers (){
+    const b = 0.1;
+    const a = 0.05;
+    const alpha = (-a*this.roflCount)+Math.log2(0.95);
+
+    if ( this.popTimer != undefined && this.goneTimer != undefined ){
+      
+      this.popTimer = Math.floor(this.popTimerIni*(Math.exp(alpha)+b));
+      this.goneTimer = Math.floor(this.goneTimerIni*(Math.exp(alpha)+b));
+
+      /*
+      if (this.scoreText) {
+        this.score = this.popTimer;
+        this.scoreText.setText(this.score.toString());
+      }*/
+    } else {
+
+      this.popTimer = this.popTimerIni;
+      this.goneTimer = this.goneTimerIni;
+
+    }
+
+  }
 
 
 
@@ -163,13 +234,12 @@ export class GameScene extends Phaser.Scene {
         this.player,
         this.rofls,
         (_, rofl) => {
-          (rofl as Rofl).squashRofl();
-          this.addScore();
-
-          this.currentDeleteTimer = this.currentDeleteTimer - this.deleteDelta;
+          this.squashRofl(rofl as Rofl); //(rofl as Rofl).squashRofl();
 
         }
       )
+    } else {
+      window.history.back();
     }
 
   }

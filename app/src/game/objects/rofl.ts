@@ -1,13 +1,13 @@
 import { getGameHeight , getGameWidth } from '../helpers';
-import { ROFL , GONE , SQUASH } from 'game/assets';
+import { ROFL , GONE  } from 'game/assets';
 
 export class Rofl extends Phaser.GameObjects.Image {
   private health = 200;
   private yOrigin = 0;
   private isWaiting = false;
-  private isDead = false;
+  public isDead = false;
   private gone?: Phaser.Sound.BaseSound;
-  private squash?: Phaser.Sound.BaseSound;
+  //private squash?: Phaser.Sound.BaseSound;
 
  constructor(scene: Phaser.Scene) {
    super(scene, -100, -100, ROFL, 0);
@@ -21,7 +21,7 @@ export class Rofl extends Phaser.GameObjects.Image {
 
    //sounds
    this.gone = this.scene.sound.add(GONE, { loop: false });
-   this.squash = this.scene.sound.add(SQUASH, { loop: false });
+   //this.squash = this.scene.sound.add(SQUASH, { loop: false });
 
    this.scene.add.existing(this);
  }
@@ -34,8 +34,7 @@ export class Rofl extends Phaser.GameObjects.Image {
     this.getRandomLocation();
 
     this.yOrigin = this.y;
-    //this.setPosition(x, y);
-    //this.setFrame(frame);
+
   }
 
   public getRandomLocation (){
@@ -84,12 +83,7 @@ export class Rofl extends Phaser.GameObjects.Image {
 
   }
 
-  public timeOut = () => {
-    if (!this.isDead){
-      this.gone?.play();
-      this.setDead(true);
-    }
-  }
+
 
   public getDead(): boolean {
     return this.isDead;
@@ -98,15 +92,22 @@ export class Rofl extends Phaser.GameObjects.Image {
   public setDead(dead: boolean): void {
     this.isDead = dead;
     if (dead == true){
-      
       //this.anims.play('dead');
       this.destroy(); 
     }
   }
 
+    /*
+  public timeOut = () => {
+    if (!this.isDead){
+      this.gone?.play();
+      this.setDead(true);
+    }
+  
   public squashRofl = () => {
     this.squash?.play();
     this.setDead(true);
   }
+ */
 
 }

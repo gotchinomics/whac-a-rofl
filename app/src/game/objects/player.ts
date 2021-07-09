@@ -15,6 +15,7 @@ export class Player extends Phaser.GameObjects.Sprite {
   private cursorKeys?: Phaser.Types.Input.Keyboard.CursorKeys;
   private isHitting = false;
   private isDead = false;
+  private lives = 4;
   public speed = 1000;
 
   constructor({ scene, x, y, key }: Props) {
@@ -112,9 +113,20 @@ public getDead(): boolean {
   return this.isDead;
 }
 
-public setDead(dead: boolean): void {
+private setDead(dead: boolean): void {
   this.isDead = dead;
   //this.anims.play('dead');
+}
+
+public removeLife(){
+  this.lives -= 1;
+  if (this.lives<1){
+    this.setDead(true);
+  }
+}
+
+public getLives(): number {
+  return this.lives;
 }
 
 }
