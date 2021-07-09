@@ -1,6 +1,4 @@
-import {
-  LEFT_CHEVRON, BG, CLICK
-} from 'game/assets';
+import {   LEFT_CHEVRON, BG, CLICK , POP , GONE , GAMETUNE } from 'game/assets';
 import { AavegotchiGameObject } from 'types';
 import { getGameWidth, getGameHeight, getRelative } from '../helpers';
 import { Player , Rofl } from 'game/objects';
@@ -21,10 +19,22 @@ export class GameScene extends Phaser.Scene {
 
   // Sounds
   private back?: Phaser.Sound.BaseSound;
+  private pop?: Phaser.Sound.BaseSound;
+  private gone?: Phaser.Sound.BaseSound;
+  private gametune?: Phaser.Sound.BaseSound;
 
   // Score
   private score = 0;
   private scoreText?: Phaser.GameObjects.Text;
+
+  // Timer Settings
+  private addTimer = 3000;
+  private deleteTimer = 5000;
+  private addDelta = 200;
+  private deleteDelta = 100; 
+  private currentAddTimer = this.addTimer;
+  private currentDeleteTimer = this.deleteTimer;
+
 
   // Rofls
   private addRofls = () =>{
@@ -36,21 +46,27 @@ export class GameScene extends Phaser.Scene {
 
      this.addRofl(x, y, position, velocityY );
 
+    
+     this.currentAddTimer = this.currentAddTimer - this.addDelta;     
+
   };
 
   // Add Rofl
   private addRofl = (x: number, y: number, position: number, velocityY: number) : void =>{
     const rofl: Rofl = this.rofls?.get();
     rofl.activate(x, y, position, velocityY);
+    this.pop?.play();
      
     // adding killer timer
      this.time.addEvent({
-      delay: 5000,
+      delay: this.currentDeleteTimer,
       callback: rofl.timeOut,
-      callbackScope: this,
       loop: false,
-   });
+    });
+  };
 
+  public roflGone= () => {
+    this.addCrazyScore();
   };
 
   constructor() {
@@ -65,7 +81,13 @@ export class GameScene extends Phaser.Scene {
     // Add layout
     this.add.image(getGameWidth(this) / 2, getGameHeight(this) / 2, BG).setDisplaySize(getGameWidth(this), getGameHeight(this));
     this.back = this.sound.add(CLICK, { loop: false });
+    this.pop = this.sound.add(POP, { loop: false });
+    this.gone = this.sound.add(GONE, { loop: false });
+    this.gametune = this.sound.add(GAMETUNE, { loop: true });
     this.createBackButton();
+
+    // Play main tune
+    this.gametune?.play();
 
     // Add a player sprite that can be moved around.
     this.player = new Player({
@@ -93,9 +115,10 @@ export class GameScene extends Phaser.Scene {
 
      this.addRofls();
 
+     
      // Adding Rofl to the scene
      this.time.addEvent({
-        delay: 3000,
+        delay: this.currentAddTimer,
         callback: this.addRofls,
         callbackScope: this,
         loop: true,
@@ -103,9 +126,16 @@ export class GameScene extends Phaser.Scene {
 
   }
 
-  private addScore = () => {
+  public addScore = () => {
     if (this.scoreText) {
       this.score += 1;
+      this.scoreText.setText(this.score.toString());
+    }
+  };
+
+  public addCrazyScore = () => {
+    if (this.scoreText) {
+      this.score -= 100;
       this.scoreText.setText(this.score.toString());
     }
   };
@@ -127,5 +157,20 @@ export class GameScene extends Phaser.Scene {
   public update(): void {
     // Every frame, we update the player
     this.player?.update();
+
+    if (this.player && !this.player?.getDead()) {
+      this.physics.overlap(
+        this.player,
+        this.rofls,
+        (_, rofl) => {
+          (rofl as Rofl).squashRofl();
+          this.addScore();
+
+          this.currentDeleteTimer = this.currentDeleteTimer - this.deleteDelta;
+
+        }
+      )
+    }
+
   }
 }

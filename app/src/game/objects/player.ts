@@ -14,6 +14,7 @@ export class Player extends Phaser.GameObjects.Sprite {
   private pointer: Phaser.Input.Pointer;
   private cursorKeys?: Phaser.Types.Input.Keyboard.CursorKeys;
   private isHitting = false;
+  private isDead = false;
   public speed = 1000;
 
   constructor({ scene, x, y, key }: Props) {
@@ -94,13 +95,26 @@ export class Player extends Phaser.GameObjects.Sprite {
         } else if (this.hitKey.isUp && !this.pointer.isDown && this.isHitting)  {
           this.isHitting = false;
         }
+
+
+        // TO DO: Add dead condition
+        //this.setDead(true);
     
   }
 
-  public animGotchiIdle = () => {
+public animGotchiIdle = () => {
     if (!this.isHitting){
       this.anims.play('idle', false);
     } 
+}
+
+public getDead(): boolean {
+  return this.isDead;
+}
+
+public setDead(dead: boolean): void {
+  this.isDead = dead;
+  //this.anims.play('dead');
 }
 
 }

@@ -20,7 +20,12 @@ export const BG = 'bg';
 export const FULLSCREEN = 'fullscreen';
 export const LEFT_CHEVRON = 'left_chevron';
 export const CLICK = 'click';
+export const POP = 'pop';
+export const GONE = 'gone';
+export const SQUASH = 'squash';
+export const GAMETUNE = 'gametune';
 export const ROFL = 'rofl';
+
 
 // Save all in game assets in the public folder
 export const assets: Array<Asset | SpritesheetAsset> = [
@@ -37,6 +42,26 @@ export const assets: Array<Asset | SpritesheetAsset> = [
   {
     key: CLICK,
     src: 'assets/sounds/click.mp3',
+    type: 'AUDIO',
+  },
+  {
+    key: POP,
+    src: 'assets/sounds/pop.mp3',
+    type: 'AUDIO',
+  },
+  {
+    key: GONE,
+    src: 'assets/sounds/gone.mp3',
+    type: 'AUDIO',
+  },
+  {
+    key: SQUASH,
+    src: 'assets/sounds/squash.mp3',
+    type: 'AUDIO',
+  },
+  {
+    key: GAMETUNE,
+    src: 'assets/sounds/gametune.mp3',
     type: 'AUDIO',
   },
   {
