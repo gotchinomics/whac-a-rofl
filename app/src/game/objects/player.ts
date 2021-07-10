@@ -20,6 +20,8 @@ export class Player extends Phaser.GameObjects.Sprite {
 
   constructor({ scene, x, y, key }: Props) {
     super(scene, x, y, key);
+    this.displayHeight = getGameHeight(scene) * 0.15;
+    this.displayWidth = getGameHeight(scene) * 0.15;
 
     // sprite
     this.setOrigin(0, 0);
@@ -58,51 +60,55 @@ export class Player extends Phaser.GameObjects.Sprite {
 
     if (!this.isDead){
 
-    // Every frame, we create a new velocity for the sprite based on what keys the player is holding down.
-    const velocity = new Phaser.Math.Vector2(0, 0);
-    
-    // Horizontal movement
-    switch (true) {
-      case this.cursorKeys?.left.isDown && this.x > 10:
-        velocity.x -= 1;
-        break;
-      case this.cursorKeys?.right.isDown && this.x < (getGameWidth(this.scene)-150) :
-        velocity.x += 1;
-        break;
-        
-      default: 
-    }
- 
-    // Vertical movement
-    switch (true) {
-      case this.cursorKeys?.down.isDown && this.y < (getGameHeight(this.scene)-150) :
-        velocity.y += 1;
-        break;
-      case this.cursorKeys?.up.isDown && this.y > 300:
-        velocity.y -= 1;
-        break;
-      default:
-    }
+      // Every frame, we create a new velocity for the sprite based on what keys the player is holding down.
+      const velocity = new Phaser.Math.Vector2(0, 0);
 
-    this.animGotchiIdle();
- 
-    // We normalize the velocity so that the player is always moving at the same speed, regardless of direction.
-    const normalizedVelocity = velocity.normalize();
-    (this.body as Phaser.Physics.Arcade.Body).setVelocity(normalizedVelocity.x * this.speed, normalizedVelocity.y * this.speed);
-
-        // handling hitting input
-        if ( (this.hitKey.isDown || this.pointer.isDown)  && !this.isHitting) {
-          // jump
-          this.isHitting = true;
-          this.anims.play('hit');
-    
-          //(this.body as Phaser.Physics.Arcade.Body).setVelocityY(-getGameHeight(this.scene) * 0.6);
-    
-        } else if (this.hitKey.isUp && !this.pointer.isDown && this.isHitting)  {
-          this.isHitting = false;
-        }
-
+      // Handling mouse input
+      if (this.pointer.isDown && this.pointer.getDuration()<50 ){
+        this.setPosition( this.pointer.position.x - (getGameWidth(this.scene)*0.045) , this.pointer.position.y - (getGameWidth(this.scene)*0.045) );
       }
+    
+      // Horizontal movement
+      switch (true) {
+       case this.cursorKeys?.left.isDown && this.x > 10:
+         velocity.x -= 1;
+         break;
+       case this.cursorKeys?.right.isDown && this.x < (getGameWidth(this.scene)-150) :
+         velocity.x += 1;
+         break;
+       default: 
+      }
+ 
+      // Vertical movement
+      switch (true) {
+        case this.cursorKeys?.down.isDown && this.y < (getGameHeight(this.scene)-150) :
+         velocity.y += 1;
+         break;
+        case this.cursorKeys?.up.isDown && this.y > 300:
+          velocity.y -= 1;
+          break;
+        default:
+      }
+
+      this.animGotchiIdle();
+ 
+      // We normalize the velocity so that the player is always moving at the same speed, regardless of direction.
+      const normalizedVelocity = velocity.normalize();
+      (this.body as Phaser.Physics.Arcade.Body).setVelocity(normalizedVelocity.x * this.speed, normalizedVelocity.y * this.speed);
+
+      // handling hitting input
+      if ( (this.hitKey.isDown || this.pointer.isDown)  && !this.isHitting) {
+        // jump
+        this.isHitting = true;
+        this.anims.play('hit');
+    
+         //(this.body as Phaser.Physics.Arcade.Body).setVelocityY(-getGameHeight(this.scene) * 0.6);
+    
+      } else if (this.hitKey.isUp && !this.pointer.isDown && this.isHitting)  {
+          this.isHitting = false;
+      }
+
+    }
     
   }
 

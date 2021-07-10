@@ -12,8 +12,8 @@ export class Rofl extends Phaser.GameObjects.Image {
  constructor(scene: Phaser.Scene) {
    super(scene, -100, -100, ROFL, 0);
    this.setOrigin(0, 0);
-   this.displayHeight = getGameHeight(scene) / 10;
-   this.displayWidth = getGameHeight(scene) / 10;
+   this.displayHeight = getGameHeight(scene) * 0.08;
+   this.displayWidth = getGameHeight(scene) * 0.08;
 
    // physics
    this.scene.physics.world.enable(this);
@@ -45,26 +45,38 @@ export class Rofl extends Phaser.GameObjects.Image {
       case positionIndex == 1:
          this.x = getGameWidth(this.scene)  * ( 0.215-0.034 );
          this.y = getGameHeight(this.scene) * ( 0.89-0.062  );
+         this.displayHeight = getGameHeight(this.scene) * 0.1;
+         this.displayWidth = getGameHeight(this.scene) * 0.1;
         break;
       case positionIndex == 2:
          this.x = getGameWidth(this.scene)  * ( 0.145-0.034 );
          this.y = getGameHeight(this.scene) * ( 0.672-0.062 );
+         this.displayHeight = getGameHeight(this.scene) * 0.09;
+         this.displayWidth = getGameHeight(this.scene) * 0.09;
         break;
       case positionIndex == 3:
           this.x = getGameWidth(this.scene)  * ( 0.332-0.034 );
           this.y = getGameHeight(this.scene) * ( 0.517-0.062 );
+          this.displayHeight = getGameHeight(this.scene) * 0.08;
+          this.displayWidth = getGameHeight(this.scene) * 0.08;
         break;
       case positionIndex == 4:
           this.x = getGameWidth(this.scene)  * ( 0.797-0.034 );
           this.y = getGameHeight(this.scene) * ( 0.89-0.062  );
+          this.displayHeight = getGameHeight(this.scene) * 0.1;
+          this.displayWidth = getGameHeight(this.scene) * 0.1;
         break;
       case positionIndex == 5:
           this.x = getGameWidth(this.scene)  * ( 0.854-0.034 );
           this.y = getGameHeight(this.scene) * ( 0.672-0.062 );
+          this.displayHeight = getGameHeight(this.scene) * 0.09;
+          this.displayWidth = getGameHeight(this.scene) * 0.09;
          break;
       case positionIndex >= 6:
           this.x = getGameWidth(this.scene)  * ( 0.671-0.034 );
           this.y = getGameHeight(this.scene) * ( 0.517-0.062 );
+          this.displayHeight = getGameHeight(this.scene) * 0.08;
+          this.displayWidth = getGameHeight(this.scene) * 0.08;
         break;
         
     }
