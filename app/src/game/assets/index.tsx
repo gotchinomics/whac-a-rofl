@@ -24,6 +24,7 @@ export const POP = 'pop';
 export const GONE = 'gone';
 export const SQUASH = 'squash';
 export const GAMETUNE = 'gametune';
+export const GAMEOVER = 'gameover';
 export const ROFL = 'rofl';
 
 
@@ -62,6 +63,11 @@ export const assets: Array<Asset | SpritesheetAsset> = [
   {
     key: GAMETUNE,
     src: 'assets/sounds/gametune.mp3',
+    type: 'AUDIO',
+  },
+  {
+    key: GAMEOVER,
+    src: 'assets/sounds/gameover.mp3',
     type: 'AUDIO',
   },
   {

@@ -37,6 +37,10 @@ export class Player extends Phaser.GameObjects.Sprite {
       frameRate: 8,
       repeat: -1,
     });
+    this.anims.create({
+      key: 'dead',
+      frames: this.anims.generateFrameNumbers(key || '', { frames: [ 4 ]}),
+    });
 
     // physics
     this.scene.physics.world.enable(this);
@@ -52,6 +56,7 @@ export class Player extends Phaser.GameObjects.Sprite {
 
   update(): void {
 
+    if (!this.isDead){
 
     // Every frame, we create a new velocity for the sprite based on what keys the player is holding down.
     const velocity = new Phaser.Math.Vector2(0, 0);
@@ -97,14 +102,12 @@ export class Player extends Phaser.GameObjects.Sprite {
           this.isHitting = false;
         }
 
-
-        // TO DO: Add dead condition
-        //this.setDead(true);
+      }
     
   }
 
 public animGotchiIdle = () => {
-    if (!this.isHitting){
+    if ( !this.isHitting && !this.isDead ){
       this.anims.play('idle', false);
     } 
 }
@@ -115,18 +118,23 @@ public getDead(): boolean {
 
 private setDead(dead: boolean): void {
   this.isDead = dead;
-  //this.anims.play('dead');
 }
 
 public removeLife(){
   this.lives -= 1;
   if (this.lives<1){
+    this.anims.play('dead');
+    (this.body as Phaser.Physics.Arcade.Body).setVelocity(0);
     this.setDead(true);
   }
 }
 
 public getLives(): number {
   return this.lives;
+}
+
+public getLivesString(): string {
+  return this.lives.toString();
 }
 
 }

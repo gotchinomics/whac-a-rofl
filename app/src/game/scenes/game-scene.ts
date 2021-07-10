@@ -1,4 +1,4 @@
-import {   LEFT_CHEVRON, BG, CLICK , POP , GONE , SQUASH, GAMETUNE } from 'game/assets';
+import {   LEFT_CHEVRON, BG, CLICK , POP , GONE , SQUASH, GAMETUNE, GAMEOVER } from 'game/assets';
 import { AavegotchiGameObject } from 'types';
 import { getGameWidth, getGameHeight, getRelative } from '../helpers';
 import { Player , Rofl } from 'game/objects';
@@ -23,6 +23,7 @@ export class GameScene extends Phaser.Scene {
   private gone?: Phaser.Sound.BaseSound;
   private squash?: Phaser.Sound.BaseSound;
   private gametune?: Phaser.Sound.BaseSound;
+  private gameover?: Phaser.Sound.BaseSound;
 
   // Score
   private score = 0;
@@ -39,7 +40,10 @@ export class GameScene extends Phaser.Scene {
   private goneTimerIni = 5000;
   private popTimer?: number;//= this.popTimerIni;
   private goneTimer?: number;// = this.goneTimerIni;
+  private gameOverTimer = 3000;
 
+  // Local states and aux  variables
+  private endingGame =  false;
 
   // Rofls
   private addRofls = () =>{
@@ -48,13 +52,15 @@ export class GameScene extends Phaser.Scene {
      const y = getGameHeight(this) / 2;
      const velocityY = -getGameHeight(this) *  0.75 ;
      const position = Math.floor(Math.random() * 6) + 1;
+    
+     if (this.endingGame == false){
+      this.roflCount += 1;
 
-     this.roflCount += 1;
+      this.addRofl(x, y, position, velocityY );
 
-     this.addRofl(x, y, position, velocityY );
-
-    this.updateTimers(); 
+      this.updateTimers(); 
     //this.updateGoneTimer();
+    }
 
   };
 
@@ -99,6 +105,7 @@ export class GameScene extends Phaser.Scene {
     this.gone = this.sound.add(GONE, { loop: false });
     this.squash = this.sound.add(SQUASH, { loop: false });
     this.gametune = this.sound.add(GAMETUNE, { loop: true });
+    this.gameover = this.sound.add(GAMEOVER, { loop: false });
     this.createBackButton();
 
     // Play main tune
@@ -123,8 +130,8 @@ export class GameScene extends Phaser.Scene {
     .setDepth(1);
 
     this.livesText = this.add
-    .text(getGameWidth(this) * 0.95, getGameHeight(this) * 0.05, this.lives.toString(), { color: '#FFFFFF',  })
-    .setFontSize(getRelative(94, this))
+    .text(getGameWidth(this) * 0.1, getGameHeight(this) * 0.1,'Lives: '+ this.lives.toString(), { color: '#FFFFFF',  })
+    .setFontSize(getRelative(70, this))
     .setOrigin(0.5)
     .setDepth(1);
 
@@ -158,17 +165,11 @@ export class GameScene extends Phaser.Scene {
 
   private roflTimeOut = (rofl : Rofl) => {
 
-    if (!rofl.isDead && this.player != undefined){
+    if (!rofl.isDead && this.player != undefined && this.endingGame == false ){
       
       this.player.removeLife();
       
       this.updateLivesCounter();
-      /*
-      if ( this.livesText != undefined){ //this.lives != undefined &&
-          this.lives = this.player.getLives();
-          this.livesText.setText( this.lives.toString() );
-      }
-      */
 
       this.gone?.play();
       rofl.setDead(true);
@@ -180,7 +181,7 @@ export class GameScene extends Phaser.Scene {
   private updateLivesCounter= () => {
     if ( this.player != undefined && this.livesText != undefined){ //
       this.lives = this.player.getLives();
-      this.livesText.setText( this.lives.toString() );
+      this.livesText.setText( 'Lives: ' + this.lives.toString() );
    }
   };
 
@@ -225,6 +226,10 @@ export class GameScene extends Phaser.Scene {
       });
   };
 
+  private endGame(){
+    window.history.back();
+  }
+
   public update(): void {
     // Every frame, we update the player
     this.player?.update();
@@ -235,12 +240,29 @@ export class GameScene extends Phaser.Scene {
         this.rofls,
         (_, rofl) => {
           this.squashRofl(rofl as Rofl); //(rofl as Rofl).squashRofl();
-
         }
       )
     } else {
-      window.history.back();
+      if ( this.endingGame == false ){
+        // Play gameover sound
+        this.gametune?.stop();
+        this.gameover?.play();
+        this.endingGame = true;
+        
+        
+
+        this.time.addEvent({
+         delay: this.gameOverTimer,
+         callback: this.endGame,
+          callbackScope: this,
+          loop: false,
+        });
+      
+      }
+      
     }
+
+
 
   }
 }

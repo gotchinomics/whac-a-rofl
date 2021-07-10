@@ -199,6 +199,14 @@ export class BootScene extends Phaser.Scene {
           removeBg: true,
           removeShadow: true }),
       ],
+      [
+        customiseSVG(svg, {
+          eyes: "sleeping",
+          mouth: "neutral",
+          armsUp: false,
+          removeBg: true,
+          removeShadow: false  }),
+      ],
       
 
     ];
