@@ -1,16 +1,17 @@
 import { getGameHeight , getGameWidth } from '../helpers';
-import { ROFL , GONE  } from 'game/assets';
+import {  GODROFL, GONE  } from 'game/assets';
 
-export class Rofl extends Phaser.GameObjects.Image {
+export class Godrofl extends Phaser.GameObjects.Image {
   private health = 200;
   private yOrigin = 0;
+  private isGodlike = true;
   private isWaiting = false;
   public isDead = false;
   private gone?: Phaser.Sound.BaseSound;
   //private squash?: Phaser.Sound.BaseSound;
 
  constructor(scene: Phaser.Scene) {
-   super(scene, -100, -100, ROFL , 0);
+   super(scene, -100, -100, GODROFL , 0);
    this.setOrigin(0, 0);
    this.displayHeight = getGameHeight(scene) * 0.08;
    this.displayWidth = getGameHeight(scene) * 0.08;

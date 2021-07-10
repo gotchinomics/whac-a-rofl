@@ -23,9 +23,11 @@ export const CLICK = 'click';
 export const POP = 'pop';
 export const GONE = 'gone';
 export const SQUASH = 'squash';
+export const GODLIKESQUASH = 'godlikesquash';
 export const GAMETUNE = 'gametune';
 export const GAMEOVER = 'gameover';
 export const ROFL = 'rofl';
+export const GODROFL = 'godrofl';
 
 
 // Save all in game assets in the public folder
@@ -61,6 +63,11 @@ export const assets: Array<Asset | SpritesheetAsset> = [
     type: 'AUDIO',
   },
   {
+    key: GODLIKESQUASH,
+    src: 'assets/sounds/godlikesquash.mp3',
+    type: 'AUDIO',
+  },
+  {
     key: GAMETUNE,
     src: 'assets/sounds/gametune.mp3',
     type: 'AUDIO',
@@ -78,5 +85,14 @@ export const assets: Array<Asset | SpritesheetAsset> = [
       frameWidth: 553 / 1,
       frameHeight: 553 / 1,
     }
-  }
+  },
+  {
+    key: GODROFL,
+    src: 'assets/sprites/godrofl.png',
+    type: 'SPRITESHEET',
+    data: {
+      frameWidth: 553 / 1,
+      frameHeight: 553 / 1,
+    }
+  },
 ];

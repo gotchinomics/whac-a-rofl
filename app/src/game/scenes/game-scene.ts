@@ -1,7 +1,8 @@
-import {   LEFT_CHEVRON, BG, CLICK , POP , GONE , SQUASH, GAMETUNE, GAMEOVER } from 'game/assets';
+import {   LEFT_CHEVRON, BG, CLICK , POP , GONE , SQUASH, GODLIKESQUASH, GAMETUNE, GAMEOVER } from 'game/assets';
 import { AavegotchiGameObject } from 'types';
 import { getGameWidth, getGameHeight, getRelative } from '../helpers';
-import { Player , Rofl } from 'game/objects';
+import { Player , Rofl, Godrofl } from 'game/objects';
+import { Socket } from 'dgram';
 
 const sceneConfig: Phaser.Types.Scenes.SettingsConfig = {
   active: false,
@@ -13,15 +14,18 @@ const sceneConfig: Phaser.Types.Scenes.SettingsConfig = {
  * Scene where gameplay takes place
  */
 export class GameScene extends Phaser.Scene {
+  private socket?: Socket;
   private player?: Player;
   private selectedGotchi?: AavegotchiGameObject;
   private rofls?: Phaser.GameObjects.Group;
+  private godrofls?: Phaser.GameObjects.Group;
 
   // Sounds
   private back?: Phaser.Sound.BaseSound;
   private pop?: Phaser.Sound.BaseSound;
   private gone?: Phaser.Sound.BaseSound;
   private squash?: Phaser.Sound.BaseSound;
+  private godlikesquash?: Phaser.Sound.BaseSound;
   private gametune?: Phaser.Sound.BaseSound;
   private gameover?: Phaser.Sound.BaseSound;
 
@@ -29,21 +33,25 @@ export class GameScene extends Phaser.Scene {
   private score = 0;
   private lives?: number;
   private roflCount = 0;
+  private godroflCount = 0;
+  private godroflProb = 0.2 ; // Probabilty of GodRofl [0-1]
   private scoreText?: Phaser.GameObjects.Text;
   private livesText?: Phaser.GameObjects.Text;
 
-  // Active scoring elements
-  private countActive = 0;
-
   // Timer Settings
-  private popTimerIni = 3000;
-  private goneTimerIni = 5000;
-  private popTimer?: number;//= this.popTimerIni;
-  private goneTimer?: number;// = this.goneTimerIni;
+  private popRoflTimerIni = 3000;
+  private goneRoflTimerIni = 5000;
+  private popRoflTimer?: number;
+  private goneRoflTimer?: number;
+  private popGodroflTimerIni = 5000;
+  private goneGodroflTimerIni = 8000;
+  private popGodroflTimer?: number;
+  private goneGodroflTimer?: number;
   private gameOverTimer = 3000;
 
   // Local states and aux  variables
   private endingGame =  false;
+  private isGameOver =  false;
 
   // Rofls
   private addRofls = () =>{
@@ -58,8 +66,12 @@ export class GameScene extends Phaser.Scene {
 
       this.addRofl(x, y, position, velocityY );
 
-      this.updateTimers(); 
+      this.updateRoflTimers(); 
     //this.updateGoneTimer();
+    } else {
+      this.popRoflTimer = 100;
+      this.goneRoflTimer = 2000;
+      this.addRofl(x, y, position, velocityY );
     }
 
   };
@@ -74,20 +86,68 @@ export class GameScene extends Phaser.Scene {
      
     // adding TimeOut and Next timer
     this.time.addEvent({
-      delay: this.goneTimer,
+      delay: this.goneRoflTimer,
       callback: this.roflTimeOut, 
       args: [rofl as Rofl],
       loop: false,
     });
 
     this.time.addEvent({
-      delay: this.popTimer,
+      delay: this.popRoflTimer,
       callback: this.addRofls,
       callbackScope: this,
       loop: false,
     });
 
   };
+
+  // GODROFLS
+  private addGodrofls = () =>{
+    const size = getGameHeight(this) / 7;
+    const x = getGameWidth(this)  / 2;
+    const y = getGameHeight(this) / 2;
+    const velocityY = -getGameHeight(this) *  0.75 ;
+    const position = Math.floor(Math.random() * 6) + 1;
+   
+    if (this.endingGame == false){
+     this.godroflCount += 1;
+
+     this.addGodrofl(x, y, position, velocityY );
+
+     this.updateGodroflTimers(); 
+   //this.updateGoneTimer();
+   } 
+
+ };
+
+ // Add Godrofl
+ private addGodrofl = (x: number, y: number, position: number, velocityY: number) : void =>{
+   const godrofl: Godrofl = this.godrofls?.get();
+
+   godrofl.activate(x, y, position, velocityY);
+
+   this.pop?.play();
+    
+   // adding TimeOut and Next timer
+   this.time.addEvent({
+     delay: this.goneGodroflTimer,
+     callback: this.godroflTimeOut, 
+     args: [godrofl as Godrofl],
+     loop: false,
+   });
+
+   this.time.addEvent({
+     delay: this.popGodroflTimer,
+     callback: this.addGodrofls,
+     callbackScope: this,
+     loop: false,
+   });
+
+ };
+
+
+
+  
 
   constructor() {
     super(sceneConfig);
@@ -98,12 +158,17 @@ export class GameScene extends Phaser.Scene {
   };
 
   public create(): void {
+    // communicating gameStarted to socket
+    this.socket = this.game.registry.values.socket;
+    this.socket?.emit('gameStarted');
+
     // Add layout
     this.add.image(getGameWidth(this) / 2, getGameHeight(this) / 2, BG).setDisplaySize(getGameWidth(this), getGameHeight(this));
     this.back = this.sound.add(CLICK, { loop: false });
     this.pop = this.sound.add(POP, { loop: false });
     this.gone = this.sound.add(GONE, { loop: false });
     this.squash = this.sound.add(SQUASH, { loop: false });
+    this.godlikesquash = this.sound.add(GODLIKESQUASH, { loop: false });
     this.gametune = this.sound.add(GAMETUNE, { loop: true });
     this.gameover = this.sound.add(GAMEOVER, { loop: false });
     this.createBackButton();
@@ -139,12 +204,20 @@ export class GameScene extends Phaser.Scene {
 
     // Add Rofl group for pooling
     this.rofls = this.add.group({
-      maxSize: 10,
+      maxSize: 30,
       classType: Rofl,
+      runChildUpdate: true,
+     });
+
+     this.godrofls = this.add.group({
+      maxSize: 6,
+      classType: Godrofl,
       runChildUpdate: true,
      });
      
      this.addRofls();
+
+     this.addGodrofls();
 
   }
 
@@ -163,6 +236,15 @@ export class GameScene extends Phaser.Scene {
     this.addScore();
   };
 
+  private squashGodrofl = (godrofl : Godrofl) => {
+    this.godlikesquash?.play();
+    godrofl.setDead(true);
+    if (this.player != undefined){
+      this.player.removeLife();
+      this.updateLivesCounter();
+    }
+  };
+
   private roflTimeOut = (rofl : Rofl) => {
 
     if (!rofl.isDead && this.player != undefined && this.endingGame == false ){
@@ -173,6 +255,16 @@ export class GameScene extends Phaser.Scene {
 
       this.gone?.play();
       rofl.setDead(true);
+    }
+
+  };
+
+  private godroflTimeOut = (godrofl : Godrofl) => {
+
+    if (!godrofl.isDead && this.player != undefined && this.endingGame == false ){
+
+      this.gone?.play();
+      godrofl.setDead(true);
     }
 
   };
@@ -188,25 +280,39 @@ export class GameScene extends Phaser.Scene {
 
   // timer settings
   // reference (negative exponential model): y = t0* ( exp(-a*x+log(1-b)) +b ) = t0*(exp(alpha)+b)
-  private updateTimers (){
+  private updateRoflTimers (){
     const b = 0.1;
     const a = 0.05;
     const alpha = (-a*this.roflCount)+Math.log2(0.95);
 
-    if ( this.popTimer != undefined && this.goneTimer != undefined ){
+    if ( this.popRoflTimer != undefined && this.goneRoflTimer != undefined ){
       
-      this.popTimer = Math.floor(this.popTimerIni*(Math.exp(alpha)+b));
-      this.goneTimer = Math.floor(this.goneTimerIni*(Math.exp(alpha)+b));
+      this.popRoflTimer = Math.floor(this.popRoflTimerIni*(Math.exp(alpha)+b));
+      this.goneRoflTimer = Math.floor(this.goneRoflTimerIni*(Math.exp(alpha)+b));
 
-      /*
-      if (this.scoreText) {
-        this.score = this.popTimer;
-        this.scoreText.setText(this.score.toString());
-      }*/
     } else {
 
-      this.popTimer = this.popTimerIni;
-      this.goneTimer = this.goneTimerIni;
+      this.popRoflTimer = this.popRoflTimerIni;
+      this.goneRoflTimer = this.goneRoflTimerIni;
+
+    }
+
+  }
+
+  private updateGodroflTimers (){
+    const b = 0.1;
+    const a = 0.05;
+    const alpha = (-a*this.godroflCount)+Math.log2(0.95);
+
+    if ( this.popGodroflTimer != undefined && this.goneGodroflTimer != undefined ){
+      
+      this.popGodroflTimer = Math.floor(this.popGodroflTimerIni*(Math.exp(alpha)+b));
+      this.goneGodroflTimer = Math.floor(this.goneGodroflTimerIni*(Math.exp(alpha)+b));
+
+    } else {
+
+      this.popGodroflTimer = this.popGodroflTimerIni;
+      this.goneGodroflTimer = this.goneGodroflTimerIni;
 
     }
 
@@ -235,11 +341,21 @@ export class GameScene extends Phaser.Scene {
     this.player?.update();
 
     if (this.player && !this.player?.getDead()) {
+      // checking overlap between player and scoring element
       this.physics.overlap(
         this.player,
         this.rofls,
         (_, rofl) => {
-          this.squashRofl(rofl as Rofl); //(rofl as Rofl).squashRofl();
+          this.squashRofl(rofl as Rofl); 
+        }
+      )
+
+      // checking overlap between player and penalizing element
+      this.physics.overlap(
+        this.player,
+        this.godrofls,
+        (_, godrofl) => {
+          this.squashGodrofl(godrofl as Godrofl); 
         }
       )
     } else {
@@ -248,8 +364,8 @@ export class GameScene extends Phaser.Scene {
         this.gametune?.stop();
         this.gameover?.play();
         this.endingGame = true;
-        
-        
+        this.isGameOver = true;
+        this.socket?.emit('gameOver', {score: this.score});
 
         this.time.addEvent({
          delay: this.gameOverTimer,

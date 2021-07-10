@@ -22,6 +22,7 @@ io.on('connection', function (socket: Socket) {
 
     console.log('A user connected: ' + userId);
     connectedGotchis[userId] = {id: userId};
+    console.log(connectedGotchis);
 
     socket.on('handleDisconnect', () => {
       socket.disconnect();
