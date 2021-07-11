@@ -1,7 +1,7 @@
 import {   LEFT_CHEVRON, BG, CLICK , POP , GONE , SQUASH, GODLIKESQUASH, GAMETUNE, GAMEOVER } from 'game/assets';
 import { AavegotchiGameObject } from 'types';
 import { getGameWidth, getGameHeight, getRelative } from '../helpers';
-import { Player , Rofl, Godrofl } from 'game/objects';
+import { Player , Rofl, Lickquidator } from 'game/objects';
 import { Socket } from 'dgram';
 
 const sceneConfig: Phaser.Types.Scenes.SettingsConfig = {
@@ -18,7 +18,7 @@ export class GameScene extends Phaser.Scene {
   private player?: Player;
   private selectedGotchi?: AavegotchiGameObject;
   private rofls?: Phaser.GameObjects.Group;
-  private godrofls?: Phaser.GameObjects.Group;
+  private lickquidators?: Phaser.GameObjects.Group;
 
   // Sounds
   private back?: Phaser.Sound.BaseSound;
@@ -33,8 +33,8 @@ export class GameScene extends Phaser.Scene {
   private score = 0;
   private lives?: number;
   private roflCount = 0;
-  private godroflCount = 0;
-  private godroflProb = 0.2 ; // Probabilty of GodRofl [0-1]
+  private lickquidatorCount = 0;
+  private lickquidatorProb = 0.2 ; // Probabilty of Lickquidator [0-1]
   private scoreText?: Phaser.GameObjects.Text;
   private livesText?: Phaser.GameObjects.Text;
 
@@ -43,10 +43,10 @@ export class GameScene extends Phaser.Scene {
   private goneRoflTimerIni = 5000;
   private popRoflTimer?: number;
   private goneRoflTimer?: number;
-  private popGodroflTimerIni = 10000;
-  private goneGodroflTimerIni = 8000;
-  private popGodroflTimer?: number;
-  private goneGodroflTimer?: number;
+  private popLickquidatorTimerIni = 10000;
+  private goneLickquidatorTimerIni = 8000;
+  private popLickquidatorTimer?: number;
+  private goneLickquidatorTimer?: number;
   private gameOverTimer = 3000;
 
   // Local states and aux  variables
@@ -131,8 +131,8 @@ export class GameScene extends Phaser.Scene {
 
   };
 
-  // GODROFLS
-  private addGodrofls = () =>{
+  // LICKQUIDATORS
+  private addLickquidators = () =>{
     //const size = getGameHeight(this) / 7;
     const position = this.calculatePosition();
     const x = this.getLocationX(position);
@@ -140,35 +140,35 @@ export class GameScene extends Phaser.Scene {
     const velocityY = -getGameHeight(this) *  0.75 ;
    
     if (this.endingGame == false){
-     this.godroflCount += 1;
+     this.lickquidatorCount += 1;
 
-     this.addGodrofl(x, y, position, velocityY );
+     this.addLickquidator(x, y, position, velocityY );
 
-     this.updateGodroflTimers(); 
+     this.updateLickquidatorTimers(); 
    //this.updateGoneTimer();
    } 
 
  };
 
- // Add Godrofl
- private addGodrofl = (x: number, y: number, position: number, velocityY: number) : void =>{
-   const godrofl: Godrofl = this.godrofls?.get();
+ // Add Lickquidator
+ private addLickquidator = (x: number, y: number, position: number, velocityY: number) : void =>{
+   const lickquidator: Lickquidator = this.lickquidators?.get();
 
-   godrofl.activate(x, y, position, velocityY);
+   lickquidator.activate(x, y, position, velocityY);
 
    this.pop?.play();
     
    // adding TimeOut and Next timer
    this.time.addEvent({
-     delay: this.goneGodroflTimer,
-     callback: this.godroflTimeOut, 
-     args: [godrofl as Godrofl],
+     delay: this.goneLickquidatorTimer,
+     callback: this.lickquidatorTimeOut, 
+     args: [lickquidator as Lickquidator],
      loop: false,
    });
 
    this.time.addEvent({
-     delay: this.popGodroflTimer,
-     callback: this.addGodrofls,
+     delay: this.popLickquidatorTimer,
+     callback: this.addLickquidators,
      callbackScope: this,
      loop: false,
    });
@@ -239,17 +239,17 @@ export class GameScene extends Phaser.Scene {
       runChildUpdate: true,
      });
 
-     this.godrofls = this.add.group({
+     this.lickquidators = this.add.group({
       maxSize: 6,
-      classType: Godrofl,
+      classType: Lickquidator,
       runChildUpdate: true,
      });
      
      this.addRofls();
 
      this.time.addEvent({
-      delay: this.popGodroflTimer,
-      callback: this.addGodrofls,
+      delay: this.popLickquidatorTimer,
+      callback: this.addLickquidators,
       callbackScope: this,
       loop: false,
     });
@@ -274,12 +274,12 @@ export class GameScene extends Phaser.Scene {
     this.addScore();
   };
 
-  private squashGodrofl = (godrofl : Godrofl) => {
+  private squashLickquidator = (lickquidator : Lickquidator) => {
     this.godlikesquash?.play();
-    if (godrofl != undefined && godrofl.position != undefined ){
-      this.usedPosition[godrofl.position] = false;
+    if (lickquidator != undefined && lickquidator.position != undefined ){
+      this.usedPosition[lickquidator.position] = false;
     }
-    godrofl.setDead(true);
+    lickquidator.setDead(true);
     if (this.player != undefined){
       this.player.removeLife();
       this.updateLivesCounter();
@@ -302,14 +302,14 @@ export class GameScene extends Phaser.Scene {
 
   };
 
-  private godroflTimeOut = (godrofl : Godrofl) => {
+  private lickquidatorTimeOut = (lickquidator : Lickquidator) => {
 
-    if (!godrofl.isDead && this.player != undefined && this.endingGame == false ){
+    if (!lickquidator.isDead && this.player != undefined && this.endingGame == false ){
       this.gone?.play();
-      if (godrofl != undefined && godrofl.position != undefined ){
-        this.usedPosition[godrofl.position] = false;
+      if (lickquidator != undefined && lickquidator.position != undefined ){
+        this.usedPosition[lickquidator.position] = false;
       }
-      godrofl.setDead(true);
+      lickquidator.setDead(true);
     }
 
   };
@@ -344,20 +344,20 @@ export class GameScene extends Phaser.Scene {
 
   }
 
-  private updateGodroflTimers (){
+  private updateLickquidatorTimers (){
     const b = 0.1;
     const a = 0.05;
-    const alpha = (-a*this.godroflCount)+Math.log2(0.95);
+    const alpha = (-a*this.lickquidatorCount)+Math.log2(0.95);
 
-    if ( this.popGodroflTimer != undefined && this.goneGodroflTimer != undefined ){
+    if ( this.popLickquidatorTimer != undefined && this.goneLickquidatorTimer != undefined ){
       
-      this.popGodroflTimer = Math.floor(this.popGodroflTimerIni*(Math.exp(alpha)+b));
-      this.goneGodroflTimer = Math.floor(this.goneGodroflTimerIni*(Math.exp(alpha)+b));
+      this.popLickquidatorTimer = Math.floor(this.popLickquidatorTimerIni*(Math.exp(alpha)+b));
+      this.goneLickquidatorTimer = Math.floor(this.goneLickquidatorTimerIni*(Math.exp(alpha)+b));
 
     } else {
 
-      this.popGodroflTimer = this.popGodroflTimerIni;
-      this.goneGodroflTimer = this.goneGodroflTimerIni;
+      this.popLickquidatorTimer = this.popLickquidatorTimerIni;
+      this.goneLickquidatorTimer = this.goneLickquidatorTimerIni;
 
     }
 
@@ -450,9 +450,9 @@ export class GameScene extends Phaser.Scene {
       // checking overlap between player and penalizing element
       this.physics.overlap(
         this.player,
-        this.godrofls,
-        (_, godrofl) => {
-          this.squashGodrofl(godrofl as Godrofl); 
+        this.lickquidators,
+        (_, lickquidator) => {
+          this.squashLickquidator(lickquidator as Lickquidator); 
         }
       )
     } else {

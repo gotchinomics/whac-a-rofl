@@ -28,6 +28,7 @@ export const GAMETUNE = 'gametune';
 export const GAMEOVER = 'gameover';
 export const ROFL = 'rofl';
 export const GODROFL = 'godrofl';
+export const LICKQUIDATOR = 'lickquidator';
 
 
 // Save all in game assets in the public folder
@@ -89,6 +90,15 @@ export const assets: Array<Asset | SpritesheetAsset> = [
   {
     key: GODROFL,
     src: 'assets/sprites/godrofl.png',
+    type: 'SPRITESHEET',
+    data: {
+      frameWidth: 553 / 1,
+      frameHeight: 553 / 1,
+    }
+  },
+  {
+    key: LICKQUIDATOR,
+    src: 'assets/sprites/lickquidator.png',
     type: 'SPRITESHEET',
     data: {
       frameWidth: 553 / 1,

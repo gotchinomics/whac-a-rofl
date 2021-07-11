@@ -1,5 +1,5 @@
 import { getGameHeight  } from '../helpers';
-import { ROFL , GONE  } from 'game/assets';
+import { ROFL , GONE , GODROFL } from 'game/assets';
 
 export class Rofl extends Phaser.GameObjects.Image {
   private health = 200;
@@ -15,6 +15,8 @@ export class Rofl extends Phaser.GameObjects.Image {
    this.setOrigin(0, 0);
    this.displayHeight = getGameHeight(scene) * 0.08;
    this.displayWidth = getGameHeight(scene) * 0.08;
+
+   // this.setTexture(GODROFL);
 
    // physics
    this.scene.physics.world.enable(this);

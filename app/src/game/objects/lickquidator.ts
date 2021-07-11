@@ -1,7 +1,7 @@
 import { getGameHeight  } from '../helpers';
-import {  GODROFL, GONE  } from 'game/assets';
+import {  LICKQUIDATOR , GONE  } from 'game/assets';
 
-export class Godrofl extends Phaser.GameObjects.Image {
+export class Lickquidator extends Phaser.GameObjects.Image {
   private health = 200;
   private yOrigin = 0;
   private isGodlike = true;
@@ -12,7 +12,7 @@ export class Godrofl extends Phaser.GameObjects.Image {
   //private squash?: Phaser.Sound.BaseSound;
 
  constructor(scene: Phaser.Scene) {
-   super(scene, -100, -100, GODROFL , 0);
+   super(scene, -100, -100, LICKQUIDATOR , 0);
    this.setOrigin(0, 0);
    this.displayHeight = getGameHeight(scene) * 0.15;
    this.displayWidth = getGameHeight(scene) * 0.15;
