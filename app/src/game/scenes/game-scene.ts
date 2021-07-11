@@ -43,7 +43,7 @@ export class GameScene extends Phaser.Scene {
   private goneRoflTimerIni = 5000;
   private popRoflTimer?: number;
   private goneRoflTimer?: number;
-  private popGodroflTimerIni = 5000;
+  private popGodroflTimerIni = 10000;
   private goneGodroflTimerIni = 8000;
   private popGodroflTimer?: number;
   private goneGodroflTimer?: number;
@@ -52,15 +52,45 @@ export class GameScene extends Phaser.Scene {
   // Local states and aux  variables
   private endingGame =  false;
   private isGameOver =  false;
+  private allPositions= [1,2,3,4,5,6];
+  private takenPositions?: number[];
+  private arrayTest?: Array<number>;
+  private usedPosition= [false,false,false,false,false,false]; //Array<boolean>;
+
+  private calculatePosition=():number => {
+    let positionIndex= 1;
+    let validIndex = false;
+    let maxCount = 50;
+
+    while(!validIndex && maxCount>0 ){
+      positionIndex = Math.floor(Math.random() * 6) + 1;
+      maxCount -= 1;
+      if (this.usedPosition[positionIndex] == false) {
+        validIndex = true;
+        this.usedPosition[positionIndex] = true;
+        return positionIndex;
+      }
+    }
+
+    return positionIndex;
+
+  };
 
   // Rofls
   private addRofls = () =>{
-     const size = getGameHeight(this) / 7;
-     const x = getGameWidth(this)  / 2;
-     const y = getGameHeight(this) / 2;
+     //const size = getGameHeight(this) / 7;
      const velocityY = -getGameHeight(this) *  0.75 ;
-     const position = Math.floor(Math.random() * 6) + 1;
-    
+     const position = this.calculatePosition();
+     const x = this.getLocationX(position);
+     const y = this.getLocationY(position);
+
+
+
+     //this.arrayTest?.push(position);
+
+     //if (this.scoreText != undefined){
+     //this.scoreText.setText(y.toString());}
+
      if (this.endingGame == false){
       this.roflCount += 1;
 
@@ -69,9 +99,9 @@ export class GameScene extends Phaser.Scene {
       this.updateRoflTimers(); 
     //this.updateGoneTimer();
     } else {
-      this.popRoflTimer = 100;
-      this.goneRoflTimer = 2000;
-      this.addRofl(x, y, position, velocityY );
+      //this.popRoflTimer = 100;
+      //this.goneRoflTimer = 2000;
+      //this.addRofl(x, y, position, velocityY );
     }
 
   };
@@ -103,11 +133,11 @@ export class GameScene extends Phaser.Scene {
 
   // GODROFLS
   private addGodrofls = () =>{
-    const size = getGameHeight(this) / 7;
-    const x = getGameWidth(this)  / 2;
-    const y = getGameHeight(this) / 2;
+    //const size = getGameHeight(this) / 7;
+    const position = this.calculatePosition();
+    const x = this.getLocationX(position);
+    const y = this.getLocationY(position);
     const velocityY = -getGameHeight(this) *  0.75 ;
-    const position = Math.floor(Math.random() * 6) + 1;
    
     if (this.endingGame == false){
      this.godroflCount += 1;
@@ -217,7 +247,12 @@ export class GameScene extends Phaser.Scene {
      
      this.addRofls();
 
-     this.addGodrofls();
+     this.time.addEvent({
+      delay: this.popGodroflTimer,
+      callback: this.addGodrofls,
+      callbackScope: this,
+      loop: false,
+    });
 
   }
 
@@ -232,12 +267,18 @@ export class GameScene extends Phaser.Scene {
   // methods related to rolf interactions
   private squashRofl = (rofl : Rofl) => {
     this.squash?.play();
+    if (rofl != undefined && rofl.position != undefined ){
+      this.usedPosition[rofl.position] = false;
+    }
     rofl.setDead(true);
     this.addScore();
   };
 
   private squashGodrofl = (godrofl : Godrofl) => {
     this.godlikesquash?.play();
+    if (godrofl != undefined && godrofl.position != undefined ){
+      this.usedPosition[godrofl.position] = false;
+    }
     godrofl.setDead(true);
     if (this.player != undefined){
       this.player.removeLife();
@@ -250,7 +291,9 @@ export class GameScene extends Phaser.Scene {
     if (!rofl.isDead && this.player != undefined && this.endingGame == false ){
       
       this.player.removeLife();
-      
+      if (rofl != undefined && rofl.position != undefined ){
+        this.usedPosition[rofl.position] = false;
+      }
       this.updateLivesCounter();
 
       this.gone?.play();
@@ -262,8 +305,10 @@ export class GameScene extends Phaser.Scene {
   private godroflTimeOut = (godrofl : Godrofl) => {
 
     if (!godrofl.isDead && this.player != undefined && this.endingGame == false ){
-
       this.gone?.play();
+      if (godrofl != undefined && godrofl.position != undefined ){
+        this.usedPosition[godrofl.position] = false;
+      }
       godrofl.setDead(true);
     }
 
@@ -318,6 +363,58 @@ export class GameScene extends Phaser.Scene {
 
   }
 
+  public getLocationX (positionIndex : number):number {
+    let x=0;
+    switch (true) {
+      case positionIndex == 1:
+        x = getGameWidth(this)  * ( 0.215-0.034 );
+        break;
+      case positionIndex == 2:
+        x = getGameWidth(this)  * ( 0.145-0.034 );
+        break;
+      case positionIndex == 3:
+        x = getGameWidth(this)  * ( 0.332-0.034 );
+        break;
+      case positionIndex == 4:
+        x = getGameWidth(this)  * ( 0.797-0.034 );
+        break;
+      case positionIndex == 5:
+        x = getGameWidth(this)  * ( 0.854-0.034 );
+         break;
+      case positionIndex >= 6:
+        x= getGameWidth(this)  * ( 0.671-0.034 );
+        break;
+      default:
+    }
+    console.log(x);
+    return x;
+  }
+
+  public getLocationY (positionIndex : number):number {
+    let y=0;
+    switch (true) {
+      case positionIndex == 1:
+        y = getGameHeight(this) * ( 0.89-0.062  );
+        break;
+      case positionIndex == 2:
+        y = getGameHeight(this) * ( 0.672-0.062 );
+        break;
+      case positionIndex == 3:
+        y = getGameHeight(this) * ( 0.517-0.062 );
+        break;
+      case positionIndex == 4:
+        y = getGameHeight(this) * ( 0.89-0.062  );
+        break;
+      case positionIndex == 5:
+         y = getGameHeight(this) * ( 0.672-0.062 );
+         break;
+      case positionIndex >= 6:
+         y = getGameHeight(this) * ( 0.517-0.062 );
+        break; 
+        default:
+    }
+    return y;
+  }
 
 
   private createBackButton = () => {

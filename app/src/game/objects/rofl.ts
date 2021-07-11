@@ -1,13 +1,14 @@
-import { getGameHeight , getGameWidth } from '../helpers';
+import { getGameHeight  } from '../helpers';
 import { ROFL , GONE  } from 'game/assets';
 
 export class Rofl extends Phaser.GameObjects.Image {
   private health = 200;
   private yOrigin = 0;
+  private isGodlike = false;
   private isWaiting = false;
   public isDead = false;
+  public position= 0;
   private gone?: Phaser.Sound.BaseSound;
-  //private squash?: Phaser.Sound.BaseSound;
 
  constructor(scene: Phaser.Scene) {
    super(scene, -100, -100, ROFL , 0);
@@ -21,7 +22,6 @@ export class Rofl extends Phaser.GameObjects.Image {
 
    //sounds
    this.gone = this.scene.sound.add(GONE, { loop: false });
-   //this.squash = this.scene.sound.add(SQUASH, { loop: false });
 
    this.scene.add.existing(this);
  }
@@ -31,12 +31,15 @@ export class Rofl extends Phaser.GameObjects.Image {
     //this.scene.physics.world.enable(this);
     (this.body as Phaser.Physics.Arcade.Body).setVelocityY(velocityY);
 
-    this.getRandomLocation();
+    this.setPosition(x, y);
+    this.position=position;
+    //this.getRandomLocation();
 
-    this.yOrigin = this.y;
+    this.yOrigin = y;
 
   }
 
+  /*
   public getRandomLocation (){
     const positionIndex = Math.floor(Math.random() * 6) + 1;
     
@@ -84,6 +87,7 @@ export class Rofl extends Phaser.GameObjects.Image {
     this.setPosition(this.x, this.y);
 
   }
+  */
 
   public update = () => {
       

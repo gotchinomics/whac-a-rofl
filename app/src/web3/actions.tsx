@@ -1,7 +1,7 @@
 import { AavegotchiContractObject, AavegotchiObject } from "types";
 import { Contract } from "ethers";
 import { request } from "graphql-request";
-import defaultGotchi from 'assets/svgs/defaultGotchi';
+//import defaultGotchi from 'assets/svgs/defaultGotchi';
 
 const uri =
   "https://api.thegraph.com/subgraphs/name/aavegotchi/aavegotchi-core-matic";
@@ -60,8 +60,8 @@ export const getAavegotchisForUser = async (
       }
     }
   `;
-  let errorStatus: 400 | 403 = 400;
-  try {
+ // let errorStatus: 400 | 403 = 400;
+ // try {
     const response = await request<QueryResponse>(uri, query);
     console.log(response);
 
@@ -71,7 +71,7 @@ export const getAavegotchisForUser = async (
     );
 
     if (gotchisOnly.length === 0) {
-      errorStatus = 403;
+      //errorStatus = 403;
       throw new Error(
         "No Aavegotchis found for address - Please make sure the correct wallet is connected."
       );
@@ -85,10 +85,10 @@ export const getAavegotchisForUser = async (
       status: 200,
       data: gotchisWithSVGs,
     };
-  } catch (error) {
-    return {
-      status: errorStatus,
-      error,
-    };
-  }
+ // } catch (error) {
+  //  return {
+  //    status: errorStatus,
+   //   error,
+  //  };
+ // }
 };

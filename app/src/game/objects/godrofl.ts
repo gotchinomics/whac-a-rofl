@@ -1,4 +1,4 @@
-import { getGameHeight , getGameWidth } from '../helpers';
+import { getGameHeight  } from '../helpers';
 import {  GODROFL, GONE  } from 'game/assets';
 
 export class Godrofl extends Phaser.GameObjects.Image {
@@ -7,14 +7,15 @@ export class Godrofl extends Phaser.GameObjects.Image {
   private isGodlike = true;
   private isWaiting = false;
   public isDead = false;
+  public position= 0;
   private gone?: Phaser.Sound.BaseSound;
   //private squash?: Phaser.Sound.BaseSound;
 
  constructor(scene: Phaser.Scene) {
    super(scene, -100, -100, GODROFL , 0);
    this.setOrigin(0, 0);
-   this.displayHeight = getGameHeight(scene) * 0.08;
-   this.displayWidth = getGameHeight(scene) * 0.08;
+   this.displayHeight = getGameHeight(scene) * 0.15;
+   this.displayWidth = getGameHeight(scene) * 0.15;
 
    // physics
    this.scene.physics.world.enable(this);
@@ -32,12 +33,15 @@ export class Godrofl extends Phaser.GameObjects.Image {
     //this.scene.physics.world.enable(this);
     (this.body as Phaser.Physics.Arcade.Body).setVelocityY(velocityY);
 
-    this.getRandomLocation();
+    //this.getRandomLocation();
+
+    this.setPosition(x, y);
+    this.position=position;
 
     this.yOrigin = this.y;
 
   }
-
+  /*
   public getRandomLocation (){
     const positionIndex = Math.floor(Math.random() * 6) + 1;
     
@@ -46,38 +50,38 @@ export class Godrofl extends Phaser.GameObjects.Image {
       case positionIndex == 1:
          this.x = getGameWidth(this.scene)  * ( 0.215-0.034 );
          this.y = getGameHeight(this.scene) * ( 0.89-0.062  );
-         this.displayHeight = getGameHeight(this.scene) * 0.1;
-         this.displayWidth = getGameHeight(this.scene) * 0.1;
+         //this.displayHeight = getGameHeight(this.scene) * 0.1;
+         //this.displayWidth = getGameHeight(this.scene) * 0.1;
         break;
       case positionIndex == 2:
          this.x = getGameWidth(this.scene)  * ( 0.145-0.034 );
          this.y = getGameHeight(this.scene) * ( 0.672-0.062 );
-         this.displayHeight = getGameHeight(this.scene) * 0.09;
-         this.displayWidth = getGameHeight(this.scene) * 0.09;
+         //this.displayHeight = getGameHeight(this.scene) * 0.09;
+        // this.displayWidth = getGameHeight(this.scene) * 0.09;
         break;
       case positionIndex == 3:
           this.x = getGameWidth(this.scene)  * ( 0.332-0.034 );
           this.y = getGameHeight(this.scene) * ( 0.517-0.062 );
-          this.displayHeight = getGameHeight(this.scene) * 0.08;
-          this.displayWidth = getGameHeight(this.scene) * 0.08;
+        //  this.displayHeight = getGameHeight(this.scene) * 0.08;
+        //  this.displayWidth = getGameHeight(this.scene) * 0.08;
         break;
       case positionIndex == 4:
           this.x = getGameWidth(this.scene)  * ( 0.797-0.034 );
           this.y = getGameHeight(this.scene) * ( 0.89-0.062  );
-          this.displayHeight = getGameHeight(this.scene) * 0.1;
-          this.displayWidth = getGameHeight(this.scene) * 0.1;
+        //  this.displayHeight = getGameHeight(this.scene) * 0.1;
+        //  this.displayWidth = getGameHeight(this.scene) * 0.1;
         break;
       case positionIndex == 5:
           this.x = getGameWidth(this.scene)  * ( 0.854-0.034 );
           this.y = getGameHeight(this.scene) * ( 0.672-0.062 );
-          this.displayHeight = getGameHeight(this.scene) * 0.09;
-          this.displayWidth = getGameHeight(this.scene) * 0.09;
+        //  this.displayHeight = getGameHeight(this.scene) * 0.09;
+         // this.displayWidth = getGameHeight(this.scene) * 0.09;
          break;
       case positionIndex >= 6:
           this.x = getGameWidth(this.scene)  * ( 0.671-0.034 );
           this.y = getGameHeight(this.scene) * ( 0.517-0.062 );
-          this.displayHeight = getGameHeight(this.scene) * 0.08;
-          this.displayWidth = getGameHeight(this.scene) * 0.08;
+        //  this.displayHeight = getGameHeight(this.scene) * 0.08;
+        //  this.displayWidth = getGameHeight(this.scene) * 0.08;
         break;
         
     }
@@ -85,6 +89,7 @@ export class Godrofl extends Phaser.GameObjects.Image {
     this.setPosition(this.x, this.y);
 
   }
+  */
 
   public update = () => {
       
