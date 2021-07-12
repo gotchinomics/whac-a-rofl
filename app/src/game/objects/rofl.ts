@@ -1,111 +1,98 @@
 import { getGameHeight  } from '../helpers';
-import { ROFL , GONE , GODROFL } from 'game/assets';
+import {  COMMONROFL, UNCOMMONROFL, RAREROFL, MYTHICALROFL } from 'game/assets';
 
 export class Rofl extends Phaser.GameObjects.Image {
   private health = 200;
-  private yOrigin = 0;
-  private isGodlike = false;
+  private groundY = 0;
+  private brs = 50;
+  public rarityTag?: string;
   private isWaiting = false;
   public isDead = false;
-  public position= 0;
-  private gone?: Phaser.Sound.BaseSound;
+  public positionIndex= 0;
 
  constructor(scene: Phaser.Scene) {
-   super(scene, -100, -100, ROFL , 0);
+   super(scene, -100, -100, COMMONROFL , 0);
    this.setOrigin(0, 0);
    this.displayHeight = getGameHeight(scene) * 0.08;
    this.displayWidth = getGameHeight(scene) * 0.08;
 
-   // this.setTexture(GODROFL);
-
-   // physics
+   // Physics
    this.scene.physics.world.enable(this);
    (this.body as Phaser.Physics.Arcade.Body).setGravityY(getGameHeight(this.scene) * 2);
-
-   //sounds
-   this.gone = this.scene.sound.add(GONE, { loop: false });
 
    this.scene.add.existing(this);
  }
 
- public activate = (x: number, y: number, position: number, velocityY: number) => {
+ public activate = (x: number, y: number, positionIndex: number, velocityY: number) => {
     // Physics
-    //this.scene.physics.world.enable(this);
     (this.body as Phaser.Physics.Arcade.Body).setVelocityY(velocityY);
 
+    // Calculating rarity type
+    this.brs =  Math.floor(Math.random() * 100);
+
+    // Updating Rofl type, position and lowest y coordinates (groundY)
+    this.calculateRoflType(this.brs);
     this.setPosition(x, y);
-    this.position=position;
-    //this.getRandomLocation();
-
-    this.yOrigin = y;
-
+    this.positionIndex=positionIndex;
+    this.groundY = y;
   }
 
-  /*
-  public getRandomLocation (){
-    const positionIndex = Math.floor(Math.random() * 6) + 1;
-    
+  private calculateRoflType(brs : number){
 
-    switch (true) {
-      case positionIndex == 1:
-         this.x = getGameWidth(this.scene)  * ( 0.215-0.034 );
-         this.y = getGameHeight(this.scene) * ( 0.89-0.062  );
-         this.displayHeight = getGameHeight(this.scene) * 0.1;
-         this.displayWidth = getGameHeight(this.scene) * 0.1;
-        break;
-      case positionIndex == 2:
-         this.x = getGameWidth(this.scene)  * ( 0.145-0.034 );
-         this.y = getGameHeight(this.scene) * ( 0.672-0.062 );
-         this.displayHeight = getGameHeight(this.scene) * 0.09;
-         this.displayWidth = getGameHeight(this.scene) * 0.09;
-        break;
-      case positionIndex == 3:
-          this.x = getGameWidth(this.scene)  * ( 0.332-0.034 );
-          this.y = getGameHeight(this.scene) * ( 0.517-0.062 );
-          this.displayHeight = getGameHeight(this.scene) * 0.08;
-          this.displayWidth = getGameHeight(this.scene) * 0.08;
-        break;
-      case positionIndex == 4:
-          this.x = getGameWidth(this.scene)  * ( 0.797-0.034 );
-          this.y = getGameHeight(this.scene) * ( 0.89-0.062  );
-          this.displayHeight = getGameHeight(this.scene) * 0.1;
-          this.displayWidth = getGameHeight(this.scene) * 0.1;
-        break;
-      case positionIndex == 5:
-          this.x = getGameWidth(this.scene)  * ( 0.854-0.034 );
-          this.y = getGameHeight(this.scene) * ( 0.672-0.062 );
-          this.displayHeight = getGameHeight(this.scene) * 0.09;
-          this.displayWidth = getGameHeight(this.scene) * 0.09;
-         break;
-      case positionIndex >= 6:
-          this.x = getGameWidth(this.scene)  * ( 0.671-0.034 );
-          this.y = getGameHeight(this.scene) * ( 0.517-0.062 );
-          this.displayHeight = getGameHeight(this.scene) * 0.08;
-          this.displayWidth = getGameHeight(this.scene) * 0.08;
-        break;
-        
+    if ( brs >= 25 && brs <= 74){
+      this.rarityTag = 'common';
+    } else if( brs >= 10 && brs <= 24){
+      this.rarityTag = 'uncommon';
+    } else if( brs >= 75 && brs <= 90){
+      this.rarityTag = 'uncommon';
+    } else if( brs >= 2 && brs <= 9){
+      this.rarityTag = 'rare';
+    } else if( brs >= 91 && brs <= 97){
+      this.rarityTag = 'rare';
+    } else if( brs >= 0 && brs <= 1){
+      this.rarityTag = 'mythical';
+    } else if( brs >= 98 && brs <= 99){
+      this.rarityTag = 'mythical';
     }
 
-    this.setPosition(this.x, this.y);
-
+    this.updateRoflImage();
   }
-  */
+
+  private updateRoflImage(){
+
+    if (this.rarityTag == 'common') {
+      this.setTexture(COMMONROFL);
+    } else if(this.rarityTag == 'uncommon'){
+      this.setTexture(UNCOMMONROFL);
+    } else if(this.rarityTag == 'rare'){
+      this.setTexture(RAREROFL);
+    } else if(this.rarityTag == 'mythical'){
+      this.setTexture(MYTHICALROFL);
+    } else {
+      this.setTexture(COMMONROFL);
+    }
+  }
 
   public update = () => {
       
-      if (this.y > this.yOrigin && this.isWaiting == false ){
+      if (this.y > this.groundY && this.isWaiting == false ){
         (this.body as Phaser.Physics.Arcade.Body).setVelocityY( 0 );  
         (this.body as Phaser.Physics.Arcade.Body).setGravityY( 0 );
         this.isWaiting = true;
       }
-
   }
-
-
 
   public getDead(): boolean {
     return this.isDead;
   }
+
+  public getRarity = ():string => {
+    if (this.rarityTag != undefined){
+      return this.rarityTag;
+    } else {
+      return '';
+    }
+  };
   
   public setDead(dead: boolean): void {
     this.isDead = dead;
@@ -114,18 +101,4 @@ export class Rofl extends Phaser.GameObjects.Image {
       this.destroy(); 
     }
   }
-
-    /*
-  public timeOut = () => {
-    if (!this.isDead){
-      this.gone?.play();
-      this.setDead(true);
-    }
-  
-  public squashRofl = () => {
-    this.squash?.play();
-    this.setDead(true);
-  }
- */
-
 }

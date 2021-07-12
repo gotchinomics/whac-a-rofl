@@ -27,7 +27,10 @@ export const GODLIKESQUASH = 'godlikesquash';
 export const GAMETUNE = 'gametune';
 export const GAMEOVER = 'gameover';
 export const ROFL = 'rofl';
-export const GODROFL = 'godrofl';
+export const COMMONROFL = 'commonrofl';
+export const UNCOMMONROFL = 'uncommonrofl';
+export const RAREROFL = 'rarerofl';
+export const MYTHICALROFL = 'mythicalrofl';
 export const LICKQUIDATOR = 'lickquidator';
 
 
@@ -88,8 +91,35 @@ export const assets: Array<Asset | SpritesheetAsset> = [
     }
   },
   {
-    key: GODROFL,
-    src: 'assets/sprites/godrofl.png',
+    key: COMMONROFL,
+    src: 'assets/sprites/commonrofl.png',
+    type: 'SPRITESHEET',
+    data: {
+      frameWidth: 553 / 1,
+      frameHeight: 553 / 1,
+    }
+  },
+  {
+    key: UNCOMMONROFL,
+    src: 'assets/sprites/uncommonrofl.png',
+    type: 'SPRITESHEET',
+    data: {
+      frameWidth: 553 / 1,
+      frameHeight: 553 / 1,
+    }
+  },
+  {
+    key: RAREROFL,
+    src: 'assets/sprites/rarerofl.png',
+    type: 'SPRITESHEET',
+    data: {
+      frameWidth: 553 / 1,
+      frameHeight: 553 / 1,
+    }
+  },
+  {
+    key: MYTHICALROFL,
+    src: 'assets/sprites/mythicalrofl.png',
     type: 'SPRITESHEET',
     data: {
       frameWidth: 553 / 1,

@@ -135,6 +135,12 @@ public removeLife(){
   }
 }
 
+public addLife(){
+  if (this.lives<5){
+    this.lives += 1;
+  }
+}
+
 public getLives(): number {
   return this.lives;
 }

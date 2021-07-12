@@ -56,6 +56,86 @@ export class GameScene extends Phaser.Scene {
   private takenPositions?: number[];
   private arrayTest?: Array<number>;
   private usedPosition= [false,false,false,false,false,false]; //Array<boolean>;
+  private roflFreeze = false;
+  private freezeTime = 5000; 
+  private freezeUpdateInterval = 100;
+
+
+  constructor() {
+    super(sceneConfig);
+  }
+
+  init = (data: { selectedGotchi: AavegotchiGameObject }): void => {
+    this.selectedGotchi = data.selectedGotchi;
+  };
+
+  public create(): void {
+    // communicating gameStarted to socket
+    this.socket = this.game.registry.values.socket;
+    this.socket?.emit('gameStarted');
+
+    // Add layout
+    this.add.image(getGameWidth(this) / 2, getGameHeight(this) / 2, BG).setDisplaySize(getGameWidth(this), getGameHeight(this));
+    this.back = this.sound.add(CLICK, { loop: false });
+    this.pop = this.sound.add(POP, { loop: false });
+    this.gone = this.sound.add(GONE, { loop: false });
+    this.squash = this.sound.add(SQUASH, { loop: false });
+    this.godlikesquash = this.sound.add(GODLIKESQUASH, { loop: false });
+    this.gametune = this.sound.add(GAMETUNE, { loop: true });
+    this.gameover = this.sound.add(GAMEOVER, { loop: false });
+    this.createBackButton();
+
+    // Play main tune
+    this.gametune?.play();
+
+    // Add a player sprite that can be moved around.
+    this.player = new Player({
+      scene: this,
+      x: getGameWidth(this) / 2,
+      y: getGameHeight(this) / 2,
+      key: this.selectedGotchi?.spritesheetKey || ''
+    });
+
+    // Initializing lives counter
+    this.lives = this.player.getLives();
+
+    // Score board
+    this.scoreText = this.add
+    .text(getGameWidth(this) / 2, getGameHeight(this) / 2 - getRelative(190, this), this.score.toString(), { color: '#FFFFFF',   })
+    .setFontSize(getRelative(94, this))
+    .setOrigin(0.5)
+    .setDepth(1);
+    
+    // Lives counter
+    this.livesText = this.add
+    .text(getGameWidth(this) * 0.1, getGameHeight(this) * 0.1,'Lives: '+ this.lives.toString(), { color: '#FFFFFF',  })
+    .setFontSize(getRelative(70, this))
+    .setOrigin(0.5)
+    .setDepth(1);
+
+    // Add Rofl group for pooling
+    this.rofls = this.add.group({
+      maxSize: 30,
+      classType: Rofl,
+      runChildUpdate: true,
+     });
+
+     this.lickquidators = this.add.group({
+      maxSize: 6,
+      classType: Lickquidator,
+      runChildUpdate: true,
+     });
+     
+     this.addRofls();
+
+     this.time.addEvent({
+      delay: this.popLickquidatorTimer,
+      callback: this.addLickquidators,
+      callbackScope: this,
+      loop: false,
+    });
+
+  }
 
   private calculatePosition=():number => {
     let positionIndex= 1;
@@ -175,87 +255,6 @@ export class GameScene extends Phaser.Scene {
 
  };
 
-
-
-  
-
-  constructor() {
-    super(sceneConfig);
-  }
-
-  init = (data: { selectedGotchi: AavegotchiGameObject }): void => {
-    this.selectedGotchi = data.selectedGotchi;
-  };
-
-  public create(): void {
-    // communicating gameStarted to socket
-    this.socket = this.game.registry.values.socket;
-    this.socket?.emit('gameStarted');
-
-    // Add layout
-    this.add.image(getGameWidth(this) / 2, getGameHeight(this) / 2, BG).setDisplaySize(getGameWidth(this), getGameHeight(this));
-    this.back = this.sound.add(CLICK, { loop: false });
-    this.pop = this.sound.add(POP, { loop: false });
-    this.gone = this.sound.add(GONE, { loop: false });
-    this.squash = this.sound.add(SQUASH, { loop: false });
-    this.godlikesquash = this.sound.add(GODLIKESQUASH, { loop: false });
-    this.gametune = this.sound.add(GAMETUNE, { loop: true });
-    this.gameover = this.sound.add(GAMEOVER, { loop: false });
-    this.createBackButton();
-
-    // Play main tune
-    this.gametune?.play();
-
-    // Add a player sprite that can be moved around.
-    this.player = new Player({
-      scene: this,
-      x: getGameWidth(this) / 2,
-      y: getGameHeight(this) / 2,
-      key: this.selectedGotchi?.spritesheetKey || ''
-    });
-
-    // Initializing lives counter
-    this.lives = this.player.getLives();
-
-    // Score & Lives boards
-    this.scoreText = this.add
-    .text(getGameWidth(this) / 2, getGameHeight(this) / 2 - getRelative(190, this), this.score.toString(), { color: '#FFFFFF',   })
-    .setFontSize(getRelative(94, this))
-    .setOrigin(0.5)
-    .setDepth(1);
-
-    this.livesText = this.add
-    .text(getGameWidth(this) * 0.1, getGameHeight(this) * 0.1,'Lives: '+ this.lives.toString(), { color: '#FFFFFF',  })
-    .setFontSize(getRelative(70, this))
-    .setOrigin(0.5)
-    .setDepth(1);
-
-
-
-    // Add Rofl group for pooling
-    this.rofls = this.add.group({
-      maxSize: 30,
-      classType: Rofl,
-      runChildUpdate: true,
-     });
-
-     this.lickquidators = this.add.group({
-      maxSize: 6,
-      classType: Lickquidator,
-      runChildUpdate: true,
-     });
-     
-     this.addRofls();
-
-     this.time.addEvent({
-      delay: this.popLickquidatorTimer,
-      callback: this.addLickquidators,
-      callbackScope: this,
-      loop: false,
-    });
-
-  }
-
   // score-related functions
   private addScore = () => {
     if (this.scoreText) {
@@ -266,13 +265,42 @@ export class GameScene extends Phaser.Scene {
 
   // methods related to rolf interactions
   private squashRofl = (rofl : Rofl) => {
+    
     this.squash?.play();
-    if (rofl != undefined && rofl.position != undefined ){
-      this.usedPosition[rofl.position] = false;
+    if (rofl != undefined && rofl.positionIndex != undefined ){
+      this.usedPosition[rofl.positionIndex] = false;
     }
-    rofl.setDead(true);
     this.addScore();
+
+    // unique actions related to the Rofl type
+    //if ( rofl.rarityTag == 'uncommon'){
+    //} else
+     if (rofl.getRarity() == 'rare'){
+      // Adding extra time to the Rofl TimeOut
+      this.roflFreeze = true;
+      
+      this.time.addEvent({
+        delay: this.freezeTime ,
+        callback: this.disableFreeze , 
+        callbackScope: this,
+        loop: false,
+      });
+
+    } else if(rofl.getRarity() == 'mythical'){
+      // Adding extra life
+      this.player?.addLife();
+      this.updateLivesCounter();
+    
+    }
+
+    
+    rofl.setDead(true);
+    
   };
+
+  private disableFreeze(){
+    this.roflFreeze = false;
+  }
 
   private squashLickquidator = (lickquidator : Lickquidator) => {
     this.godlikesquash?.play();
@@ -288,16 +316,29 @@ export class GameScene extends Phaser.Scene {
 
   private roflTimeOut = (rofl : Rofl) => {
 
-    if (!rofl.isDead && this.player != undefined && this.endingGame == false ){
+
+    //if (this.roflFreeze == false){
+    if (!rofl.isDead && this.player != undefined && this.endingGame == false && this.roflFreeze == false ){
       
       this.player.removeLife();
-      if (rofl != undefined && rofl.position != undefined ){
-        this.usedPosition[rofl.position] = false;
+      if (rofl != undefined && rofl.positionIndex != undefined ){
+        this.usedPosition[rofl.positionIndex] = false;
       }
       this.updateLivesCounter();
 
       this.gone?.play();
       rofl.setDead(true);
+
+    } else if(!rofl.isDead && this.player != undefined && this.endingGame == false && this.roflFreeze == true ){
+      
+      // activating BONUS extra time
+      this.time.addEvent({
+        delay: this.freezeUpdateInterval ,
+        callback: this.roflTimeOut, 
+        args: [rofl as Rofl],
+        loop: false,
+      });
+
     }
 
   };
@@ -386,7 +427,6 @@ export class GameScene extends Phaser.Scene {
         break;
       default:
     }
-    console.log(x);
     return x;
   }
 
