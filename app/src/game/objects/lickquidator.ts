@@ -1,10 +1,9 @@
 import { getGameHeight  } from '../helpers';
 import {  LICKQUIDATOR , GONE  } from 'game/assets';
 
-export class Lickquidator extends Phaser.GameObjects.Image {
+export class Lickquidator extends Phaser.GameObjects.Sprite {
   private health = 200;
   private groundY = 0;
-  private isGodlike = true;
   private isWaiting = false;
   public isDead = false;
   public position= 0;
@@ -19,11 +18,19 @@ export class Lickquidator extends Phaser.GameObjects.Image {
 
    // physics
    this.scene.physics.world.enable(this);
-   (this.body as Phaser.Physics.Arcade.Body).setGravityY(getGameHeight(this.scene) * 2);
+   (this.body as Phaser.Physics.Arcade.Body).setGravityY(getGameHeight(this.scene) * 4);
 
    //sounds
    this.gone = this.scene.sound.add(GONE, { loop: false });
    //this.squash = this.scene.sound.add(SQUASH, { loop: false });
+
+   // creating animation
+    this.anims.create({
+      key: 'licking',
+      frames: this.anims.generateFrameNumbers(LICKQUIDATOR || '', { start: 0, end: 11 }),
+      frameRate: 10,
+      repeat: -1,
+    });
 
    this.scene.add.existing(this);
  }
@@ -32,10 +39,13 @@ export class Lickquidator extends Phaser.GameObjects.Image {
     // Physics
     (this.body as Phaser.Physics.Arcade.Body).setVelocityY(velocityY);
 
-    this.setPosition(x, y);
+    this.setPosition(x-this.displayWidth/2, y-this.displayHeight);
+
     this.position=position;
 
-    this.groundY = this.y;
+    this.groundY = this.y-this.displayHeight;
+
+    this.anims.play('licking');
   }
 
   public update = () => {

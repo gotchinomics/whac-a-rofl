@@ -32,9 +32,9 @@ export class Rofl extends Phaser.GameObjects.Image {
 
     // Updating Rofl type, position and lowest y coordinates (groundY)
     this.calculateRoflType(this.brs);
-    this.setPosition(x, y);
+    this.setPosition(x - this.displayWidth/2, y - this.displayHeight);
     this.positionIndex=positionIndex;
-    this.groundY = y;
+    this.groundY = y - this.displayHeight;
   }
 
   private calculateRoflType(brs : number){

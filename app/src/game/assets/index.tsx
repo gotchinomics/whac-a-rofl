@@ -128,6 +128,19 @@ export const assets: Array<Asset | SpritesheetAsset> = [
   },
   {
     key: LICKQUIDATOR,
+    src: 'assets/sprites/liquidator_sprite.png',
+    type: 'SPRITESHEET',
+    data: {
+      frameWidth: 7500 / 12,
+      frameHeight: 625 / 1,
+    }
+  },
+];
+
+
+/*
+{
+    key: LICKQUIDATOR,
     src: 'assets/sprites/lickquidator.png',
     type: 'SPRITESHEET',
     data: {
@@ -135,4 +148,4 @@ export const assets: Array<Asset | SpritesheetAsset> = [
       frameHeight: 553 / 1,
     }
   },
-];
+*/

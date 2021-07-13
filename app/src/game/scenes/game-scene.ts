@@ -40,11 +40,11 @@ export class GameScene extends Phaser.Scene {
 
   // Timer Settings
   private popRoflTimerIni = 3000;
-  private goneRoflTimerIni = 5000;
+  private goneRoflTimerIni = 8000;
   private popRoflTimer?: number;
   private goneRoflTimer?: number;
-  private popLickquidatorTimerIni = 10000;
-  private goneLickquidatorTimerIni = 8000;
+  private popLickquidatorTimerIni = 6000;
+  private goneLickquidatorTimerIni = 4000;
   private popLickquidatorTimer?: number;
   private goneLickquidatorTimer?: number;
   private gameOverTimer = 3000;
@@ -57,7 +57,7 @@ export class GameScene extends Phaser.Scene {
   private arrayTest?: Array<number>;
   private usedPosition= [false,false,false,false,false,false]; //Array<boolean>;
   private roflFreeze = false;
-  private freezeTime = 5000; 
+  private freezeTime = 60000; 
   private freezeUpdateInterval = 100;
 
 
@@ -265,17 +265,21 @@ export class GameScene extends Phaser.Scene {
 
   // methods related to rolf interactions
   private squashRofl = (rofl : Rofl) => {
-    
+    const rarityType = rofl.getRarity();
+
+    if (rofl != undefined) {
     this.squash?.play();
     if (rofl != undefined && rofl.positionIndex != undefined ){
       this.usedPosition[rofl.positionIndex] = false;
     }
     this.addScore();
+    rofl.setDead(true);
 
+
+    // SPECIAL ROFL POWERS 
     // unique actions related to the Rofl type
-    //if ( rofl.rarityTag == 'uncommon'){
-    //} else
-     if (rofl.getRarity() == 'rare'){
+    if ( rarityType == 'uncommon'){
+      
       // Adding extra time to the Rofl TimeOut
       this.roflFreeze = true;
       
@@ -286,7 +290,27 @@ export class GameScene extends Phaser.Scene {
         loop: false,
       });
 
-    } else if(rofl.getRarity() == 'mythical'){
+    } else
+     if ( rarityType == 'rare'){
+     
+      Phaser.Actions.Call(
+        (this.lickquidators as Phaser.GameObjects.Group).getChildren(),
+        (lickquidator) => {
+          this.killLickquidator(lickquidator as Lickquidator);
+        },
+        this,
+      );
+
+      Phaser.Actions.Call(
+        (this.rofls as Phaser.GameObjects.Group).getChildren(),
+        (rofl) => {
+          this.squashRofl(rofl as Rofl);
+        },
+        this,
+      );
+
+
+    } else if( rarityType == 'mythical'){
       // Adding extra life
       this.player?.addLife();
       this.updateLivesCounter();
@@ -294,7 +318,7 @@ export class GameScene extends Phaser.Scene {
     }
 
     
-    rofl.setDead(true);
+  }
     
   };
 
@@ -303,6 +327,7 @@ export class GameScene extends Phaser.Scene {
   }
 
   private squashLickquidator = (lickquidator : Lickquidator) => {
+    
     this.godlikesquash?.play();
     if (lickquidator != undefined && lickquidator.position != undefined ){
       this.usedPosition[lickquidator.position] = false;
@@ -312,6 +337,16 @@ export class GameScene extends Phaser.Scene {
       this.player.removeLife();
       this.updateLivesCounter();
     }
+  };
+
+  private killLickquidator = (lickquidator : Lickquidator) => {
+    if (lickquidator != undefined){
+    this.godlikesquash?.play();
+    if (lickquidator != undefined && lickquidator.position != undefined ){
+      this.usedPosition[lickquidator.position] = false;
+    }
+    lickquidator.setDead(true);
+  }
   };
 
   private roflTimeOut = (rofl : Rofl) => {
@@ -408,22 +443,22 @@ export class GameScene extends Phaser.Scene {
     let x=0;
     switch (true) {
       case positionIndex == 1:
-        x = getGameWidth(this)  * ( 0.215-0.034 );
+        x = getGameWidth(this)  * ( 0.215 ); //-0.034
         break;
       case positionIndex == 2:
-        x = getGameWidth(this)  * ( 0.145-0.034 );
+        x = getGameWidth(this)  * ( 0.145 );
         break;
       case positionIndex == 3:
-        x = getGameWidth(this)  * ( 0.332-0.034 );
+        x = getGameWidth(this)  * ( 0.332 );
         break;
       case positionIndex == 4:
-        x = getGameWidth(this)  * ( 0.797-0.034 );
+        x = getGameWidth(this)  * ( 0.797 );
         break;
       case positionIndex == 5:
-        x = getGameWidth(this)  * ( 0.854-0.034 );
+        x = getGameWidth(this)  * ( 0.854 );
          break;
       case positionIndex >= 6:
-        x= getGameWidth(this)  * ( 0.671-0.034 );
+        x= getGameWidth(this)  * ( 0.671 );
         break;
       default:
     }
@@ -434,22 +469,22 @@ export class GameScene extends Phaser.Scene {
     let y=0;
     switch (true) {
       case positionIndex == 1:
-        y = getGameHeight(this) * ( 0.89-0.062  );
+        y = getGameHeight(this) * ( 0.89  ); //-0.062  
         break;
       case positionIndex == 2:
-        y = getGameHeight(this) * ( 0.672-0.062 );
+        y = getGameHeight(this) * ( 0.672 );
         break;
       case positionIndex == 3:
-        y = getGameHeight(this) * ( 0.517-0.062 );
+        y = getGameHeight(this) * ( 0.517 );
         break;
       case positionIndex == 4:
-        y = getGameHeight(this) * ( 0.89-0.062  );
+        y = getGameHeight(this) * ( 0.89  );
         break;
       case positionIndex == 5:
-         y = getGameHeight(this) * ( 0.672-0.062 );
+         y = getGameHeight(this) * ( 0.672 );
          break;
       case positionIndex >= 6:
-         y = getGameHeight(this) * ( 0.517-0.062 );
+         y = getGameHeight(this) * ( 0.517 );
         break; 
         default:
     }
@@ -495,6 +530,7 @@ export class GameScene extends Phaser.Scene {
           this.squashLickquidator(lickquidator as Lickquidator); 
         }
       )
+
     } else {
       if ( this.endingGame == false ){
         // Play gameover sound
