@@ -1,7 +1,7 @@
 import { getGameHeight  } from '../helpers';
-import {  COMMONROFL, UNCOMMONROFL, RAREROFL, MYTHICALROFL } from 'game/assets';
+import {  COMMONROFL, UNCOMMONROFL, RAREROFL, MYTHICALROFL,  COMMONROFLJOINT, UNCOMMONROFLJOINT, RAREROFLJOINT, MYTHICALROFLJOINT } from 'game/assets';
 
-export class Rofl extends Phaser.GameObjects.Image {
+export class Rofl extends Phaser.GameObjects.Sprite {
   private health = 200;
   private groundY = 0;
   private brs = 50;
@@ -9,6 +9,7 @@ export class Rofl extends Phaser.GameObjects.Image {
   private isWaiting = false;
   public isDead = false;
   public positionIndex= 0;
+  public isStoned = false;
 
  constructor(scene: Phaser.Scene) {
    super(scene, -100, -100, COMMONROFL , 0);
@@ -19,6 +20,14 @@ export class Rofl extends Phaser.GameObjects.Image {
    // Physics
    this.scene.physics.world.enable(this);
    (this.body as Phaser.Physics.Arcade.Body).setGravityY(getGameHeight(this.scene) * 2);
+
+   // Animations
+    this.scene.anims.create({
+      key: 'gone_splash',
+      frames: this.anims.generateFrameNumbers(COMMONROFL || '', { start: 1, end: 9}),
+      frameRate: 10,
+      repeat: 0,
+    });
 
    this.scene.add.existing(this);
  }
@@ -35,6 +44,10 @@ export class Rofl extends Phaser.GameObjects.Image {
     this.setPosition(x - this.displayWidth/2, y - this.displayHeight);
     this.positionIndex=positionIndex;
     this.groundY = y - this.displayHeight;
+
+    //if (this.rarityTag == 'common'){
+     // this.anims.play('gone_splash');
+   // }
   }
 
   private calculateRoflType(brs : number){
@@ -58,20 +71,35 @@ export class Rofl extends Phaser.GameObjects.Image {
     this.updateRoflImage();
   }
 
-  private updateRoflImage(){
+  public updateRoflImage = () => {
 
-    if (this.rarityTag == 'common') {
-      this.setTexture(COMMONROFL);
-    } else if(this.rarityTag == 'uncommon'){
-      this.setTexture(UNCOMMONROFL);
-    } else if(this.rarityTag == 'rare'){
-      this.setTexture(RAREROFL);
-    } else if(this.rarityTag == 'mythical'){
-      this.setTexture(MYTHICALROFL);
-    } else {
-      this.setTexture(COMMONROFL);
+    if (!this.isStoned){
+      if (this.rarityTag == 'common') {
+        this.setTexture(COMMONROFL);
+      } else if(this.rarityTag == 'uncommon'){
+       this.setTexture(UNCOMMONROFL);
+      } else if(this.rarityTag == 'rare'){
+       this.setTexture(RAREROFL);
+      } else if(this.rarityTag == 'mythical'){
+       this.setTexture(MYTHICALROFL);
+      } else {
+        this.setTexture(COMMONROFL);
+      }
+    } else{
+      if (this.rarityTag == 'common') {
+        this.setTexture(COMMONROFLJOINT);
+      } else if(this.rarityTag == 'uncommon'){
+       this.setTexture(UNCOMMONROFLJOINT);
+      } else if(this.rarityTag == 'rare'){
+       this.setTexture(RAREROFLJOINT);
+      } else if(this.rarityTag == 'mythical'){
+        this.setTexture(MYTHICALROFLJOINT);
+      } else {
+        this.setTexture(COMMONROFLJOINT);
+      }
+
     }
-  }
+  };
 
   public update = () => {
       
@@ -101,4 +129,17 @@ export class Rofl extends Phaser.GameObjects.Image {
       this.destroy(); 
     }
   }
+
+  public setStoned(stoned: boolean): void {
+    
+    if (this.isStoned != stoned){
+      this.isStoned = stoned;
+      this.updateRoflImage();
+    } else{
+      this.isStoned = stoned;
+    }
+
+    
+  }
+
 }

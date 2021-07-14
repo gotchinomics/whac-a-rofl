@@ -1,7 +1,7 @@
 import {   LEFT_CHEVRON, BG, CLICK , POP , GONE , SQUASH, GODLIKESQUASH, GAMETUNE, GAMEOVER } from 'game/assets';
 import { AavegotchiGameObject } from 'types';
 import { getGameWidth, getGameHeight, getRelative } from '../helpers';
-import { Player , Rofl, Lickquidator } from 'game/objects';
+import { Player , Rofl, Lickquidator, Splash } from 'game/objects';
 import { Socket } from 'dgram';
 
 const sceneConfig: Phaser.Types.Scenes.SettingsConfig = {
@@ -56,8 +56,8 @@ export class GameScene extends Phaser.Scene {
   private takenPositions?: number[];
   private arrayTest?: Array<number>;
   private usedPosition= [false,false,false,false,false,false]; //Array<boolean>;
-  private roflFreeze = false;
-  private freezeTime = 60000; 
+  private roflStoned = false;
+  private freezeTime = 10000; 
   private freezeUpdateInterval = 100;
 
 
@@ -190,9 +190,14 @@ export class GameScene extends Phaser.Scene {
   private addRofl = (x: number, y: number, position: number, velocityY: number) : void =>{
     const rofl: Rofl = this.rofls?.get();
 
+    if (this.roflStoned == true){
+      rofl.isStoned = true;
+    }
+
     rofl.activate(x, y, position, velocityY);
 
     this.pop?.play();
+    //rofl.anims.play('gone_splash');
      
     // adding TimeOut and Next timer
     this.time.addEvent({
@@ -263,6 +268,11 @@ export class GameScene extends Phaser.Scene {
     }
   };
 
+  private stoneRofl= (rofl : Rofl) => {
+    rofl.isStoned = true;
+    rofl.updateRoflImage();
+  };
+
   // methods related to rolf interactions
   private squashRofl = (rofl : Rofl) => {
     const rarityType = rofl.getRarity();
@@ -281,7 +291,15 @@ export class GameScene extends Phaser.Scene {
     if ( rarityType == 'uncommon'){
       
       // Adding extra time to the Rofl TimeOut
-      this.roflFreeze = true;
+      this.roflStoned = true;
+
+      Phaser.Actions.Call(
+        (this.rofls as Phaser.GameObjects.Group).getChildren(),
+        (rofl) => {
+          this.stoneRofl(rofl as Rofl);
+        },
+        this,
+      );
       
       this.time.addEvent({
         delay: this.freezeTime ,
@@ -289,6 +307,10 @@ export class GameScene extends Phaser.Scene {
         callbackScope: this,
         loop: false,
       });
+
+      
+
+
 
     } else
      if ( rarityType == 'rare'){
@@ -323,7 +345,7 @@ export class GameScene extends Phaser.Scene {
   };
 
   private disableFreeze(){
-    this.roflFreeze = false;
+    this.roflStoned = false;
   }
 
   private squashLickquidator = (lickquidator : Lickquidator) => {
@@ -352,9 +374,11 @@ export class GameScene extends Phaser.Scene {
   private roflTimeOut = (rofl : Rofl) => {
 
 
-    //if (this.roflFreeze == false){
-    if (!rofl.isDead && this.player != undefined && this.endingGame == false && this.roflFreeze == false ){
+    //if (this.roflStoned == false){
+    if (!rofl.isDead && this.player != undefined && this.endingGame == false && this.roflStoned == false ){
       
+      //rofl.anims.play('gone_splash');
+
       this.player.removeLife();
       if (rofl != undefined && rofl.positionIndex != undefined ){
         this.usedPosition[rofl.positionIndex] = false;
@@ -362,9 +386,11 @@ export class GameScene extends Phaser.Scene {
       this.updateLivesCounter();
 
       this.gone?.play();
+      
+
       rofl.setDead(true);
 
-    } else if(!rofl.isDead && this.player != undefined && this.endingGame == false && this.roflFreeze == true ){
+    } else if(!rofl.isDead && this.player != undefined && this.endingGame == false && this.roflStoned == true ){
       
       // activating BONUS extra time
       this.time.addEvent({

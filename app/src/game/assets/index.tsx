@@ -26,19 +26,23 @@ export const SQUASH = 'squash';
 export const GODLIKESQUASH = 'godlikesquash';
 export const GAMETUNE = 'gametune';
 export const GAMEOVER = 'gameover';
-export const ROFL = 'rofl';
 export const COMMONROFL = 'commonrofl';
 export const UNCOMMONROFL = 'uncommonrofl';
 export const RAREROFL = 'rarerofl';
 export const MYTHICALROFL = 'mythicalrofl';
+export const COMMONROFLJOINT = 'commonrofljoint';
+export const UNCOMMONROFLJOINT = 'uncommonrofljoint';
+export const RAREROFLJOINT = 'rarerofljoint';
+export const MYTHICALROFLJOINT = 'mythicalrofl_oint';
 export const LICKQUIDATOR = 'lickquidator';
+export const SPLASH = 'splash';
 
 
 // Save all in game assets in the public folder
 export const assets: Array<Asset | SpritesheetAsset> = [
   {
     key: BG,
-    src: 'assets/images/bg.png',
+    src: 'assets/images/bg2.png',
     type: 'IMAGE',
   },
   {
@@ -82,15 +86,6 @@ export const assets: Array<Asset | SpritesheetAsset> = [
     type: 'AUDIO',
   },
   {
-    key: ROFL,
-    src: 'assets/sprites/rofl.png',
-    type: 'SPRITESHEET',
-    data: {
-      frameWidth: 553 / 1,
-      frameHeight: 553 / 1,
-    }
-  },
-  {
     key: COMMONROFL,
     src: 'assets/sprites/commonrofl.png',
     type: 'SPRITESHEET',
@@ -127,8 +122,53 @@ export const assets: Array<Asset | SpritesheetAsset> = [
     }
   },
   {
+    key: COMMONROFLJOINT,
+    src: 'assets/sprites/commonrofl_joint.png',
+    type: 'SPRITESHEET',
+    data: {
+      frameWidth: 553 / 1,
+      frameHeight: 553 / 1,
+    }
+  },
+  {
+    key: UNCOMMONROFLJOINT,
+    src: 'assets/sprites/uncommonrofl_joint.png',
+    type: 'SPRITESHEET',
+    data: {
+      frameWidth: 553 / 1,
+      frameHeight: 553 / 1,
+    }
+  },
+  {
+    key: RAREROFLJOINT,
+    src: 'assets/sprites/rarerofl_joint.png',
+    type: 'SPRITESHEET',
+    data: {
+      frameWidth: 553 / 1,
+      frameHeight: 553 / 1,
+    }
+  },
+  {
+    key: MYTHICALROFLJOINT,
+    src: 'assets/sprites/mythicalrofl_joint.png',
+    type: 'SPRITESHEET',
+    data: {
+      frameWidth: 553 / 1,
+      frameHeight: 553 / 1,
+    }
+  },
+  {
     key: LICKQUIDATOR,
     src: 'assets/sprites/liquidator_sprite.png',
+    type: 'SPRITESHEET',
+    data: {
+      frameWidth: 7500 / 12,
+      frameHeight: 625 / 1,
+    }
+  },
+  {
+    key: SPLASH,
+    src: 'assets/sprites/splash_sprite.png',
     type: 'SPRITESHEET',
     data: {
       frameWidth: 7500 / 12,
