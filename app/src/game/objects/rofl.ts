@@ -1,5 +1,7 @@
 import { getGameHeight  } from '../helpers';
-import {  COMMONROFL, UNCOMMONROFL, RAREROFL, MYTHICALROFL,  COMMONROFLJOINT, UNCOMMONROFLJOINT, RAREROFLJOINT, MYTHICALROFLJOINT } from 'game/assets';
+import {  SPLASH, COMMONROFL, UNCOMMONROFL, RAREROFL, MYTHICALROFL,  COMMONROFLJOINT, UNCOMMONROFLJOINT, RAREROFLJOINT, MYTHICALROFLJOINT } from 'game/assets';
+import { Splash } from 'game/objects';
+
 
 export class Rofl extends Phaser.GameObjects.Sprite {
   private health = 200;
@@ -10,6 +12,7 @@ export class Rofl extends Phaser.GameObjects.Sprite {
   public isDead = false;
   public positionIndex= 0;
   public isStoned = false;
+  //private splash?: Splash;
 
  constructor(scene: Phaser.Scene) {
    super(scene, -100, -100, COMMONROFL , 0);
@@ -21,12 +24,20 @@ export class Rofl extends Phaser.GameObjects.Sprite {
    this.scene.physics.world.enable(this);
    (this.body as Phaser.Physics.Arcade.Body).setGravityY(getGameHeight(this.scene) * 2);
 
+   /*
    // Animations
     this.scene.anims.create({
       key: 'gone_splash',
       frames: this.anims.generateFrameNumbers(COMMONROFL || '', { start: 1, end: 9}),
       frameRate: 10,
       repeat: 0,
+    });
+    */
+    this.anims.create({
+      key: 'splash',
+      frames: this.anims.generateFrameNumbers(SPLASH || '', { start: 1, end: 9 }),
+      frameRate: 5,
+      repeat: -1,
     });
 
    this.scene.add.existing(this);
@@ -39,6 +50,9 @@ export class Rofl extends Phaser.GameObjects.Sprite {
     // Calculating rarity type
     this.brs =  Math.floor(Math.random() * 100);
 
+    // initializing splash 
+    //this.splash?.setCoordinates(x,y); 
+
     // Updating Rofl type, position and lowest y coordinates (groundY)
     this.calculateRoflType(this.brs);
     this.setPosition(x - this.displayWidth/2, y - this.displayHeight);
@@ -46,7 +60,7 @@ export class Rofl extends Phaser.GameObjects.Sprite {
     this.groundY = y - this.displayHeight;
 
     //if (this.rarityTag == 'common'){
-     // this.anims.play('gone_splash');
+     // this.anims.play('splash');
    // }
   }
 
@@ -126,6 +140,7 @@ export class Rofl extends Phaser.GameObjects.Sprite {
     this.isDead = dead;
     if (dead == true){
       //this.anims.play('dead');
+      //this.splash?.activate();
       this.destroy(); 
     }
   }

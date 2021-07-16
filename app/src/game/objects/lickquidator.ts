@@ -18,7 +18,7 @@ export class Lickquidator extends Phaser.GameObjects.Sprite {
 
    // physics
    this.scene.physics.world.enable(this);
-   (this.body as Phaser.Physics.Arcade.Body).setGravityY(getGameHeight(this.scene) * 4);
+   (this.body as Phaser.Physics.Arcade.Body).setGravityY(getGameHeight(this.scene) * 3);
 
    //sounds
    this.gone = this.scene.sound.add(GONE, { loop: false });

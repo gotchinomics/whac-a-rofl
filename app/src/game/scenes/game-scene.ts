@@ -1,7 +1,7 @@
-import {   LEFT_CHEVRON, BG, CLICK , POP , GONE , SQUASH, GODLIKESQUASH, GAMETUNE, GAMEOVER } from 'game/assets';
+import {   LEFT_CHEVRON, BG, CLICK , POP , GONE , SQUASH, GODLIKESQUASH, GAMETUNE, GAMEOVER, HEART } from 'game/assets';
 import { AavegotchiGameObject } from 'types';
 import { getGameWidth, getGameHeight, getRelative } from '../helpers';
-import { Player , Rofl, Lickquidator, Splash } from 'game/objects';
+import { Player , Rofl, Lickquidator, Splash, HeartCounter } from 'game/objects';
 import { Socket } from 'dgram';
 
 const sceneConfig: Phaser.Types.Scenes.SettingsConfig = {
@@ -19,6 +19,8 @@ export class GameScene extends Phaser.Scene {
   private selectedGotchi?: AavegotchiGameObject;
   private rofls?: Phaser.GameObjects.Group;
   private lickquidators?: Phaser.GameObjects.Group;
+  private splashes?: Phaser.GameObjects.Group;
+  private hearts?: Phaser.GameObjects.Group;
 
   // Sounds
   private back?: Phaser.Sound.BaseSound;
@@ -31,19 +33,19 @@ export class GameScene extends Phaser.Scene {
 
   // Score
   private score = 0;
-  private lives?: number;
+  public lives?: number;
   private roflCount = 0;
   private lickquidatorCount = 0;
   private lickquidatorProb = 0.2 ; // Probabilty of Lickquidator [0-1]
   private scoreText?: Phaser.GameObjects.Text;
-  private livesText?: Phaser.GameObjects.Text;
+  private heartCounter?: HeartCounter;
 
   // Timer Settings
   private popRoflTimerIni = 3000;
   private goneRoflTimerIni = 8000;
   private popRoflTimer?: number;
   private goneRoflTimer?: number;
-  private popLickquidatorTimerIni = 6000;
+  private popLickquidatorTimerIni = 4000;
   private goneLickquidatorTimerIni = 4000;
   private popLickquidatorTimer?: number;
   private goneLickquidatorTimer?: number;
@@ -59,7 +61,8 @@ export class GameScene extends Phaser.Scene {
   private roflStoned = false;
   private freezeTime = 10000; 
   private freezeUpdateInterval = 100;
-
+  private firstRun = true;
+  
 
   constructor() {
     super(sceneConfig);
@@ -71,6 +74,10 @@ export class GameScene extends Phaser.Scene {
 
   public create(): void {
     // communicating gameStarted to socket
+    //const hearts = [];
+        //  Our container
+    //let container = this.add.container(400, 300);
+
     this.socket = this.game.registry.values.socket;
     this.socket?.emit('gameStarted');
 
@@ -101,15 +108,8 @@ export class GameScene extends Phaser.Scene {
 
     // Score board
     this.scoreText = this.add
-    .text(getGameWidth(this) / 2, getGameHeight(this) / 2 - getRelative(190, this), this.score.toString(), { color: '#FFFFFF',   })
-    .setFontSize(getRelative(94, this))
-    .setOrigin(0.5)
-    .setDepth(1);
-    
-    // Lives counter
-    this.livesText = this.add
-    .text(getGameWidth(this) * 0.1, getGameHeight(this) * 0.1,'Lives: '+ this.lives.toString(), { color: '#FFFFFF',  })
-    .setFontSize(getRelative(70, this))
+    .text(getGameWidth(this) * 0.097, getGameHeight(this) * 0.245, this.score.toString(), { color: '#FFFFFF',   })
+    .setFontSize(getRelative(84, this))
     .setOrigin(0.5)
     .setDepth(1);
 
@@ -120,20 +120,49 @@ export class GameScene extends Phaser.Scene {
       runChildUpdate: true,
      });
 
+
+     // Add Liquidators group
      this.lickquidators = this.add.group({
       maxSize: 6,
       classType: Lickquidator,
       runChildUpdate: true,
      });
+
+     // Add Splash group
+     this.splashes = this.add.group({
+      maxSize: 30,
+      classType: Splash,
+      runChildUpdate: false,
+     });
+
+     // Add heart counter
+     this.heartCounter = new HeartCounter(this); 
+     
+     //const heart1=this.add.sprite( getGameWidth(this) * 0.06, getGameHeight(this) * 0.36, HEART ); 
+     //const heart2=this.add.sprite( getGameWidth(this) * 0.07, getGameHeight(this) * 0.36, HEART ); 
+     //const heart3=this.add.sprite( getGameWidth(this) * 0.08, getGameHeight(this) * 0.36, HEART ); 
+     //const heart4=this.add.sprite( getGameWidth(this) * 0.09, getGameHeight(this) * 0.36, HEART ); 
+     //const heart5=this.add.sprite( getGameWidth(this) * 0.10, getGameHeight(this) * 0.36, HEART ); 
+     //heart1.displayHeight = getGameHeight(this) * 0.04;
+    // heart1.displayWidth = getGameHeight(this) * 0.04;
+    
+
+     //this.lifesScore=(new Heart(this));
+      //this.lifesScore.setCoordinates(getGameWidth(this) * 0.06, getGameHeight(this) * 0.36);
+     ///hearts.push(new Heart(this));
+     //hearts[1].setCoordinates(100,100);
      
      this.addRofls();
 
+     /*
      this.time.addEvent({
       delay: this.popLickquidatorTimer,
       callback: this.addLickquidators,
       callbackScope: this,
       loop: false,
     });
+    */
+     
 
   }
 
@@ -418,11 +447,13 @@ export class GameScene extends Phaser.Scene {
 
   // Updating live counter
   private updateLivesCounter= () => {
-    if ( this.player != undefined && this.livesText != undefined){ //
+    if ( this.player != undefined ){ 
       this.lives = this.player.getLives();
-      this.livesText.setText( 'Lives: ' + this.lives.toString() );
+      this.heartCounter?.setRemainingHearts(this.lives);
    }
   };
+
+
 
 
   // timer settings
@@ -535,6 +566,19 @@ export class GameScene extends Phaser.Scene {
   }
 
   public update(): void {
+    
+    // Initializing first liquidator after a timer
+    if (this.firstRun){
+      this.time.addEvent({
+        delay: this.popLickquidatorTimerIni,
+        callback: this.addLickquidators,
+        callbackScope: this,
+        loop: false,
+      });
+      this.firstRun = false;
+    }
+    
+
     // Every frame, we update the player
     this.player?.update();
 

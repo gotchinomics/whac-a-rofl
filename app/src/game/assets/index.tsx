@@ -26,6 +26,7 @@ export const SQUASH = 'squash';
 export const GODLIKESQUASH = 'godlikesquash';
 export const GAMETUNE = 'gametune';
 export const GAMEOVER = 'gameover';
+export const HEART = 'heart';
 export const COMMONROFL = 'commonrofl';
 export const UNCOMMONROFL = 'uncommonrofl';
 export const RAREROFL = 'rarerofl';
@@ -84,6 +85,15 @@ export const assets: Array<Asset | SpritesheetAsset> = [
     key: GAMEOVER,
     src: 'assets/sounds/gameover.mp3',
     type: 'AUDIO',
+  },
+  {
+    key: HEART,
+    src: 'assets/sprites/heart.png',
+    type: 'SPRITESHEET',
+    data: {
+      frameWidth: 64 / 1,
+      frameHeight: 64 / 1,
+    }
   },
   {
     key: COMMONROFL,
