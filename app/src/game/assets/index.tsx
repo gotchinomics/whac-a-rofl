@@ -23,6 +23,7 @@ export const CLICK = 'click';
 export const POP = 'pop';
 export const GONE = 'gone';
 export const SQUASH = 'squash';
+export const LICKING = 'licking';
 export const GODLIKESQUASH = 'godlikesquash';
 export const GAMETUNE = 'gametune';
 export const GAMEOVER = 'gameover';
@@ -37,6 +38,7 @@ export const RAREROFLJOINT = 'rarerofljoint';
 export const MYTHICALROFLJOINT = 'mythicalrofl_oint';
 export const LICKQUIDATOR = 'lickquidator';
 export const SPLASH = 'splash';
+export const HITTING = 'hitting';
 
 
 // Save all in game assets in the public folder
@@ -72,8 +74,8 @@ export const assets: Array<Asset | SpritesheetAsset> = [
     type: 'AUDIO',
   },
   {
-    key: GODLIKESQUASH,
-    src: 'assets/sounds/godlikesquash.mp3',
+    key: LICKING,
+    src: 'assets/sounds/licking.wav',
     type: 'AUDIO',
   },
   {
@@ -178,11 +180,20 @@ export const assets: Array<Asset | SpritesheetAsset> = [
   },
   {
     key: SPLASH,
-    src: 'assets/sprites/splash_sprite.png',
+    src: 'assets/sprites/splash_spritev2.png',
     type: 'SPRITESHEET',
     data: {
-      frameWidth: 7500 / 12,
-      frameHeight: 625 / 1,
+      frameWidth: 4977 / 9,
+      frameHeight: 553 / 1,
+    }
+  },
+  {
+    key: HITTING,
+    src: 'assets/sprites/hitting_sprite.png',
+    type: 'SPRITESHEET',
+    data: {
+      frameWidth: 2048 / 4,
+      frameHeight: 2048 / 4,
     }
   },
 ];

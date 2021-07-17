@@ -11,6 +11,10 @@ interface Props {
 
 export class Player extends Phaser.GameObjects.Sprite {
   private hitKey: Phaser.Input.Keyboard.Key;
+  private upKey: Phaser.Input.Keyboard.Key;
+  private downKey: Phaser.Input.Keyboard.Key;
+  private leftKey: Phaser.Input.Keyboard.Key;
+  private rightKey: Phaser.Input.Keyboard.Key;
   private pointer: Phaser.Input.Pointer;
   private cursorKeys?: Phaser.Types.Input.Keyboard.CursorKeys;
   private isHitting = false;
@@ -52,6 +56,10 @@ export class Player extends Phaser.GameObjects.Sprite {
     this.cursorKeys = this.scene.input.keyboard.createCursorKeys();
     this.pointer = this.scene.input.activePointer;
     this.hitKey = this.scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
+    this.upKey = this.scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.W);
+    this.downKey = this.scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.S);
+    this.leftKey = this.scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.A);
+    this.rightKey = this.scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.D);
 
     this.scene.add.existing(this);
   }
@@ -70,10 +78,10 @@ export class Player extends Phaser.GameObjects.Sprite {
     
       // Horizontal movement
       switch (true) {
-       case this.cursorKeys?.left.isDown && this.x > 10:
+       case (this.cursorKeys?.left.isDown || this.leftKey.isDown) && this.x > 10:
          velocity.x -= 1;
          break;
-       case this.cursorKeys?.right.isDown && this.x < (getGameWidth(this.scene)-150) :
+       case (this.cursorKeys?.right.isDown || this.rightKey.isDown) && this.x < (getGameWidth(this.scene)-150) :
          velocity.x += 1;
          break;
        default: 
@@ -81,10 +89,10 @@ export class Player extends Phaser.GameObjects.Sprite {
  
       // Vertical movement
       switch (true) {
-        case this.cursorKeys?.down.isDown && this.y < (getGameHeight(this.scene)-150) :
+        case (this.cursorKeys?.down.isDown || this.downKey.isDown) && this.y < (getGameHeight(this.scene)-150) :
          velocity.y += 1;
          break;
-        case this.cursorKeys?.up.isDown && this.y > 300:
+        case (this.cursorKeys?.up.isDown  || this.upKey.isDown)  && this.y > 300:
           velocity.y -= 1;
           break;
         default:

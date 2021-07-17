@@ -1,6 +1,6 @@
-import { getGameHeight  } from '../helpers';
+import { getGameHeight , getGameWidth } from '../helpers';
 import {  SPLASH, COMMONROFL, UNCOMMONROFL, RAREROFL, MYTHICALROFL,  COMMONROFLJOINT, UNCOMMONROFLJOINT, RAREROFLJOINT, MYTHICALROFLJOINT } from 'game/assets';
-import { Splash } from 'game/objects';
+//import { Splash } from 'game/objects';
 
 
 export class Rofl extends Phaser.GameObjects.Sprite {
@@ -12,6 +12,8 @@ export class Rofl extends Phaser.GameObjects.Sprite {
   public isDead = false;
   public positionIndex= 0;
   public isStoned = false;
+  private splashSprite?: Phaser.GameObjects.Sprite;
+  public sessionID?:number
   //private splash?: Splash;
 
  constructor(scene: Phaser.Scene) {
@@ -32,18 +34,25 @@ export class Rofl extends Phaser.GameObjects.Sprite {
       frameRate: 10,
       repeat: 0,
     });
-    */
+  
     this.anims.create({
-      key: 'splash',
+      key: 'idle',
+      frames: this.anims.generateFrameNumbers(SPLASH || '', { frames: [0] }),
+    });
+     /*
+    this.anims.create({
+      key: 'splash_sprite',
       frames: this.anims.generateFrameNumbers(SPLASH || '', { start: 1, end: 9 }),
       frameRate: 5,
       repeat: -1,
     });
+    */
+    //this.setTexture(SPLASH,'idle');
 
    this.scene.add.existing(this);
  }
 
- public activate = (x: number, y: number, positionIndex: number, velocityY: number) => {
+ public activate = (x: number, y: number, positionIndex: number, velocityY: number, sessionID: number) => {
     // Physics
     (this.body as Phaser.Physics.Arcade.Body).setVelocityY(velocityY);
 
@@ -58,9 +67,16 @@ export class Rofl extends Phaser.GameObjects.Sprite {
     this.setPosition(x - this.displayWidth/2, y - this.displayHeight);
     this.positionIndex=positionIndex;
     this.groundY = y - this.displayHeight;
+    this.sessionID = sessionID;
 
+    /*
+    // Adding exit animation
+    this.splashSprite = this.scene.add.sprite( x - this.displayWidth/2, y - this.displayHeight, SPLASH ,1);
+    this.splashSprite.displayHeight = getGameHeight(this.scene) * 0.15;
+    this.splashSprite.displayWidth = getGameHeight(this.scene) * 0.15;
+      */
     //if (this.rarityTag == 'common'){
-     // this.anims.play('splash');
+     //this.anims.play('idle');
    // }
   }
 
@@ -86,33 +102,39 @@ export class Rofl extends Phaser.GameObjects.Sprite {
   }
 
   public updateRoflImage = () => {
-
-    if (!this.isStoned){
-      if (this.rarityTag == 'common') {
+    
+    if (!this.isDead){
+      if (!this.isStoned){
+       if (this.rarityTag == 'common') {
         this.setTexture(COMMONROFL);
-      } else if(this.rarityTag == 'uncommon'){
-       this.setTexture(UNCOMMONROFL);
-      } else if(this.rarityTag == 'rare'){
-       this.setTexture(RAREROFL);
-      } else if(this.rarityTag == 'mythical'){
-       this.setTexture(MYTHICALROFL);
-      } else {
-        this.setTexture(COMMONROFL);
+       } else if(this.rarityTag == 'uncommon'){
+        this.setTexture(UNCOMMONROFL);
+       } else if(this.rarityTag == 'rare'){
+         this.setTexture(RAREROFL);
+       } else if(this.rarityTag == 'mythical'){
+         this.setTexture(MYTHICALROFL);
+        } else {
+          this.setTexture(COMMONROFL);
+       }
+      } else{
+        if (this.rarityTag == 'common') {
+         this.setTexture(COMMONROFLJOINT);
+       } else if(this.rarityTag == 'uncommon'){
+        this.setTexture(UNCOMMONROFLJOINT);
+        } else if(this.rarityTag == 'rare'){
+        this.setTexture(RAREROFLJOINT);
+       } else if(this.rarityTag == 'mythical'){
+         this.setTexture(MYTHICALROFLJOINT);
+       } else {
+         this.setTexture(COMMONROFLJOINT);
+       }
       }
     } else{
-      if (this.rarityTag == 'common') {
-        this.setTexture(COMMONROFLJOINT);
-      } else if(this.rarityTag == 'uncommon'){
-       this.setTexture(UNCOMMONROFLJOINT);
-      } else if(this.rarityTag == 'rare'){
-       this.setTexture(RAREROFLJOINT);
-      } else if(this.rarityTag == 'mythical'){
-        this.setTexture(MYTHICALROFLJOINT);
-      } else {
-        this.setTexture(COMMONROFLJOINT);
-      }
-
+      
+      this.setTexture(SPLASH,1);
+      //this.anims.play('splash_sprite');
     }
+    
   };
 
   public update = () => {
@@ -138,8 +160,10 @@ export class Rofl extends Phaser.GameObjects.Sprite {
   
   public setDead(dead: boolean): void {
     this.isDead = dead;
+    this.updateRoflImage();
+
     if (dead == true){
-      //this.anims.play('dead');
+      //this.anims.play('splash_sprite');
       //this.splash?.activate();
       this.destroy(); 
     }
