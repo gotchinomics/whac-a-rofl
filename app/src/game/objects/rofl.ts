@@ -12,8 +12,9 @@ export class Rofl extends Phaser.GameObjects.Sprite {
   public isDead = false;
   public positionIndex= 0;
   public isStoned = false;
-  private splashSprite?: Phaser.GameObjects.Sprite;
   public sessionID?:number
+  public popTimer?: Phaser.Time.TimerEvent;
+  public goneTimer?: Phaser.Time.TimerEvent;
   //private splash?: Splash;
 
  constructor(scene: Phaser.Scene) {
@@ -24,30 +25,7 @@ export class Rofl extends Phaser.GameObjects.Sprite {
 
    // Physics
    this.scene.physics.world.enable(this);
-   (this.body as Phaser.Physics.Arcade.Body).setGravityY(getGameHeight(this.scene) * 2);
-
-   /*
-   // Animations
-    this.scene.anims.create({
-      key: 'gone_splash',
-      frames: this.anims.generateFrameNumbers(COMMONROFL || '', { start: 1, end: 9}),
-      frameRate: 10,
-      repeat: 0,
-    });
-  
-    this.anims.create({
-      key: 'idle',
-      frames: this.anims.generateFrameNumbers(SPLASH || '', { frames: [0] }),
-    });
-     /*
-    this.anims.create({
-      key: 'splash_sprite',
-      frames: this.anims.generateFrameNumbers(SPLASH || '', { start: 1, end: 9 }),
-      frameRate: 5,
-      repeat: -1,
-    });
-    */
-    //this.setTexture(SPLASH,'idle');
+   (this.body as Phaser.Physics.Arcade.Body).setGravityY(getGameHeight(this.scene) * 1.5);
 
    this.scene.add.existing(this);
  }

@@ -49,7 +49,7 @@ export class GameScene extends Phaser.Scene {
   private popRoflTime?: number;
   private goneRoflTime?: number;
   private popLickquidatorTimeIni = 4000;
-  private goneLickquidatorTimeIni = 4000;
+  private goneLickquidatorTimeIni = 2000;
   private popLickquidatorTime?: number;
   private goneLickquidatorTime?: number;
   private gameOverTime = 3000;
@@ -164,23 +164,27 @@ export class GameScene extends Phaser.Scene {
    puddle6.setPuddle(this.getLocationX(6),this.getLocationY(6));
    this.puddleArray.push(puddle6);
    
-
-  // Add heart counter
-  this.heartCounter = new HeartCounter(this); 
-     
-     
-     
-     /*
-     this.time.addEvent({
-      delay: this.popLickquidatorTime,
-      callback: this.addLickquidators,
+    // Add heart counter
+    this.heartCounter = new HeartCounter(this);    
+   /*
+    // Create first timer Event
+    this.popRoflTimer = new Phaser.Time.TimerEvent({
+      delay: this.popRoflTime,
+      callback: this.addRofls,
       callbackScope: this,
       loop: false,
     });
-    */
-     
+    
+    this.popRoflTimer = this.time.addEvent({
+      delay: this.popRoflTime,
+      callback: this.addRofls,
+      callbackScope: this,
+      loop: false,
+     });
+     */
 
   }
+  /// END OF CREATE VOID  ////
 
   private calculatePosition=():number => {
     let positionIndex= 1;
@@ -211,17 +215,16 @@ export class GameScene extends Phaser.Scene {
 
 
      if (this.endingGame == false){
-      this.roflCount += 1;
 
-      this.addRofl(x, y, position, velocityY );
+      this.roflCount += 1;
 
       this.updateRoflTimers(); 
 
-    } else {
-      //this.popRoflTime = 100;
-      //this.goneRoflTime = 2000;
-      //this.addRofl(x, y, position, velocityY );
-    }
+      this.addRofl(x, y, position, velocityY );
+
+      
+
+    } 
 
   };
 
@@ -236,7 +239,23 @@ export class GameScene extends Phaser.Scene {
     }
 
     rofl.activate(x, y, position, velocityY, this.sessionID);
+    
+    // adding TimeOut and Next timer
 
+    rofl.popTimer = this.time.addEvent({
+     delay: this.popRoflTime,
+     callback: this.addRofls,
+     callbackScope: this,
+     loop: false,
+    });
+            
+    rofl.goneTimer = this.time.addEvent({
+      delay: this.goneRoflTime,
+      callback: this.roflTimeOut, 
+      args: [rofl as Rofl],
+      loop: false,
+    });
+   
     // popping sound
     this.pop?.play();
 
@@ -244,23 +263,17 @@ export class GameScene extends Phaser.Scene {
     if (this.puddleArray != undefined){
       (this.puddleArray[position-1] as Puddle).splash();
     }
-     
-    // adding TimeOut and Next timer
-    this.goneRoflTimer = this.time.addEvent({
-      delay: this.goneRoflTime,
-      callback: this.roflTimeOut, 
-      args: [rofl as Rofl],
-      loop: false,
-    });
 
-    
-    this.popRoflTimer = this.time.addEvent({
+    ///ALTERNATIVE TIMER DEFINITION
+    /*
+    this.popRoflTimer = new Phaser.Time.TimerEvent({
       delay: this.popRoflTime,
       callback: this.addRofls,
       callbackScope: this,
       loop: false,
     });
-    
+    this.time.addEvent(this.popRoflTimer);
+    */
 
   };
 
@@ -275,9 +288,11 @@ export class GameScene extends Phaser.Scene {
     if (this.endingGame == false){
      this.lickquidatorCount += 1;
 
+     this.updateLickquidatorTimers(); 
+
      this.addLickquidator(x, y, position, velocityY );
 
-     this.updateLickquidatorTimers(); 
+     
    //this.updateGoneTimer();
    } 
 
@@ -297,19 +312,21 @@ export class GameScene extends Phaser.Scene {
   }
     
    // adding TimeOut and Next timer
-   this.time.addEvent({
+   //this.updateLickquidatorTimers();
+   
+   this.goneLickquidatorTimer = this.time.addEvent({
      delay: this.goneLickquidatorTime,
      callback: this.lickquidatorTimeOut, 
      args: [lickquidator as Lickquidator],
      loop: false,
    });
 
-   this.time.addEvent({
-     delay: this.popLickquidatorTime,
-     callback: this.addLickquidators,
-     callbackScope: this,
-     loop: false,
-   });
+    this.popLickquidatorTimer = this.time.addEvent({
+      delay: this.popLickquidatorTime,
+      callback: this.addLickquidators,
+      callbackScope: this,
+      loop: false,
+     });
 
  };
 
@@ -445,7 +462,9 @@ export class GameScene extends Phaser.Scene {
 
       this.gone?.play();
       
-
+      rofl.popTimer?.destroy;
+      rofl.goneTimer?.destroy;
+      
       rofl.setDead(true);
 
     } else if(!rofl.isDead && this.player != undefined && this.endingGame == false && this.sessionID == rofl.sessionID && this.roflStoned == true ){
@@ -600,6 +619,7 @@ export class GameScene extends Phaser.Scene {
 //  }
 
   public update(): void {
+    
     
     // Initializing first liquidator after a timer
     if (this.firstRun){
