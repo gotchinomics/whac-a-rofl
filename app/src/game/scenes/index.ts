@@ -4,3 +4,4 @@ import { GameScene } from './game-scene';
 const scenes = [BootScene, GameScene];
 
 export default scenes;
+export { GameScene } from './game-scene'; 

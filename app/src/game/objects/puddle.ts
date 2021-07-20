@@ -24,7 +24,7 @@ export class Puddle extends Phaser.GameObjects.Sprite {
     this.anims.create({
       key: 'hitting',
       frames: this.anims.generateFrameNumbers(HITTING || '', { start: 1, end: 8 }),
-      frameRate: 10,
+      frameRate: 16,
       repeat: 0,
     }); // hideOnComplete: true,
 
@@ -36,7 +36,7 @@ export class Puddle extends Phaser.GameObjects.Sprite {
 
  public setPuddle =  (x: number, y: number) => {
 
-    this.setPosition(x-this.displayWidth/2, y-(this.displayHeight*0.4));
+    this.setPosition(x-this.displayWidth/2, y-(this.displayHeight*0.6));
 
     //this.anims.play('idle');
   }

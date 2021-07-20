@@ -1,4 +1,4 @@
-import {   LEFT_CHEVRON, BG, CLICK , POP , GONE , SQUASH, LICKING, GAMETUNE, GAMEOVER} from 'game/assets';
+import {   LEFT_CHEVRON, BG, CLICK , POP , GONE , SQUASH, LICKING, GAMETUNE, GAMEOVER, NET , GRENADE, DRANK } from 'game/assets';
 import { AavegotchiGameObject } from 'types';
 import { getGameWidth, getGameHeight, getRelative } from '../helpers';
 import { Player , Rofl, Lickquidator, HeartCounter , Puddle } from 'game/objects';
@@ -22,6 +22,8 @@ export class GameScene extends Phaser.Scene {
   private lickquidators?: Phaser.GameObjects.Group;
   private hearts?: Phaser.GameObjects.Group;
   private puddles?: Phaser.GameObjects.Group;
+  private grenadeButton?: Phaser.GameObjects.Image;
+  private drankButton?: Phaser.GameObjects.Image;
   private puddleArray?: Array<Phaser.GameObjects.Sprite>;
 
   // Sounds
@@ -48,7 +50,8 @@ export class GameScene extends Phaser.Scene {
   private goneRoflTimeIni = 8000;
   private popRoflTime?: number;
   private goneRoflTime?: number;
-  private popLickquidatorTimeIni = 4000;
+  private firstLickquidatorTime = 20000;
+  private popLickquidatorTimeIni = 10000;
   private goneLickquidatorTimeIni = 2000;
   private popLickquidatorTime?: number;
   private goneLickquidatorTime?: number;
@@ -60,6 +63,13 @@ export class GameScene extends Phaser.Scene {
   private popLickquidatorTimer?: Phaser.Time.TimerEvent;
   private goneLickquidatorTimer?: Phaser.Time.TimerEvent;
   private gameOverTimer?: Phaser.Time.TimerEvent;
+
+  // Bonus variables
+  private grenadeCount= 0;
+  private grenadeText?: Phaser.GameObjects.Text;
+  private drankCount=0;
+  private drankText?: Phaser.GameObjects.Text;
+
   
   // Local states and aux  variables
   private endingGame =  false;
@@ -73,6 +83,7 @@ export class GameScene extends Phaser.Scene {
   private freezeUpdateInterval = 100;
   private firstRun = true;
   private sessionID = Math.random()*10000;
+  private pointer?: Phaser.Input.Pointer;
 
   
 
@@ -103,6 +114,9 @@ export class GameScene extends Phaser.Scene {
     // Play main tune
     this.gametune?.play();
 
+    // Change default icon
+    //this.input.setDefaultCursor('url(public/assets/icons/cursor_net.cur), pointer');
+
     // Add a player sprite that can be moved around.
     this.player = new Player({
       scene: this,
@@ -118,6 +132,20 @@ export class GameScene extends Phaser.Scene {
     this.scoreText = this.add
     .text(getGameWidth(this) * 0.097, getGameHeight(this) * 0.245, this.score.toString(), { color: '#FFFFFF',   })
     .setFontSize(getRelative(84, this))
+    .setOrigin(0.5)
+    .setDepth(1);
+
+    // Grenade board
+    this.grenadeText = this.add
+    .text(getGameWidth(this) * 0.5, getGameHeight(this) * 0.93, 'X' + this.grenadeCount.toString(), { color: '#FFFFFF',   })
+    .setFontSize(getRelative(60, this))
+    .setOrigin(0.5)
+    .setDepth(1);
+
+    // drank board
+    this.drankText = this.add
+    .text(getGameWidth(this) * 0.6, getGameHeight(this) * 0.93, 'X' + this.drankCount.toString(), { color: '#FFFFFF',   })
+    .setFontSize(getRelative(60, this))
     .setOrigin(0.5)
     .setDepth(1);
 
@@ -141,7 +169,6 @@ export class GameScene extends Phaser.Scene {
       classType: Puddle,
       runChildUpdate: false,
      });
-
      this.puddleArray = [];
  
    // Creating Puddles
@@ -163,7 +190,25 @@ export class GameScene extends Phaser.Scene {
    const puddle6: Puddle = this.puddles?.get();
    puddle6.setPuddle(this.getLocationX(6),this.getLocationY(6));
    this.puddleArray.push(puddle6);
-   
+
+   // Creating buttons
+   this.grenadeButton = this.add.image( getGameWidth(this) * 0.45, getGameHeight(this) * 0.93, GRENADE ) ;
+   this.grenadeButton.displayHeight = getGameHeight(this) * 0.09 ;
+   this.grenadeButton.displayWidth = getGameHeight(this) * 0.09 ;
+   this.drankButton = this.add.image( getGameWidth(this) * 0.55, getGameHeight(this) * 0.93, DRANK ) ;
+   this.drankButton.displayHeight = getGameHeight(this) * 0.09 ;
+   this.drankButton.displayWidth = getGameHeight(this) * 0.09 ;
+
+   // Adding callbacks to the buttons
+   this.grenadeButton.setInteractive();
+   this.drankButton.setInteractive();
+   this.grenadeButton.on('pointerup', this.useGrenade, this);
+   this.drankButton.on('pointerup', this.useDrank, this);
+
+
+
+   //this.input.on('gameobjectdown',this.onObjectClicked);
+
     // Add heart counter
     this.heartCounter = new HeartCounter(this);    
    /*
@@ -221,8 +266,6 @@ export class GameScene extends Phaser.Scene {
       this.updateRoflTimers(); 
 
       this.addRofl(x, y, position, velocityY );
-
-      
 
     } 
 
@@ -292,8 +335,7 @@ export class GameScene extends Phaser.Scene {
 
      this.addLickquidator(x, y, position, velocityY );
 
-     
-   //this.updateGoneTimer();
+    //this.updateGoneTimer();
    } 
 
  };
@@ -347,6 +389,9 @@ export class GameScene extends Phaser.Scene {
   private squashRofl = (rofl : Rofl) => {
     const rarityType = rofl.getRarity();
 
+    this.addScore();
+    rofl.setDead(true);
+
     if (rofl != undefined && this.puddleArray != undefined) {
       
       this.squash?.play();
@@ -356,54 +401,23 @@ export class GameScene extends Phaser.Scene {
     if (rofl != undefined && rofl.positionIndex != undefined ){
       this.usedPosition[rofl.positionIndex] = false;
     }
-    this.addScore();
-    rofl.setDead(true);
+
 
 
     // SPECIAL ROFL POWERS 
     // unique actions related to the Rofl type
     if ( rarityType == 'uncommon'){
-      
-      // Adding extra time to the Rofl TimeOut
-      this.roflStoned = true;
 
-      Phaser.Actions.Call(
-        (this.rofls as Phaser.GameObjects.Group).getChildren(),
-        (rofl) => {
-          this.stoneRofl(rofl as Rofl);
-        },
-        this,
-      );
-      
-      this.time.addEvent({
-        delay: this.freezeTime ,
-        callback: this.disableFreeze , 
-        callbackScope: this,
-        loop: false,
-      });
-
-      
-
-
+      // Additng one drank to the counter: extra goneTimeOut BONUS
+      this.drankCount += 1;
+      this.drankText?.setText('X'+ this.drankCount.toString());
 
     } else
      if ( rarityType == 'rare'){
      
-      Phaser.Actions.Call(
-        (this.lickquidators as Phaser.GameObjects.Group).getChildren(),
-        (lickquidator) => {
-          this.killLickquidator(lickquidator as Lickquidator);
-        },
-        this,
-      );
-
-      Phaser.Actions.Call(
-        (this.rofls as Phaser.GameObjects.Group).getChildren(),
-        (rofl) => {
-          this.squashRofl(rofl as Rofl);
-        },
-        this,
-      );
+      // Adding grenade : kill-em-all BONUS
+      this.grenadeCount += 1;
+      this.grenadeText?.setText('X'+ this.grenadeCount.toString());
 
 
     } else if( rarityType == 'mythical'){
@@ -418,7 +432,7 @@ export class GameScene extends Phaser.Scene {
     
   };
 
-  private disableFreeze(){
+  private disableStoned(){
     this.roflStoned = false;
   }
 
@@ -500,9 +514,6 @@ export class GameScene extends Phaser.Scene {
       this.heartCounter?.setRemainingHearts(this.lives);
    }
   };
-
-
-
 
   // timer settings
   // reference (negative exponential model): y = t0* ( exp(-a*x+log(1-b)) +b ) = t0*(exp(alpha)+b)
@@ -609,6 +620,57 @@ export class GameScene extends Phaser.Scene {
       });
   };
 
+  public useGrenade = () => {
+
+    if (this.grenadeCount > 0){
+
+      // Updating grenade Count
+      this.grenadeCount -= 1;
+      this.grenadeText?.setText('X' + this.grenadeCount.toString());
+      
+       // Kill-em-all, making sure that the rofl group is empty, a single call it seems to be not enough
+       if (this.lickquidators != undefined){
+         while ( this.lickquidators.countActive(true)>0 ){
+                (this.lickquidators as Phaser.GameObjects.Group).getChildren().map(lickquidator => this.squashLickquidator(lickquidator as Lickquidator));
+         }
+       }
+
+      // Kill-em-all, making sure that the rofl group is empty, a single call it seems to be not enough
+      if (this.rofls != undefined){
+        while ( this.rofls.countActive(true)>0 ){
+          (this.rofls as Phaser.GameObjects.Group).getChildren().map(rofl => this.squashRofl(rofl as Rofl));
+        }
+      }
+
+    }
+  }
+
+  public useDrank = () => {
+
+    if (this.drankCount > 0){
+
+      // Updating drank Count
+      this.drankCount -= 1;
+      this.drankText?.setText('X' + this.drankCount.toString());
+
+      // Adding extra time to the Rofl TimeOut
+      this.roflStoned = true;
+
+      // Setting all present rofls stoned
+      (this.rofls as Phaser.GameObjects.Group).getChildren().map(rofl => this.stoneRofl(rofl as Rofl));
+
+      // Start event to disable stoned after certain time
+      this.time.addEvent({
+        delay: this.freezeTime ,
+        callback: this.disableStoned , 
+        callbackScope: this,
+        loop: false,
+      });
+
+    }
+  
+  }
+
   private endGame(){
     this.time.clearPendingEvents();
     window.history.back();
@@ -617,6 +679,14 @@ export class GameScene extends Phaser.Scene {
 //  private startGame = () =>{
 //
 //  }
+
+  private onObjectClicked( pointer : Phaser.Input.Pointer , gameObject: Phaser.GameObjects.Image ){
+    if ( gameObject.texture.key == GRENADE ){
+      this.useGrenade();
+    } else if( gameObject.texture.key == DRANK ){
+      this.useDrank();
+    }
+  }
 
   public update(): void {
     
@@ -629,7 +699,7 @@ export class GameScene extends Phaser.Scene {
       
       // Adding event that triggers the first Lickquidator
       this.time.addEvent({
-        delay: this.popLickquidatorTimeIni,
+        delay: this.firstLickquidatorTime,
         callback: this.addLickquidators,
         callbackScope: this,
         loop: false,

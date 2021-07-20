@@ -25,7 +25,7 @@ export class Rofl extends Phaser.GameObjects.Sprite {
 
    // Physics
    this.scene.physics.world.enable(this);
-   (this.body as Phaser.Physics.Arcade.Body).setGravityY(getGameHeight(this.scene) * 1.5);
+   (this.body as Phaser.Physics.Arcade.Body).setGravityY(getGameHeight(this.scene) * 2);
 
    this.scene.add.existing(this);
  }

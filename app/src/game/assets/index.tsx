@@ -17,6 +17,9 @@ export interface SpritesheetAsset extends Asset {
 }
 
 export const BG = 'bg';
+export const NET = 'net';
+export const DRANK = 'drank';
+export const GRENADE = 'grenade';
 export const FULLSCREEN = 'fullscreen';
 export const LEFT_CHEVRON = 'left_chevron';
 export const CLICK = 'click';
@@ -46,6 +49,21 @@ export const assets: Array<Asset | SpritesheetAsset> = [
   {
     key: BG,
     src: 'assets/images/bg2.png',
+    type: 'IMAGE',
+  },
+  {
+    key: NET,
+    src: 'assets/icons/cursor_net.cur',
+    type: 'IMAGE',
+  },
+  {
+    key: DRANK,
+    src: 'assets/icons/lilpumpdrank.png',
+    type: 'IMAGE',
+  },
+  {
+    key: GRENADE,
+    src: 'assets/icons/grenade.png',
     type: 'IMAGE',
   },
   {
@@ -189,7 +207,7 @@ export const assets: Array<Asset | SpritesheetAsset> = [
   },
   {
     key: HITTING,
-    src: 'assets/sprites/hitting_sprite.png',
+    src: 'assets/sprites/hitting_sprite_px.png',
     type: 'SPRITESHEET',
     data: {
       frameWidth: 2048 / 4,

@@ -1,5 +1,6 @@
 import{ getGameHeight } from 'game/helpers';
 import{ getGameWidth } from 'game/helpers';
+import { GameScene  } from 'game/scenes';
 
 interface Props {
   scene: Phaser.Scene;
@@ -15,11 +16,13 @@ export class Player extends Phaser.GameObjects.Sprite {
   private downKey: Phaser.Input.Keyboard.Key;
   private leftKey: Phaser.Input.Keyboard.Key;
   private rightKey: Phaser.Input.Keyboard.Key;
+  private grenadeKey: Phaser.Input.Keyboard.Key;
+  private drankKey: Phaser.Input.Keyboard.Key;
   private pointer: Phaser.Input.Pointer;
   private cursorKeys?: Phaser.Types.Input.Keyboard.CursorKeys;
   private isHitting = false;
   private isDead = false;
-  private lives = 4;
+  private lives = 3;
   public speed = 1000;
 
   constructor({ scene, x, y, key }: Props) {
@@ -60,6 +63,8 @@ export class Player extends Phaser.GameObjects.Sprite {
     this.downKey = this.scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.S);
     this.leftKey = this.scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.A);
     this.rightKey = this.scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.D);
+    this.grenadeKey = this.scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.G);
+    this.drankKey = this.scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.J);
 
     this.scene.add.existing(this);
   }
@@ -72,8 +77,10 @@ export class Player extends Phaser.GameObjects.Sprite {
       const velocity = new Phaser.Math.Vector2(0, 0);
 
       // Handling mouse input
-      if (this.pointer.isDown && this.pointer.getDuration()<50 ){
-        this.setPosition( this.pointer.position.x - (getGameWidth(this.scene)*0.045) , this.pointer.position.y - (getGameWidth(this.scene)*0.045) );
+      if (this.pointer.isDown  && this.pointer.getDuration()<50 ){ //
+        if ( this.validateCoordinates( this.pointer.position.x / getGameWidth(this.scene) , this.pointer.position.y /getGameHeight(this.scene) ) ){
+          this.setPosition( this.pointer.position.x - (getGameWidth(this.scene)*0.045) , this.pointer.position.y - (getGameWidth(this.scene)*0.045) );
+        }
       }
     
       // Horizontal movement
@@ -116,8 +123,36 @@ export class Player extends Phaser.GameObjects.Sprite {
           this.isHitting = false;
       }
 
+      // Using grenades
+      if ( Phaser.Input.Keyboard.JustDown(this.grenadeKey) ){
+        this.anims.play('hit');
+        (this.scene as GameScene).useGrenade();
+      }
+
+      // Using drank
+      if ( Phaser.Input.Keyboard.JustDown(this.drankKey) ){
+        this.anims.play('hit');
+        (this.scene as GameScene).useDrank();
+      }
+
     }
     
+  }
+
+  public validateCoordinates ( x: number, y: number ):boolean {
+    let isValid = true;
+
+    // position within the front button panel
+    if ( x > 0.33 && x < 0.67 && y > 0.81 ){
+      isValid = false ;
+    }
+
+    // position outside the gaming area, in the mountains
+    if (  y < 0.36 ){
+      isValid = false ;
+    }
+
+    return isValid
   }
 
 public animGotchiIdle = () => {
