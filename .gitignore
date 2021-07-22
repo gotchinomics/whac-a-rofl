@@ -11,6 +11,9 @@
 # production
 app/build
 
+# my ignore list
+*/server
+
 # misc
 .DS_Store
 */.env
