@@ -1,6 +1,7 @@
 import { getGameHeight , getGameWidth } from '../helpers';
 import {  SPLASH, COMMONROFL, UNCOMMONROFL, RAREROFL, MYTHICALROFL,  COMMONROFLJOINT, UNCOMMONROFLJOINT, RAREROFLJOINT, MYTHICALROFLJOINT } from 'game/assets';
-//import { Splash } from 'game/objects';
+import { TimeBar } from 'game/objects';
+import { GameScene  } from 'game/scenes';
 
 
 export class Rofl extends Phaser.GameObjects.Sprite {
@@ -15,6 +16,7 @@ export class Rofl extends Phaser.GameObjects.Sprite {
   public sessionID?:number
   public popTimer?: Phaser.Time.TimerEvent;
   public goneTimer?: Phaser.Time.TimerEvent;
+  private timeBar?: Phaser.GameObjects.Graphics;
   //private splash?: Splash;
 
  constructor(scene: Phaser.Scene) {
@@ -27,10 +29,16 @@ export class Rofl extends Phaser.GameObjects.Sprite {
    this.scene.physics.world.enable(this);
    (this.body as Phaser.Physics.Arcade.Body).setGravityY(getGameHeight(this.scene) * 2);
 
+   // Creating time bar
+   this.timeBar = new Phaser.GameObjects.Graphics(scene);
+   this.drawTimebar();
+   this.scene.add.existing(this.timeBar)
+   
+   // Adding Rofl to the scene
    this.scene.add.existing(this);
  }
 
- public activate = (x: number, y: number, positionIndex: number, velocityY: number, sessionID: number) => {
+ public activate = (x: number, y: number, positionIndex: number, velocityY: number, timerHandle : Phaser.Time.TimerEvent) => {
     // Physics
     (this.body as Phaser.Physics.Arcade.Body).setVelocityY(velocityY);
 
@@ -45,7 +53,12 @@ export class Rofl extends Phaser.GameObjects.Sprite {
     this.setPosition(x - this.displayWidth/2, y - this.displayHeight);
     this.positionIndex=positionIndex;
     this.groundY = y - this.displayHeight;
-    this.sessionID = sessionID;
+    //this.sessionID = sessionID;
+    this.goneTimer = timerHandle;
+
+    // Activating goneTimer 
+    //this.scene.time.addEvent(this.goneTimer);
+
 
     /*
     // Adding exit animation
@@ -60,20 +73,22 @@ export class Rofl extends Phaser.GameObjects.Sprite {
 
   private calculateRoflType(brs : number){
 
-    if ( brs >= 25 && brs <= 74){
+    if ( brs >= 11 && brs <= 89){
       this.rarityTag = 'common';
-    } else if( brs >= 10 && brs <= 24){
+    } else if( brs >= 5 && brs <= 7){    // 4%
       this.rarityTag = 'uncommon';
-    } else if( brs >= 75 && brs <= 90){
+    } else if( brs >= 93 && brs <= 95){
       this.rarityTag = 'uncommon';
-    } else if( brs >= 2 && brs <= 9){
+    } else if( brs >= 2 && brs <= 4){    // 3%
+      this.rarityTag = 'rare';   
+    } else if( brs >= 96 && brs <= 97){
       this.rarityTag = 'rare';
-    } else if( brs >= 91 && brs <= 97){
-      this.rarityTag = 'rare';
-    } else if( brs >= 0 && brs <= 1){
+    } else if( brs >= 0 && brs <= 1){    // 2%
       this.rarityTag = 'mythical';
     } else if( brs >= 98 && brs <= 99){
       this.rarityTag = 'mythical';
+    } else {
+      this.rarityTag = 'common';
     }
 
     this.updateRoflImage();
@@ -115,8 +130,45 @@ export class Rofl extends Phaser.GameObjects.Sprite {
     
   };
 
+  //// TIME BAR
+  public drawTimebar ()
+  {
+      const yOffset = getGameHeight(this.scene)*0.1;
+      const barWidthBlack = getGameWidth(this.scene)*0.045;
+      const barWidthWhite = getGameWidth(this.scene)*0.0445;
+      const barHeightBlack = getGameWidth(this.scene)*0.004;
+      const barHeightWhite = getGameWidth(this.scene)*0.0035;
+
+      this.timeBar?.clear();
+
+      let timeLeft= 1;
+
+      if (this.goneTimer != undefined ){
+        timeLeft = (1-this.goneTimer?.getOverallProgress()) * barWidthWhite ; 
+      } 
+
+      //  BG
+      this.timeBar?.fillStyle(0x000000);
+      this.timeBar?.fillRect(this.x, this.y + yOffset, barWidthBlack, barHeightBlack);
+
+      //  Remaining Time
+      this.timeBar?.fillStyle(0xffffff);
+      this.timeBar?.fillRect(this.x + 2, this.y + 2 + yOffset, barWidthWhite, barHeightWhite);
+
+      this.timeBar?.fillStyle(0xff0000);
+
+      this.timeBar?.fillRect(this.x + 2, this.y + 2 + yOffset, timeLeft, barHeightWhite);
+  }
+  ////  
+
   public update = () => {
-      
+
+    // Updating the timer following the rofl status (in case freezing BONUS is used)
+    if( this.goneTimer != undefined ){
+      this.goneTimer.paused = (this.scene as GameScene).roflStoned  ;
+    }
+
+    this.drawTimebar();
       if (this.y > this.groundY && this.isWaiting == false ){
         (this.body as Phaser.Physics.Arcade.Body).setVelocityY( 0 );  
         (this.body as Phaser.Physics.Arcade.Body).setGravityY( 0 );
@@ -143,17 +195,23 @@ export class Rofl extends Phaser.GameObjects.Sprite {
     if (dead == true){
       //this.anims.play('splash_sprite');
       //this.splash?.activate();
+      this.timeBar?.destroy(); 
       this.destroy(); 
     }
   }
 
-  public setStoned(stoned: boolean): void {
+  public setStoned(state: boolean): void {
     
-    if (this.isStoned != stoned){
-      this.isStoned = stoned;
+    if (this.isStoned != state){
+      this.isStoned = state;
       this.updateRoflImage();
+
     } else{
-      this.isStoned = stoned;
+      this.isStoned = state;
+    }
+
+    if (this.goneTimer != undefined){
+      this.goneTimer.paused = true;
     }
 
     

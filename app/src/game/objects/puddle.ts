@@ -36,7 +36,7 @@ export class Puddle extends Phaser.GameObjects.Sprite {
 
  public setPuddle =  (x: number, y: number) => {
 
-    this.setPosition(x-this.displayWidth/2, y-(this.displayHeight*0.6));
+    this.setPosition( x - (this.displayWidth*0.5), y - (this.displayHeight*0.75));
 
     //this.anims.play('idle');
   }

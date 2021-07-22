@@ -77,7 +77,7 @@ export class Player extends Phaser.GameObjects.Sprite {
       const velocity = new Phaser.Math.Vector2(0, 0);
 
       // Handling mouse input
-      if (this.pointer.isDown  && this.pointer.getDuration()<50 ){ //
+      if (this.pointer.isDown   ){ //&& this.pointer.getDuration()<50
         if ( this.validateCoordinates( this.pointer.position.x / getGameWidth(this.scene) , this.pointer.position.y /getGameHeight(this.scene) ) ){
           this.setPosition( this.pointer.position.x - (getGameWidth(this.scene)*0.045) , this.pointer.position.y - (getGameWidth(this.scene)*0.045) );
         }

@@ -1,7 +1,7 @@
 import {   LEFT_CHEVRON, BG, CLICK , POP , GONE , SQUASH, LICKING, GAMETUNE, GAMEOVER, NET , GRENADE, DRANK } from 'game/assets';
 import { AavegotchiGameObject } from 'types';
 import { getGameWidth, getGameHeight, getRelative } from '../helpers';
-import { Player , Rofl, Lickquidator, HeartCounter , Puddle } from 'game/objects';
+import { Player , Rofl, Lickquidator, HeartCounter , Puddle , TimeBar } from 'game/objects';
 import { Socket } from 'dgram';
 import { ProvidedRequiredArgumentsRule } from 'graphql';
 
@@ -78,8 +78,8 @@ export class GameScene extends Phaser.Scene {
   private takenPositions?: number[];
   private arrayTest?: Array<number>;
   private usedPosition= [false,false,false,false,false,false]; //Array<boolean>;
-  private roflStoned = false;
-  private freezeTime = 10000; 
+  public  roflStoned = false;
+  private freezeTime = 3000; 
   private freezeUpdateInterval = 100;
   private firstRun = true;
   private sessionID = Math.random()*10000;
@@ -281,9 +281,19 @@ export class GameScene extends Phaser.Scene {
       rofl.isStoned = true;
     }
 
-    rofl.activate(x, y, position, velocityY, this.sessionID);
+    this.goneRoflTimer  = new Phaser.Time.TimerEvent({
+      delay: this.goneRoflTime,
+      callback: this.roflTimeOut, 
+      args: [rofl as Rofl],
+      loop: false,
+    });
+
+    rofl.activate(x, y, position, velocityY, this.goneRoflTimer );
     
-    // adding TimeOut and Next timer
+    // Activating goneTimer
+    this.time.addEvent(this.goneRoflTimer);
+
+    // adding Next timer
 
     rofl.popTimer = this.time.addEvent({
      delay: this.popRoflTime,
@@ -291,13 +301,19 @@ export class GameScene extends Phaser.Scene {
      callbackScope: this,
      loop: false,
     });
-            
+
+    /*
     rofl.goneTimer = this.time.addEvent({
       delay: this.goneRoflTime,
       callback: this.roflTimeOut, 
       args: [rofl as Rofl],
       loop: false,
     });
+        */    
+
+    //if (this.roflStoned == true){
+    //  rofl.goneTimer.paused = true;
+    //}
    
     // popping sound
     this.pop?.play();
@@ -463,9 +479,9 @@ export class GameScene extends Phaser.Scene {
   };
 
   private roflTimeOut = (rofl : Rofl) => {
+    
 
-
-    if (!rofl.isDead && this.player != undefined && this.endingGame == false && this.sessionID == rofl.sessionID && this.roflStoned == false ){
+    if (!rofl.isDead && this.player != undefined && this.endingGame == false  ){
       
 
       this.player.removeLife();
@@ -481,17 +497,7 @@ export class GameScene extends Phaser.Scene {
       
       rofl.setDead(true);
 
-    } else if(!rofl.isDead && this.player != undefined && this.endingGame == false && this.sessionID == rofl.sessionID && this.roflStoned == true ){
-      
-      // activating BONUS extra time
-      this.time.addEvent({
-        delay: this.freezeUpdateInterval ,
-        callback: this.roflTimeOut, 
-        args: [rofl as Rofl],
-        loop: false,
-      });
-
-    }
+    } 
 
   };
 
@@ -516,17 +522,24 @@ export class GameScene extends Phaser.Scene {
   };
 
   // timer settings
-  // reference (negative exponential model): y = t0* ( exp(-a*x+log(1-b)) +b ) = t0*(exp(alpha)+b)
+  // v1
+  // reference (negative exponential model): y = t0* ( exp(-a*x+log(1-b)) +b ) = t0*(exp(alpha)+b) // a= 0.05; b = 0.1; t0 = 4;
+  // v2
+  // simplified version
+  // t0*exp(-roflCount/100))
   private updateRoflTimers (){
-    const b = 0.1;
-    const a = 0.05;
-    const alpha = (-a*this.roflCount)+Math.log2(0.95);
-
+    const tOffset = 300; // ms
+    //const b = 0.1;
+    //const a = 0.05;
+    //const alpha = (-a*this.roflCount)+Math.log2(0.95);
+    
     if ( this.popRoflTime != undefined && this.goneRoflTime != undefined ){
-      
-      this.popRoflTime = Math.floor(this.popRoflTimeIni*(Math.exp(alpha)+b));
-      this.goneRoflTime = Math.floor(this.goneRoflTimeIni*(Math.exp(alpha)+b));
-
+      // v1
+      //this.popRoflTime = Math.floor(this.popRoflTimeIni*(Math.exp(alpha)+b));
+      //this.goneRoflTime = Math.floor(this.goneRoflTimeIni*(Math.exp(alpha)+b));
+      // v2
+      this.popRoflTime  = Math.floor( this.popRoflTimeIni*( Math.exp(-this.roflCount/35) ) ) + tOffset;
+      this.goneRoflTime = Math.floor(this.goneRoflTimeIni*( Math.exp(-this.roflCount/35) ) ) + tOffset;
     } else {
 
       this.popRoflTime = this.popRoflTimeIni;
@@ -559,22 +572,22 @@ export class GameScene extends Phaser.Scene {
     let x=0;
     switch (true) {
       case positionIndex == 1:
-        x = getGameWidth(this)  * ( 0.215 ); //-0.034
+        x = getGameWidth(this)  * ( 0.277 ); //-0.034
         break;
       case positionIndex == 2:
         x = getGameWidth(this)  * ( 0.145 );
         break;
       case positionIndex == 3:
-        x = getGameWidth(this)  * ( 0.332 );
+        x = getGameWidth(this)  * ( 0.35 );
         break;
       case positionIndex == 4:
-        x = getGameWidth(this)  * ( 0.797 );
+        x = getGameWidth(this)  * ( 0.723 );
         break;
       case positionIndex == 5:
         x = getGameWidth(this)  * ( 0.854 );
          break;
       case positionIndex >= 6:
-        x= getGameWidth(this)  * ( 0.671 );
+        x= getGameWidth(this)  * ( 0.65 );
         break;
       default:
     }
@@ -585,7 +598,7 @@ export class GameScene extends Phaser.Scene {
     let y=0;
     switch (true) {
       case positionIndex == 1:
-        y = getGameHeight(this) * ( 0.89  ); //-0.062  
+        y = getGameHeight(this) * ( 0.87  ); //-0.062  
         break;
       case positionIndex == 2:
         y = getGameHeight(this) * ( 0.672 );
@@ -594,7 +607,7 @@ export class GameScene extends Phaser.Scene {
         y = getGameHeight(this) * ( 0.517 );
         break;
       case positionIndex == 4:
-        y = getGameHeight(this) * ( 0.89  );
+        y = getGameHeight(this) * ( 0.87  );
         break;
       case positionIndex == 5:
          y = getGameHeight(this) * ( 0.672 );
