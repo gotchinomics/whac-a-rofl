@@ -24,14 +24,28 @@ export class Player extends Phaser.GameObjects.Sprite {
   private isDead = false;
   private lives = 3;
   public speed = 1000;
+  // aux variables to perform the quick move and return movement
+  private movingToTarget = false;
+  private movingToOrigin = false;
+  private targetX?: number;
+  private targetY?: number;
+  private X0?: number;
+  private Y0?: number;
+  private distanceToTarget?: number;
+  private movingSpeed= 5000;
+  
+
 
   constructor({ scene, x, y, key }: Props) {
     super(scene, x, y, key);
     this.displayHeight = getGameHeight(scene) * 0.15;
     this.displayWidth = getGameHeight(scene) * 0.15;
-
+    //this.positionTolerance = getGameHeight(scene) * 0.04;
     // sprite
     this.setOrigin(0, 0);
+    this.X0 = getGameWidth(this.scene)*0.5  - (getGameWidth(this.scene)*0.045);
+    this.Y0 = getGameHeight(this.scene)*0.6 -  (getGameWidth(this.scene)*0.045);
+            
 
     // Add animations
     this.anims.create({
@@ -71,7 +85,9 @@ export class Player extends Phaser.GameObjects.Sprite {
 
   update(): void {
 
-    if (!this.isDead){
+    if (!this.isDead && this.X0 != undefined && this.Y0 != undefined ){
+
+      if (!this.movingToTarget && !this.movingToOrigin){
 
       // Every frame, we create a new velocity for the sprite based on what keys the player is holding down.
       const velocity = new Phaser.Math.Vector2(0, 0);
@@ -79,38 +95,20 @@ export class Player extends Phaser.GameObjects.Sprite {
       // Handling mouse input
       if (this.pointer.isDown   ){ //&& this.pointer.getDuration()<50
         if ( this.validateCoordinates( this.pointer.position.x / getGameWidth(this.scene) , this.pointer.position.y /getGameHeight(this.scene) ) ){
-          this.setPosition( this.pointer.position.x - (getGameWidth(this.scene)*0.045) , this.pointer.position.y - (getGameWidth(this.scene)*0.045) );
+          if (this.pointer.getDuration() < 20){
+            this.targetX = this.pointer.position.x - (getGameWidth(this.scene)*0.045);
+            this.targetY = this.pointer.position.y - (getGameWidth(this.scene)*0.045);
+            this.distanceToTarget = Phaser.Math.Distance.Between(this.X0,this.Y0,this.targetX,this.targetY);
+            this.scene.physics.moveTo( this, this.targetX , this.targetY , this.movingSpeed );
+            this.movingToTarget = true;
+          } else{
+            this.setPosition( this.pointer.position.x - (getGameWidth(this.scene)*0.045) , this.pointer.position.y - (getGameWidth(this.scene)*0.045) );
+          }
         }
       }
     
-      // Horizontal movement
-      switch (true) {
-       case (this.cursorKeys?.left.isDown || this.leftKey.isDown) && this.x > 10:
-         velocity.x -= 1;
-         break;
-       case (this.cursorKeys?.right.isDown || this.rightKey.isDown) && this.x < (getGameWidth(this.scene)-150) :
-         velocity.x += 1;
-         break;
-       default: 
-      }
- 
-      // Vertical movement
-      switch (true) {
-        case (this.cursorKeys?.down.isDown || this.downKey.isDown) && this.y < (getGameHeight(this.scene)-150) :
-         velocity.y += 1;
-         break;
-        case (this.cursorKeys?.up.isDown  || this.upKey.isDown)  && this.y > 300:
-          velocity.y -= 1;
-          break;
-        default:
-      }
-
       this.animGotchiIdle();
- 
-      // We normalize the velocity so that the player is always moving at the same speed, regardless of direction.
-      const normalizedVelocity = velocity.normalize();
-      (this.body as Phaser.Physics.Arcade.Body).setVelocity(normalizedVelocity.x * this.speed, normalizedVelocity.y * this.speed);
-
+      
       // handling hitting input
       if ( (this.hitKey.isDown || this.pointer.isDown)  && !this.isHitting) {
         // jump
@@ -134,6 +132,29 @@ export class Player extends Phaser.GameObjects.Sprite {
         this.anims.play('hit');
         (this.scene as GameScene).useDrank();
       }
+
+      if (this.x != this.X0 || this.y != this.Y0 ){
+        this.setPosition( this.X0 , this.Y0 );
+      }
+      
+
+    } else {
+      if (this.movingToTarget && this.targetX != undefined && this.targetY != undefined && this.distanceToTarget!= undefined ){
+        if ( Phaser.Math.Distance.Between(this.X0,this.Y0,this.x,this.y) >= this.distanceToTarget ){
+          this.movingToTarget = false;
+          this.scene.physics.moveTo( this, this.X0 , this.Y0 , this.movingSpeed );
+          this.movingToOrigin = true;
+        }
+      } else if(this.movingToOrigin && this.distanceToTarget!= undefined && this.targetX != undefined && this.targetY != undefined ){
+        if ( Phaser.Math.Distance.Between(this.targetX,this.targetY,this.x,this.y) >= this.distanceToTarget ){
+          this.movingToOrigin = false;
+          (this.body as Phaser.Physics.Arcade.Body).setVelocity(0);       
+          this.setPosition( this.X0 , this.Y0 );
+        }
+      }
+
+    }
+
 
     }
     

@@ -45,9 +45,9 @@ export class GameScene extends Phaser.Scene {
   private scoreText?: Phaser.GameObjects.Text;
   private heartCounter?: HeartCounter;
 
-  // Timer Settings
+  // Timer Settings 
   private popRoflTimeIni = 3000;
-  private goneRoflTimeIni = 8000;
+  private goneRoflTimeIni = 4000; //15000;
   private popRoflTime?: number;
   private goneRoflTime?: number;
   private firstLickquidatorTime = 20000;
@@ -539,7 +539,7 @@ export class GameScene extends Phaser.Scene {
       //this.goneRoflTime = Math.floor(this.goneRoflTimeIni*(Math.exp(alpha)+b));
       // v2
       this.popRoflTime  = Math.floor( this.popRoflTimeIni*( Math.exp(-this.roflCount/35) ) ) + tOffset;
-      this.goneRoflTime = Math.floor(this.goneRoflTimeIni*( Math.exp(-this.roflCount/35) ) ) + tOffset;
+      this.goneRoflTime = Math.floor(this.goneRoflTimeIni*( Math.exp(-this.roflCount/100) ) ) + tOffset;
     } else {
 
       this.popRoflTime = this.popRoflTimeIni;
