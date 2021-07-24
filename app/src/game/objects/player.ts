@@ -24,16 +24,17 @@ export class Player extends Phaser.GameObjects.Sprite {
   private isDead = false;
   private lives = 3;
   public speed = 1000;
+  private X0?: number;
+  private Y0?: number;
   // aux variables to perform the quick move and return movement
+  /*
   private movingToTarget = false;
   private movingToOrigin = false;
   private targetX?: number;
   private targetY?: number;
-  private X0?: number;
-  private Y0?: number;
   private distanceToTarget?: number;
   private movingSpeed= 5000;
-  
+  */
 
 
   constructor({ scene, x, y, key }: Props) {
@@ -87,7 +88,7 @@ export class Player extends Phaser.GameObjects.Sprite {
 
     if (!this.isDead && this.X0 != undefined && this.Y0 != undefined ){
 
-      if (!this.movingToTarget && !this.movingToOrigin){
+     // if (!this.movingToTarget && !this.movingToOrigin){
 
       // Every frame, we create a new velocity for the sprite based on what keys the player is holding down.
       const velocity = new Phaser.Math.Vector2(0, 0);
@@ -95,15 +96,15 @@ export class Player extends Phaser.GameObjects.Sprite {
       // Handling mouse input
       if (this.pointer.isDown   ){ //&& this.pointer.getDuration()<50
         if ( this.validateCoordinates( this.pointer.position.x / getGameWidth(this.scene) , this.pointer.position.y /getGameHeight(this.scene) ) ){
-          if (this.pointer.getDuration() < 20){
-            this.targetX = this.pointer.position.x - (getGameWidth(this.scene)*0.045);
-            this.targetY = this.pointer.position.y - (getGameWidth(this.scene)*0.045);
-            this.distanceToTarget = Phaser.Math.Distance.Between(this.X0,this.Y0,this.targetX,this.targetY);
-            this.scene.physics.moveTo( this, this.targetX , this.targetY , this.movingSpeed );
-            this.movingToTarget = true;
-          } else{
+        //  if (this.pointer.getDuration() < 20){
+        //    this.targetX = this.pointer.position.x - (getGameWidth(this.scene)*0.045);
+        //    this.targetY = this.pointer.position.y - (getGameWidth(this.scene)*0.045);
+        //    this.distanceToTarget = Phaser.Math.Distance.Between(this.X0,this.Y0,this.targetX,this.targetY);
+        //    this.scene.physics.moveTo( this, this.targetX , this.targetY , this.movingSpeed );
+        //    this.movingToTarget = true;
+        //  } else{
             this.setPosition( this.pointer.position.x - (getGameWidth(this.scene)*0.045) , this.pointer.position.y - (getGameWidth(this.scene)*0.045) );
-          }
+        //  }
         }
       }
     
@@ -133,10 +134,10 @@ export class Player extends Phaser.GameObjects.Sprite {
         (this.scene as GameScene).useDrank();
       }
 
+    /*
       if (this.x != this.X0 || this.y != this.Y0 ){
         this.setPosition( this.X0 , this.Y0 );
       }
-      
 
     } else {
       if (this.movingToTarget && this.targetX != undefined && this.targetY != undefined && this.distanceToTarget!= undefined ){
@@ -152,9 +153,8 @@ export class Player extends Phaser.GameObjects.Sprite {
           this.setPosition( this.X0 , this.Y0 );
         }
       }
-
     }
-
+    */
 
     }
     

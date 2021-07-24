@@ -55,6 +55,10 @@ export class GameScene extends Phaser.Scene {
   private goneLickquidatorTimeIni = 2000;
   private popLickquidatorTime?: number;
   private goneLickquidatorTime?: number;
+  private popRoflTimeOffset = 300;   // IF CHANGED, PLEASE UPDATE SERVER.TS
+  private goneRoflTimeOffset = 300;
+  private popRoflTimeSlope = 1/35;  // IF CHANGED, PLEASE UPDATE SERVER.TS
+  private goneRoflTimeSlope = 1/100;
   private gameOverTime = 3000;
   
   // Timer handles
@@ -528,7 +532,7 @@ export class GameScene extends Phaser.Scene {
   // simplified version
   // t0*exp(-roflCount/100))
   private updateRoflTimers (){
-    const tOffset = 300; // ms
+    //const tOffset = 300; // ms
     //const b = 0.1;
     //const a = 0.05;
     //const alpha = (-a*this.roflCount)+Math.log2(0.95);
@@ -538,8 +542,8 @@ export class GameScene extends Phaser.Scene {
       //this.popRoflTime = Math.floor(this.popRoflTimeIni*(Math.exp(alpha)+b));
       //this.goneRoflTime = Math.floor(this.goneRoflTimeIni*(Math.exp(alpha)+b));
       // v2
-      this.popRoflTime  = Math.floor( this.popRoflTimeIni*( Math.exp(-this.roflCount/35) ) ) + tOffset;
-      this.goneRoflTime = Math.floor(this.goneRoflTimeIni*( Math.exp(-this.roflCount/100) ) ) + tOffset;
+      this.popRoflTime  = Math.floor( this.popRoflTimeIni*( Math.exp(-this.roflCount * this.popRoflTimeSlope) ) ) + this.popRoflTimeOffset;
+      this.goneRoflTime = Math.floor(this.goneRoflTimeIni*( Math.exp(-this.roflCount* this.goneRoflTimeSlope ) ) ) + this.goneRoflTimeOffset;
     } else {
 
       this.popRoflTime = this.popRoflTimeIni;
