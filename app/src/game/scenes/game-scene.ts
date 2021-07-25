@@ -88,6 +88,7 @@ export class GameScene extends Phaser.Scene {
   private firstRun = true;
   private sessionID = Math.random()*10000;
   private pointer?: Phaser.Input.Pointer;
+  private gotchiTraits?: Array<number>;
 
   
 
@@ -158,42 +159,42 @@ export class GameScene extends Phaser.Scene {
       maxSize: 30,
       classType: Rofl,
       runChildUpdate: true,
-     });
+    });
 
-     // Add Liquidators group
-     this.lickquidators = this.add.group({
+    // Add Liquidators group
+    this.lickquidators = this.add.group({
       maxSize: 6,
       classType: Lickquidator,
       runChildUpdate: true,
-     });
+    });
 
-     // Add Puddles
-     this.puddles = this.add.group({
+    // Add Puddles
+    this.puddles = this.add.group({
       maxSize: 6,
       classType: Puddle,
       runChildUpdate: false,
-     });
-     this.puddleArray = [];
+    });
+    this.puddleArray = [];
  
-   // Creating Puddles
-   const puddle1: Puddle = this.puddles?.get();
-   puddle1.setPuddle(this.getLocationX(1),this.getLocationY(1));
-   this.puddleArray.push(puddle1);
-   const puddle2: Puddle = this.puddles?.get();
-   puddle2.setPuddle(this.getLocationX(2),this.getLocationY(2));
-   this.puddleArray.push(puddle2);
-   const puddle3: Puddle = this.puddles?.get();
-   puddle3.setPuddle(this.getLocationX(3),this.getLocationY(3));
-   this.puddleArray.push(puddle3);
-   const puddle4: Puddle = this.puddles?.get();
-   puddle4.setPuddle(this.getLocationX(4),this.getLocationY(4));
-   this.puddleArray.push(puddle4);
-   const puddle5: Puddle = this.puddles?.get();
-   puddle5.setPuddle(this.getLocationX(5),this.getLocationY(5));
-   this.puddleArray.push(puddle5);
-   const puddle6: Puddle = this.puddles?.get();
-   puddle6.setPuddle(this.getLocationX(6),this.getLocationY(6));
-   this.puddleArray.push(puddle6);
+    // Creating Puddles
+    const puddle1: Puddle = this.puddles?.get();
+    puddle1.setPuddle(this.getLocationX(1),this.getLocationY(1));
+    this.puddleArray.push(puddle1);
+    const puddle2: Puddle = this.puddles?.get();
+    puddle2.setPuddle(this.getLocationX(2),this.getLocationY(2));
+    this.puddleArray.push(puddle2);
+    const puddle3: Puddle = this.puddles?.get();
+    puddle3.setPuddle(this.getLocationX(3),this.getLocationY(3));
+    this.puddleArray.push(puddle3);
+    const puddle4: Puddle = this.puddles?.get();
+    puddle4.setPuddle(this.getLocationX(4),this.getLocationY(4));
+    this.puddleArray.push(puddle4);
+    const puddle5: Puddle = this.puddles?.get();
+    puddle5.setPuddle(this.getLocationX(5),this.getLocationY(5));
+    this.puddleArray.push(puddle5);
+    const puddle6: Puddle = this.puddles?.get();
+    puddle6.setPuddle(this.getLocationX(6),this.getLocationY(6));
+    this.puddleArray.push(puddle6);
 
    // Creating buttons
    this.grenadeButton = this.add.image( getGameWidth(this) * 0.45, getGameHeight(this) * 0.93, GRENADE ) ;
@@ -209,28 +210,45 @@ export class GameScene extends Phaser.Scene {
    this.grenadeButton.on('pointerup', this.useGrenade, this);
    this.drankButton.on('pointerup', this.useDrank, this);
 
-
-
-   //this.input.on('gameobjectdown',this.onObjectClicked);
-
     // Add heart counter
-    this.heartCounter = new HeartCounter(this);    
-   /*
-    // Create first timer Event
-    this.popRoflTimer = new Phaser.Time.TimerEvent({
-      delay: this.popRoflTime,
-      callback: this.addRofls,
-      callbackScope: this,
-      loop: false,
-    });
+    this.heartCounter = new HeartCounter(this); 
     
-    this.popRoflTimer = this.time.addEvent({
-      delay: this.popRoflTime,
-      callback: this.addRofls,
-      callbackScope: this,
-      loop: false,
-     });
-     */
+    /////////////////////////////////////////
+    // Adjusting game settings depending on Aavegotchi traits
+    /////////////////////////////////////////
+    if ( this.selectedGotchi != undefined){
+      this.gotchiTraits = this.selectedGotchi.withSetsNumericTraits;
+      this.player.setGotchiTraits( this.gotchiTraits[0], this.gotchiTraits[1], this.gotchiTraits[2], this.gotchiTraits[3], this.gotchiTraits[4], this.gotchiTraits[5] );
+    
+     // NRG : more energy, more hearts
+     if (this.gotchiTraits[0] <10 ){
+      this.lives = 1;
+     } else if ( this.gotchiTraits[0] >= 10 && this.gotchiTraits[0] < 25 ){
+      this.lives = 2;
+     } else if ( this.gotchiTraits[0] >= 25 && this.gotchiTraits[0] < 74 ){
+      this.lives = 3;
+     } else if ( this.gotchiTraits[0] >= 74 && this.gotchiTraits[0] < 91 ){
+      this.lives = 4;
+     } else if ( this.gotchiTraits[0] >= 91  ){
+      this.lives = 5;
+     }
+     if ( this.lives != undefined) {
+      this.player.setLifes(this.lives);
+      this.heartCounter?.setRemainingHearts( this.lives );
+     }
+     
+     // AGG : higher chance of grenades if high trait
+     
+     // SPK : the more spooky, the quicker the rofls go away
+     this.goneRoflTimeIni =  this.goneRoflTimeIni * ( 1.8 - (this.gotchiTraits[3]/100)  )  ; // 1.8 :  0= 1.8; 50=1.3; 100=0.8
+
+     //this.scoreText.setText(this.goneRoflTimeIni.toString()); // FOR DEBUGGING PURPOSES
+     // BRN : higher chance of drank if brain is smol
+
+
+
+    }
+
 
   }
   /// END OF CREATE VOID  ////

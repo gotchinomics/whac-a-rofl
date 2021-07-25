@@ -24,8 +24,17 @@ export class Player extends Phaser.GameObjects.Sprite {
   private isDead = false;
   private lives = 3;
   public speed = 1000;
-  private X0?: number;
-  private Y0?: number;
+  private x0?: number;
+  private y0?: number;
+  // Player Gotchi traits
+  private nrg?: number;
+  private agg?: number;
+  private spk?: number;
+  private brn?: number;
+  private eys?: number;
+  private eyc?: number;
+
+
   // aux variables to perform the quick move and return movement
   /*
   private movingToTarget = false;
@@ -44,8 +53,8 @@ export class Player extends Phaser.GameObjects.Sprite {
     //this.positionTolerance = getGameHeight(scene) * 0.04;
     // sprite
     this.setOrigin(0, 0);
-    this.X0 = getGameWidth(this.scene)*0.5  - (getGameWidth(this.scene)*0.045);
-    this.Y0 = getGameHeight(this.scene)*0.6 -  (getGameWidth(this.scene)*0.045);
+    this.x0 = getGameWidth(this.scene)*0.5  - (getGameWidth(this.scene)*0.045);
+    this.y0 = getGameHeight(this.scene)*0.6 -  (getGameWidth(this.scene)*0.045);
             
 
     // Add animations
@@ -86,7 +95,7 @@ export class Player extends Phaser.GameObjects.Sprite {
 
   update(): void {
 
-    if (!this.isDead && this.X0 != undefined && this.Y0 != undefined ){
+    if (!this.isDead && this.x0 != undefined && this.y0 != undefined ){
 
      // if (!this.movingToTarget && !this.movingToOrigin){
 
@@ -99,7 +108,7 @@ export class Player extends Phaser.GameObjects.Sprite {
         //  if (this.pointer.getDuration() < 20){
         //    this.targetX = this.pointer.position.x - (getGameWidth(this.scene)*0.045);
         //    this.targetY = this.pointer.position.y - (getGameWidth(this.scene)*0.045);
-        //    this.distanceToTarget = Phaser.Math.Distance.Between(this.X0,this.Y0,this.targetX,this.targetY);
+        //    this.distanceToTarget = Phaser.Math.Distance.Between(this.x0,this.y0,this.targetX,this.targetY);
         //    this.scene.physics.moveTo( this, this.targetX , this.targetY , this.movingSpeed );
         //    this.movingToTarget = true;
         //  } else{
@@ -135,22 +144,22 @@ export class Player extends Phaser.GameObjects.Sprite {
       }
 
     /*
-      if (this.x != this.X0 || this.y != this.Y0 ){
-        this.setPosition( this.X0 , this.Y0 );
+      if (this.x != this.x0 || this.y != this.y0 ){
+        this.setPosition( this.x0 , this.y0 );
       }
 
     } else {
       if (this.movingToTarget && this.targetX != undefined && this.targetY != undefined && this.distanceToTarget!= undefined ){
-        if ( Phaser.Math.Distance.Between(this.X0,this.Y0,this.x,this.y) >= this.distanceToTarget ){
+        if ( Phaser.Math.Distance.Between(this.x0,this.y0,this.x,this.y) >= this.distanceToTarget ){
           this.movingToTarget = false;
-          this.scene.physics.moveTo( this, this.X0 , this.Y0 , this.movingSpeed );
+          this.scene.physics.moveTo( this, this.x0 , this.y0 , this.movingSpeed );
           this.movingToOrigin = true;
         }
       } else if(this.movingToOrigin && this.distanceToTarget!= undefined && this.targetX != undefined && this.targetY != undefined ){
         if ( Phaser.Math.Distance.Between(this.targetX,this.targetY,this.x,this.y) >= this.distanceToTarget ){
           this.movingToOrigin = false;
           (this.body as Phaser.Physics.Arcade.Body).setVelocity(0);       
-          this.setPosition( this.X0 , this.Y0 );
+          this.setPosition( this.x0 , this.y0 );
         }
       }
     }
@@ -205,6 +214,12 @@ public addLife(){
   }
 }
 
+public setLifes( lives: number){
+  if (this.lives <=5 ){
+    this.lives = lives ;
+  }
+}
+
 public getLives(): number {
   return this.lives;
 }
@@ -212,5 +227,15 @@ public getLives(): number {
 public getLivesString(): string {
   return this.lives.toString();
 }
+
+public setGotchiTraits(nrg: number, agg: number, spk: number, brn: number, eys: number, eyc: number): void {
+  this.nrg = nrg;
+  this.agg = agg;
+  this.spk = spk;
+  this.brn = brn;
+  this.eys = eys;
+  this.eyc = eyc;
+}
+
 
 }

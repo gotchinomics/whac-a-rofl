@@ -120,71 +120,71 @@ export const assets: Array<Asset | SpritesheetAsset> = [
     src: 'assets/sprites/commonrofl.png',
     type: 'SPRITESHEET',
     data: {
-      frameWidth: 553 / 1,
-      frameHeight: 553 / 1,
+      frameWidth: 512 / 1,
+      frameHeight: 512 / 1,
     }
   },
   {
     key: UNCOMMONROFL,
-    src: 'assets/sprites/uncommonrofl.png',
+    src: 'assets/sprites/lilmythicalrofl.png',
     type: 'SPRITESHEET',
     data: {
-      frameWidth: 553 / 1,
-      frameHeight: 553 / 1,
+      frameWidth: 512 / 1,
+      frameHeight: 512 / 1,
     }
   },
   {
     key: RAREROFL,
-    src: 'assets/sprites/rarerofl.png',
+    src: 'assets/sprites/rarerofl2.png',
     type: 'SPRITESHEET',
     data: {
-      frameWidth: 553 / 1,
-      frameHeight: 553 / 1,
+      frameWidth: 512 / 1,
+      frameHeight: 512 / 1,
     }
   },
   {
     key: MYTHICALROFL,
-    src: 'assets/sprites/mythicalrofl.png',
+    src: 'assets/sprites/godlikerofl.png',
     type: 'SPRITESHEET',
     data: {
-      frameWidth: 553 / 1,
-      frameHeight: 553 / 1,
+      frameWidth: 512 / 1,
+      frameHeight: 512 / 1,
     }
   },
   {
     key: COMMONROFLJOINT,
-    src: 'assets/sprites/commonrofl_joint.png',
+    src: 'assets/sprites/commonrofl_drank.png',
     type: 'SPRITESHEET',
     data: {
-      frameWidth: 553 / 1,
-      frameHeight: 553 / 1,
+      frameWidth: 512 / 1,
+      frameHeight: 512 / 1,
     }
   },
   {
     key: UNCOMMONROFLJOINT,
-    src: 'assets/sprites/uncommonrofl_joint.png',
+    src: 'assets/sprites/lilmythicalrofl_drank.png',
     type: 'SPRITESHEET',
     data: {
-      frameWidth: 553 / 1,
-      frameHeight: 553 / 1,
+      frameWidth: 512 / 1,
+      frameHeight: 512 / 1,
     }
   },
   {
     key: RAREROFLJOINT,
-    src: 'assets/sprites/rarerofl_joint.png',
+    src: 'assets/sprites/rarerofl2_drank.png',
     type: 'SPRITESHEET',
     data: {
-      frameWidth: 553 / 1,
-      frameHeight: 553 / 1,
+      frameWidth: 512 / 1,
+      frameHeight: 512 / 1,
     }
   },
   {
     key: MYTHICALROFLJOINT,
-    src: 'assets/sprites/mythicalrofl_joint.png',
+    src: 'assets/sprites/godlikerofl_drank.png',
     type: 'SPRITESHEET',
     data: {
-      frameWidth: 553 / 1,
-      frameHeight: 553 / 1,
+      frameWidth: 512 / 1,
+      frameHeight: 512 / 1,
     }
   },
   {
