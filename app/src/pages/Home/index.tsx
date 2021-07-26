@@ -116,9 +116,9 @@ const Home = () => {
         handleClose={() => setShowRulesModal(false)}
       >
         <div className={styles.modalContent}>
-          <h1>Minigame Template</h1>
+          <h1>WHAC-A-ROFL</h1>
           <p>
-            Just a modal example. You can put your game rules in here.
+            Describe game here
           </p>
         </div>
       </Modal>
