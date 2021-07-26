@@ -32,13 +32,13 @@ export const GAMETUNE = 'gametune';
 export const GAMEOVER = 'gameover';
 export const HEART = 'heart';
 export const COMMONROFL = 'commonrofl';
-export const UNCOMMONROFL = 'uncommonrofl';
-export const RAREROFL = 'rarerofl';
-export const MYTHICALROFL = 'mythicalrofl';
-export const COMMONROFLJOINT = 'commonrofljoint';
-export const UNCOMMONROFLJOINT = 'uncommonrofljoint';
-export const RAREROFLJOINT = 'rarerofljoint';
-export const MYTHICALROFLJOINT = 'mythicalrofl_oint';
+export const GRENADEROFL = 'grenaderofl';
+export const DRANKROFL = 'drankrofl';
+export const HEARTROFL = 'heartrofl';
+export const COMMONROFLDRANK = 'commonrofldrank';
+export const GRENADEROFLDRANK = 'grenaderofldrank';
+export const DRANKROFLDRANK = 'drankrofldrank';
+export const HEARTROFLDRANK = 'heartrofldrank';
 export const LICKQUIDATOR = 'lickquidator';
 export const SPLASH = 'splash';
 export const HITTING = 'hitting';
@@ -125,8 +125,8 @@ export const assets: Array<Asset | SpritesheetAsset> = [
     }
   },
   {
-    key: UNCOMMONROFL,
-    src: 'assets/sprites/lilmythicalrofl.png',
+    key: GRENADEROFL,
+    src: 'assets/sprites/grenaderofl.png',
     type: 'SPRITESHEET',
     data: {
       frameWidth: 512 / 1,
@@ -134,8 +134,8 @@ export const assets: Array<Asset | SpritesheetAsset> = [
     }
   },
   {
-    key: RAREROFL,
-    src: 'assets/sprites/rarerofl2.png',
+    key: DRANKROFL,
+    src: 'assets/sprites/drankrofl.png',
     type: 'SPRITESHEET',
     data: {
       frameWidth: 512 / 1,
@@ -143,8 +143,8 @@ export const assets: Array<Asset | SpritesheetAsset> = [
     }
   },
   {
-    key: MYTHICALROFL,
-    src: 'assets/sprites/godlikerofl.png',
+    key: HEARTROFL,
+    src: 'assets/sprites/heartrofl.png',
     type: 'SPRITESHEET',
     data: {
       frameWidth: 512 / 1,
@@ -152,7 +152,7 @@ export const assets: Array<Asset | SpritesheetAsset> = [
     }
   },
   {
-    key: COMMONROFLJOINT,
+    key: COMMONROFLDRANK,
     src: 'assets/sprites/commonrofl_drank.png',
     type: 'SPRITESHEET',
     data: {
@@ -161,8 +161,8 @@ export const assets: Array<Asset | SpritesheetAsset> = [
     }
   },
   {
-    key: UNCOMMONROFLJOINT,
-    src: 'assets/sprites/lilmythicalrofl_drank.png',
+    key: GRENADEROFLDRANK,
+    src: 'assets/sprites/grenaderofl_drank.png',
     type: 'SPRITESHEET',
     data: {
       frameWidth: 512 / 1,
@@ -170,8 +170,8 @@ export const assets: Array<Asset | SpritesheetAsset> = [
     }
   },
   {
-    key: RAREROFLJOINT,
-    src: 'assets/sprites/rarerofl2_drank.png',
+    key: DRANKROFLDRANK,
+    src: 'assets/sprites/drankrofl_drank.png',
     type: 'SPRITESHEET',
     data: {
       frameWidth: 512 / 1,
@@ -179,8 +179,8 @@ export const assets: Array<Asset | SpritesheetAsset> = [
     }
   },
   {
-    key: MYTHICALROFLJOINT,
-    src: 'assets/sprites/godlikerofl_drank.png',
+    key: HEARTROFLDRANK,
+    src: 'assets/sprites/heartrofl_drank.png',
     type: 'SPRITESHEET',
     data: {
       frameWidth: 512 / 1,

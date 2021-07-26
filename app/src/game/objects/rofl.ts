@@ -1,5 +1,5 @@
 import { getGameHeight , getGameWidth } from '../helpers';
-import {  SPLASH, COMMONROFL, UNCOMMONROFL, RAREROFL, MYTHICALROFL,  COMMONROFLJOINT, UNCOMMONROFLJOINT, RAREROFLJOINT, MYTHICALROFLJOINT } from 'game/assets';
+import {  SPLASH, COMMONROFL, GRENADEROFL, DRANKROFL, HEARTROFL,  COMMONROFLDRANK, GRENADEROFLDRANK, DRANKROFLDRANK, HEARTROFLDRANK } from 'game/assets';
 import { TimeBar } from 'game/objects';
 import { GameScene  } from 'game/scenes';
 
@@ -17,6 +17,14 @@ export class Rofl extends Phaser.GameObjects.Sprite {
   public popTimer?: Phaser.Time.TimerEvent;
   public goneTimer?: Phaser.Time.TimerEvent;
   private timeBar?: Phaser.GameObjects.Graphics;
+  // odds boundaries
+  private grnLow?: number;
+  private drkLow?: number;
+  private hrtLow?: number;
+  private grnHigh?: number;
+  private drkHigh?: number;
+  private hrtHigh?: number;
+  private oddOffset = 40;
   //private splash?: Splash;
 
  constructor(scene: Phaser.Scene) {
@@ -71,6 +79,7 @@ export class Rofl extends Phaser.GameObjects.Sprite {
    // }
   }
 
+  /*
   private calculateRoflType(brs : number){
 
     if ( brs >= 11 && brs <= 89){
@@ -92,6 +101,37 @@ export class Rofl extends Phaser.GameObjects.Sprite {
     }
 
     this.updateRoflImage();
+  } */
+
+  private calculateRoflType(brs : number){
+
+    if ( this.grnLow != undefined && this.grnHigh != undefined && this.drkLow != undefined && this.drkHigh != undefined && this.hrtLow != undefined && this.hrtHigh != undefined ){
+    
+      if ( brs >= this.grnLow && brs <= this.grnHigh ){
+        this.rarityTag = 'grenade';
+      } else if(  brs >= this.drkLow && brs <= this.drkHigh ){   
+        this.rarityTag = 'drank';
+      } else if( brs >= this.hrtLow && brs <= this.hrtHigh ){
+        this.rarityTag = 'heart';
+      } else {
+      this.rarityTag = 'common';
+      }
+
+      this.updateRoflImage();
+
+    }
+  }
+
+  public setRoflOdds = ( grn : number, drk : number, hrt : number) => {
+    // checking for valid odds
+    if ( grn+drk+hrt <= 15 && grn+drk+hrt >= 3 ){
+      this.grnLow = this.oddOffset ;
+      this.grnHigh = this.grnLow + grn - 1;
+      this.drkLow = this.grnHigh + 1;
+      this.drkHigh = this.drkLow + drk - 1;
+      this.hrtLow = this.drkHigh + 1;
+      this.hrtHigh = this.hrtLow + hrt - 1;
+    }
   }
 
   public updateRoflImage = () => {
@@ -100,27 +140,23 @@ export class Rofl extends Phaser.GameObjects.Sprite {
       if (!this.isStoned){
        if (this.rarityTag == 'common') {
         this.setTexture(COMMONROFL);
-       } else if(this.rarityTag == 'uncommon'){
-        this.setTexture(UNCOMMONROFL);
-       } else if(this.rarityTag == 'rare'){
-         this.setTexture(RAREROFL);
-       } else if(this.rarityTag == 'mythical'){
-         this.setTexture(MYTHICALROFL);
-        } else {
-          this.setTexture(COMMONROFL);
-       }
+       } else if(this.rarityTag == 'grenade'){
+        this.setTexture(GRENADEROFL);
+       } else if(this.rarityTag == 'drank'){
+         this.setTexture(DRANKROFL);
+       } else if(this.rarityTag == 'heart'){
+         this.setTexture(HEARTROFL);
+        } 
       } else{
         if (this.rarityTag == 'common') {
-         this.setTexture(COMMONROFLJOINT);
-       } else if(this.rarityTag == 'uncommon'){
-        this.setTexture(UNCOMMONROFLJOINT);
-        } else if(this.rarityTag == 'rare'){
-        this.setTexture(RAREROFLJOINT);
-       } else if(this.rarityTag == 'mythical'){
-         this.setTexture(MYTHICALROFLJOINT);
-       } else {
-         this.setTexture(COMMONROFLJOINT);
-       }
+         this.setTexture(COMMONROFLDRANK);
+       } else if(this.rarityTag == 'grenade'){
+        this.setTexture(GRENADEROFLDRANK);
+        } else if(this.rarityTag == 'drank'){
+        this.setTexture(DRANKROFLDRANK);
+       } else if(this.rarityTag == 'heart'){
+         this.setTexture(HEARTROFLDRANK);
+       } 
       }
     } else{
       

@@ -59,6 +59,8 @@ export class GameScene extends Phaser.Scene {
   private goneRoflTimeOffset = 300;
   private popRoflTimeSlope = 1/35;  // IF CHANGED, PLEASE UPDATE SERVER.TS
   private goneRoflTimeSlope = 1/100;
+  private popLickquidatorTimeSlope = 1/35; 
+  private goneLickquidatorTimeSlope = 1/100;
   private gameOverTime = 3000;
   
   // Timer handles
@@ -73,8 +75,10 @@ export class GameScene extends Phaser.Scene {
   private grenadeText?: Phaser.GameObjects.Text;
   private drankCount=0;
   private drankText?: Phaser.GameObjects.Text;
+  private grenadeProbability?: number;
+  private drankProbability?: number;
+  private heartProbability?: number;
 
-  
   // Local states and aux  variables
   private endingGame =  false;
   private isGameOver =  false;
@@ -213,45 +217,60 @@ export class GameScene extends Phaser.Scene {
     // Add heart counter
     this.heartCounter = new HeartCounter(this); 
     
-    /////////////////////////////////////////
+    /////////////////////////////////////////////////////////
     // Adjusting game settings depending on Aavegotchi traits
-    /////////////////////////////////////////
+    //////////////////////////////////////////////////////////
+
     if ( this.selectedGotchi != undefined){
       this.gotchiTraits = this.selectedGotchi.withSetsNumericTraits;
       this.player.setGotchiTraits( this.gotchiTraits[0], this.gotchiTraits[1], this.gotchiTraits[2], this.gotchiTraits[3], this.gotchiTraits[4], this.gotchiTraits[5] );
-    
-     // NRG : more energy, more hearts
-     if (this.gotchiTraits[0] <10 ){
-      this.lives = 1;
-     } else if ( this.gotchiTraits[0] >= 10 && this.gotchiTraits[0] < 25 ){
-      this.lives = 2;
-     } else if ( this.gotchiTraits[0] >= 25 && this.gotchiTraits[0] < 74 ){
-      this.lives = 3;
-     } else if ( this.gotchiTraits[0] >= 74 && this.gotchiTraits[0] < 91 ){
-      this.lives = 4;
-     } else if ( this.gotchiTraits[0] >= 91  ){
-      this.lives = 5;
-     }
+
+
+     // NRG : more energy, more hearts and less godlike frogs
+     this.lives = this.getBonusQuantity( this.gotchiTraits[0] );
+     this.heartProbability = 6 - this.lives; // max: 5% ; min: 1%
      if ( this.lives != undefined) {
       this.player.setLifes(this.lives);
       this.heartCounter?.setRemainingHearts( this.lives );
      }
      
-     // AGG : higher chance of grenades if high trait
-     
+     // AGG : higher chance of grenades if high trait and more lickquidators
+     this.popLickquidatorTimeIni = Math.floor( this.popLickquidatorTimeIni * ( 1.8 - (this.gotchiTraits[1]/100)  ) ) ;
+     this.grenadeProbability = this.getBonusQuantity( this.gotchiTraits[1] ); // max: 5% ; min: 1%
+
      // SPK : the more spooky, the quicker the rofls go away
-     this.goneRoflTimeIni =  this.goneRoflTimeIni * ( 1.8 - (this.gotchiTraits[3]/100)  )  ; // 1.8 :  0= 1.8; 50=1.3; 100=0.8
+     this.goneRoflTimeIni =  Math.floor( this.goneRoflTimeIni * ( 1.8 - (this.gotchiTraits[2]/100) ) )  ; // 1.8 :  0= 1.8; 50=1.3; 100=0.8
+     this.goneLickquidatorTimeIni = Math.floor(  this.goneLickquidatorTimeIni * ( 1.8 - (this.gotchiTraits[2]/100)  ) ) ;
 
-     //this.scoreText.setText(this.goneRoflTimeIni.toString()); // FOR DEBUGGING PURPOSES
-     // BRN : higher chance of drank if brain is smol
+     // BRN : higher chance of drank if brain is smol and less freeze freeze time
+     this.freezeTime = Math.floor(this.freezeTime * ( 0.8 + (this.gotchiTraits[3]/100)  ))  ;  // 1.8 :  0= 0.8; 50=1.3; 100=1.8
+     this.drankProbability = 6 - this.getBonusQuantity( this.gotchiTraits[3] ); // max: 5% ; min: 1%
 
-
-
+     //this.scoreText.setText(this.drankProbability.toString()); // FOR DEBUGGING PURPOSES
+     
     }
 
 
   }
   /// END OF CREATE VOID  ////
+
+  private getBonusQuantity = ( gotchiTrait : number ):number => {
+    let bonus = 1 ;
+
+    if (gotchiTrait <10 ){
+      bonus = 1;
+     } else if ( gotchiTrait >= 10 && gotchiTrait < 25 ){
+      bonus = 2;
+     } else if ( gotchiTrait >= 25 && gotchiTrait < 74 ){
+      bonus = 3;
+     } else if ( gotchiTrait >= 74 && gotchiTrait < 91 ){
+      bonus = 4;
+     } else if ( gotchiTrait >= 91  ){
+      bonus = 5;
+     }
+
+     return bonus;
+  };
 
   private calculatePosition=():number => {
     let positionIndex= 1;
@@ -309,6 +328,10 @@ export class GameScene extends Phaser.Scene {
       args: [rofl as Rofl],
       loop: false,
     });
+
+    if (this.grenadeProbability != undefined && this.drankProbability != undefined && this.heartProbability != undefined){
+      rofl.setRoflOdds( this.grenadeProbability , this.drankProbability , this.heartProbability );
+    }
 
     rofl.activate(x, y, position, velocityY, this.goneRoflTimer );
     
@@ -440,34 +463,28 @@ export class GameScene extends Phaser.Scene {
       this.usedPosition[rofl.positionIndex] = false;
     }
 
-
-
     // SPECIAL ROFL POWERS 
     // unique actions related to the Rofl type
-    if ( rarityType == 'uncommon'){
+    if ( rarityType == 'drank'){
 
       // Additng one drank to the counter: extra goneTimeOut BONUS
       this.drankCount += 1;
       this.drankText?.setText('X'+ this.drankCount.toString());
 
     } else
-     if ( rarityType == 'rare'){
+     if ( rarityType == 'grenade'){
      
       // Adding grenade : kill-em-all BONUS
       this.grenadeCount += 1;
       this.grenadeText?.setText('X'+ this.grenadeCount.toString());
 
-
-    } else if( rarityType == 'mythical'){
+    } else if( rarityType == 'heart'){
       // Adding extra life
       this.player?.addLife();
       this.updateLivesCounter();
     
     }
-
-    
   }
-    
   };
 
   private disableStoned(){
@@ -572,14 +589,17 @@ export class GameScene extends Phaser.Scene {
   }
 
   private updateLickquidatorTimers (){
-    const b = 0.1;
-    const a = 0.05;
-    const alpha = (-a*this.lickquidatorCount)+Math.log2(0.95);
+    //const b = 0.1;
+    //const a = 0.05;
+    //const alpha = (-a*this.lickquidatorCount)+Math.log2(0.95);
 
     if ( this.popLickquidatorTime != undefined && this.goneLickquidatorTime != undefined ){
-      
-      this.popLickquidatorTime = Math.floor(this.popLickquidatorTimeIni*(Math.exp(alpha)+b));
-      this.goneLickquidatorTime = Math.floor(this.goneLickquidatorTimeIni*(Math.exp(alpha)+b));
+      // v1
+      //this.popLickquidatorTime = Math.floor(this.popLickquidatorTimeIni*(Math.exp(alpha)+b));
+      //this.goneLickquidatorTime = Math.floor(this.goneLickquidatorTimeIni*(Math.exp(alpha)+b));
+      // v2
+      this.popLickquidatorTime  = Math.floor( this.popLickquidatorTimeIni*( Math.exp(-this.lickquidatorCount * this.popLickquidatorTimeSlope) ) ) + this.popRoflTimeOffset;
+      this.goneLickquidatorTime = Math.floor(this.goneLickquidatorTimeIni*( Math.exp(-this.lickquidatorCount* this.goneLickquidatorTimeSlope ) ) ) + this.goneRoflTimeOffset;
 
     } else {
 
