@@ -1,7 +1,7 @@
 import {   LEFT_CHEVRON, BG, BGLOL, CLICK , POP , EXPLOSION, OPENCAN, GONE , SQUASH, LICKING, GAMETUNE, EPICTUNE, GAMEOVER, NET , GRENADE, DRANK } from 'game/assets';
 import { AavegotchiGameObject } from 'types';
 import { getGameWidth, getGameHeight, getRelative } from '../helpers';
-import { Player , Rofl, Lickquidator, HeartCounter , Puddle , TimeBar } from 'game/objects';
+import { Player , Rofl, Lickquidator, HeartCounter , Puddle } from 'game/objects';
 import { Socket } from 'dgram';
 
 const sceneConfig: Phaser.Types.Scenes.SettingsConfig = {

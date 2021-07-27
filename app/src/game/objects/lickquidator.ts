@@ -2,7 +2,6 @@ import { getGameHeight  } from '../helpers';
 import {  LICKQUIDATOR   } from 'game/assets';
 
 export class Lickquidator extends Phaser.GameObjects.Sprite {
-  private health = 200;
   private groundY = 0;
   private isWaiting = false;
   public isDead = false;
@@ -18,9 +17,6 @@ export class Lickquidator extends Phaser.GameObjects.Sprite {
    // physics
    this.scene.physics.world.enable(this);
    (this.body as Phaser.Physics.Arcade.Body).setGravityY(getGameHeight(this.scene) * 3);
-
-   //sounds
-   //this.licking = this.scene.sound.add(LICKING, { loop: false });
 
    // creating animation
     this.anims.create({
@@ -51,13 +47,6 @@ export class Lickquidator extends Phaser.GameObjects.Sprite {
       (this.body as Phaser.Physics.Arcade.Body).setGravityY( 0 );
       this.isWaiting = true;
     }
-      
-    /*
-      if (this.y > this.groundY && this.isWaiting == false ){
-        (this.body as Phaser.Physics.Arcade.Body).setVelocityY( 0 );  
-        (this.body as Phaser.Physics.Arcade.Body).setGravityY( 0 );
-        this.isWaiting = true;
-      }*/
 
   }
 
