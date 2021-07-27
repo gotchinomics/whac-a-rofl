@@ -1,9 +1,8 @@
-import {   LEFT_CHEVRON, BG, CLICK , POP , GONE , SQUASH, LICKING, GAMETUNE, GAMEOVER, NET , GRENADE, DRANK } from 'game/assets';
+import {   LEFT_CHEVRON, BG, BGLOL, CLICK , POP , EXPLOSION, OPENCAN, GONE , SQUASH, LICKING, GAMETUNE, EPICTUNE, GAMEOVER, NET , GRENADE, DRANK } from 'game/assets';
 import { AavegotchiGameObject } from 'types';
 import { getGameWidth, getGameHeight, getRelative } from '../helpers';
 import { Player , Rofl, Lickquidator, HeartCounter , Puddle , TimeBar } from 'game/objects';
 import { Socket } from 'dgram';
-import { ProvidedRequiredArgumentsRule } from 'graphql';
 
 const sceneConfig: Phaser.Types.Scenes.SettingsConfig = {
   active: false,
@@ -11,16 +10,12 @@ const sceneConfig: Phaser.Types.Scenes.SettingsConfig = {
   key: 'Game',
 };
 
-/**
- * Scene where gameplay takes place
- */
 export class GameScene extends Phaser.Scene {
   private socket?: Socket;
   private player?: Player;
   private selectedGotchi?: AavegotchiGameObject;
   private rofls?: Phaser.GameObjects.Group;
   private lickquidators?: Phaser.GameObjects.Group;
-  private hearts?: Phaser.GameObjects.Group;
   private puddles?: Phaser.GameObjects.Group;
   private grenadeButton?: Phaser.GameObjects.Image;
   private drankButton?: Phaser.GameObjects.Image;
@@ -29,11 +24,13 @@ export class GameScene extends Phaser.Scene {
   // Sounds
   private back?: Phaser.Sound.BaseSound;
   private pop?: Phaser.Sound.BaseSound;
+  private explosion?: Phaser.Sound.BaseSound;
+  private opencan?: Phaser.Sound.BaseSound;
   private gone?: Phaser.Sound.BaseSound;
   private squash?: Phaser.Sound.BaseSound;
   private licking?: Phaser.Sound.BaseSound;
-  private godlikesquash?: Phaser.Sound.BaseSound;
   private gametune?: Phaser.Sound.BaseSound;
+  private epictune?: Phaser.Sound.BaseSound;
   private gameover?: Phaser.Sound.BaseSound;
 
   // Score
@@ -41,7 +38,6 @@ export class GameScene extends Phaser.Scene {
   public lives?: number;
   private roflCount = 0;
   private lickquidatorCount = 0;
-  private lickquidatorProb = 0.2 ; // Probabilty of Lickquidator [0-1]
   private scoreText?: Phaser.GameObjects.Text;
   private heartCounter?: HeartCounter;
 
@@ -88,13 +84,15 @@ export class GameScene extends Phaser.Scene {
   private usedPosition= [false,false,false,false,false,false]; //Array<boolean>;
   public  roflStoned = false;
   private freezeTime = 3000; 
+  private epicScore = 100 ;
   private freezeUpdateInterval = 100;
   private firstRun = true;
   private sessionID = Math.random()*10000;
   private pointer?: Phaser.Input.Pointer;
   private gotchiTraits?: Array<number>;
+  private backgroundImageEpic?: Phaser.GameObjects.Image;
+  private backgroundImageRegular?: Phaser.GameObjects.Image;
 
-  
 
   constructor() {
     super(sceneConfig);
@@ -110,13 +108,17 @@ export class GameScene extends Phaser.Scene {
     this.socket?.emit('gameStarted');
 
     // Add layout
-    this.add.image(getGameWidth(this) / 2, getGameHeight(this) / 2, BG).setDisplaySize(getGameWidth(this), getGameHeight(this));
+    this.backgroundImageEpic =  this.add.image(getGameWidth(this) / 2, getGameHeight(this) / 2, BGLOL).setDisplaySize(getGameWidth(this), getGameHeight(this));
+    this.backgroundImageRegular =  this.add.image(getGameWidth(this) / 2, getGameHeight(this) / 2, BG).setDisplaySize(getGameWidth(this), getGameHeight(this));
     this.back = this.sound.add(CLICK, { loop: false });
     this.pop = this.sound.add(POP, { loop: false });
+    this.explosion = this.sound.add(EXPLOSION, { loop: false });
+    this.opencan = this.sound.add(OPENCAN, { loop: false });
     this.gone = this.sound.add(GONE, { loop: false });
     this.squash = this.sound.add(SQUASH, { loop: false });
     this.licking = this.sound.add(LICKING, { loop: false });
     this.gametune = this.sound.add(GAMETUNE, { loop: true });
+    this.epictune = this.sound.add(EPICTUNE, { loop: true });
     this.gameover = this.sound.add(GAMEOVER, { loop: false });
     this.createBackButton();
 
@@ -225,7 +227,6 @@ export class GameScene extends Phaser.Scene {
       this.gotchiTraits = this.selectedGotchi.withSetsNumericTraits;
       this.player.setGotchiTraits( this.gotchiTraits[0], this.gotchiTraits[1], this.gotchiTraits[2], this.gotchiTraits[3], this.gotchiTraits[4], this.gotchiTraits[5] );
 
-
      // NRG : more energy, more hearts and less godlike frogs
      this.lives = this.getBonusQuantity( this.gotchiTraits[0] );
      this.heartProbability = 6 - this.lives; // max: 5% ; min: 1%
@@ -299,17 +300,13 @@ export class GameScene extends Phaser.Scene {
      const x = this.getLocationX(position);
      const y = this.getLocationY(position);
 
-
      if (this.endingGame == false){
 
       this.roflCount += 1;
-
       this.updateRoflTimers(); 
-
       this.addRofl(x, y, position, velocityY );
 
     } 
-
   };
 
   // Add Rofl
@@ -346,19 +343,6 @@ export class GameScene extends Phaser.Scene {
      callbackScope: this,
      loop: false,
     });
-
-    /*
-    rofl.goneTimer = this.time.addEvent({
-      delay: this.goneRoflTime,
-      callback: this.roflTimeOut, 
-      args: [rofl as Rofl],
-      loop: false,
-    });
-        */    
-
-    //if (this.roflStoned == true){
-    //  rofl.goneTimer.paused = true;
-    //}
    
     // popping sound
     this.pop?.play();
@@ -383,7 +367,6 @@ export class GameScene extends Phaser.Scene {
 
   // LICKQUIDATORS
   private addLickquidators = () =>{
-    //const size = getGameHeight(this) / 7;
     const position = this.calculatePosition();
     const x = this.getLocationX(position);
     const y = this.getLocationY(position);
@@ -396,7 +379,6 @@ export class GameScene extends Phaser.Scene {
 
      this.addLickquidator(x, y, position, velocityY );
 
-    //this.updateGoneTimer();
    } 
 
  };
@@ -412,10 +394,7 @@ export class GameScene extends Phaser.Scene {
    // playing puddle animation
    if (this.puddleArray != undefined){
     (this.puddleArray[position-1] as Puddle).splash();
-  }
-    
-   // adding TimeOut and Next timer
-   //this.updateLickquidatorTimers();
+   }
    
    this.goneLickquidatorTimer = this.time.addEvent({
      delay: this.goneLickquidatorTime,
@@ -424,12 +403,12 @@ export class GameScene extends Phaser.Scene {
      loop: false,
    });
 
-    this.popLickquidatorTimer = this.time.addEvent({
+   this.popLickquidatorTimer = this.time.addEvent({
       delay: this.popLickquidatorTime,
       callback: this.addLickquidators,
       callbackScope: this,
       loop: false,
-     });
+   });
 
  };
 
@@ -438,6 +417,13 @@ export class GameScene extends Phaser.Scene {
     if (this.scoreText) {
       this.score += 1;
       this.scoreText.setText(this.score.toString());
+      // Entering EPIC MODE
+      if (this.score == this.epicScore) {
+        this.gametune?.stop();
+        this.epictune?.play();
+        this.backgroundImageRegular?.destroy(true);
+      }
+
     }
   };
 
@@ -495,7 +481,6 @@ export class GameScene extends Phaser.Scene {
     
     this.licking?.play();
 
-
     if (lickquidator != undefined && this.puddleArray != undefined && lickquidator.positionIndex != undefined ){
       this.usedPosition[lickquidator.positionIndex] = false;
       (this.puddleArray[lickquidator.positionIndex-1] as Puddle).showHitting();
@@ -518,11 +503,9 @@ export class GameScene extends Phaser.Scene {
   };
 
   private roflTimeOut = (rofl : Rofl) => {
-    
 
     if (!rofl.isDead && this.player != undefined && this.endingGame == false  ){
       
-
       this.player.removeLife();
       if (rofl != undefined && rofl.positionIndex != undefined ){
         this.usedPosition[rofl.positionIndex] = false;
@@ -537,7 +520,6 @@ export class GameScene extends Phaser.Scene {
       rofl.setDead(true);
 
     } 
-
   };
 
   private lickquidatorTimeOut = (lickquidator : Lickquidator) => {
@@ -679,6 +661,9 @@ export class GameScene extends Phaser.Scene {
 
     if (this.grenadeCount > 0){
 
+      //Playback sound
+      this.explosion?.play();
+
       // Updating grenade Count
       this.grenadeCount -= 1;
       this.grenadeText?.setText('X' + this.grenadeCount.toString());
@@ -686,7 +671,7 @@ export class GameScene extends Phaser.Scene {
        // Kill-em-all, making sure that the rofl group is empty, a single call it seems to be not enough
        if (this.lickquidators != undefined){
          while ( this.lickquidators.countActive(true)>0 ){
-                (this.lickquidators as Phaser.GameObjects.Group).getChildren().map(lickquidator => this.squashLickquidator(lickquidator as Lickquidator));
+                (this.lickquidators as Phaser.GameObjects.Group).getChildren().map(lickquidator => this.killLickquidator(lickquidator as Lickquidator));
          }
        }
 
@@ -703,6 +688,8 @@ export class GameScene extends Phaser.Scene {
   public useDrank = () => {
 
     if (this.drankCount > 0){
+      // Playing can sound
+      this.opencan?.play();
 
       // Updating drank Count
       this.drankCount -= 1;
@@ -731,9 +718,6 @@ export class GameScene extends Phaser.Scene {
     window.history.back();
   }
 
-//  private startGame = () =>{
-//
-//  }
 
   private onObjectClicked( pointer : Phaser.Input.Pointer , gameObject: Phaser.GameObjects.Image ){
     if ( gameObject.texture.key == GRENADE ){
@@ -791,6 +775,7 @@ export class GameScene extends Phaser.Scene {
       if ( this.endingGame == false ){
         // Play gameover sound
         this.gametune?.stop();
+        this.epictune?.stop();
         this.gameover?.play();
         this.endingGame = true;
         this.isGameOver = true;

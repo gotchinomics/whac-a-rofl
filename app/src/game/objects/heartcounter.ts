@@ -45,7 +45,7 @@ private heartArray?: Array<Phaser.GameObjects.Image>;
     }
  }
   
-  public destroySplash(): void {
+  public destroyHeartCounter(): void {
       this.destroy(); 
   }
 

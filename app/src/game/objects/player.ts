@@ -12,14 +12,9 @@ interface Props {
 
 export class Player extends Phaser.GameObjects.Sprite {
   private hitKey: Phaser.Input.Keyboard.Key;
-  private upKey: Phaser.Input.Keyboard.Key;
-  private downKey: Phaser.Input.Keyboard.Key;
-  private leftKey: Phaser.Input.Keyboard.Key;
-  private rightKey: Phaser.Input.Keyboard.Key;
   private grenadeKey: Phaser.Input.Keyboard.Key;
   private drankKey: Phaser.Input.Keyboard.Key;
   private pointer: Phaser.Input.Pointer;
-  private cursorKeys?: Phaser.Types.Input.Keyboard.CursorKeys;
   private isHitting = false;
   private isDead = false;
   private lives = 3;
@@ -35,28 +30,16 @@ export class Player extends Phaser.GameObjects.Sprite {
   private eyc?: number;
 
 
-  // aux variables to perform the quick move and return movement
-  /*
-  private movingToTarget = false;
-  private movingToOrigin = false;
-  private targetX?: number;
-  private targetY?: number;
-  private distanceToTarget?: number;
-  private movingSpeed= 5000;
-  */
-
-
   constructor({ scene, x, y, key }: Props) {
     super(scene, x, y, key);
     this.displayHeight = getGameHeight(scene) * 0.15;
     this.displayWidth = getGameHeight(scene) * 0.15;
-    //this.positionTolerance = getGameHeight(scene) * 0.04;
+
     // sprite
     this.setOrigin(0, 0);
     this.x0 = getGameWidth(this.scene)*0.5  - (getGameWidth(this.scene)*0.045);
     this.y0 = getGameHeight(this.scene)*0.6 -  (getGameWidth(this.scene)*0.045);
             
-
     // Add animations
     this.anims.create({
       key: 'idle',
@@ -80,13 +63,8 @@ export class Player extends Phaser.GameObjects.Sprite {
    // (this.body as Phaser.Physics.Arcade.Body).setGravityY(getGameHeight(this.scene) * 1.5);
 
     // input
-    this.cursorKeys = this.scene.input.keyboard.createCursorKeys();
     this.pointer = this.scene.input.activePointer;
     this.hitKey = this.scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
-    this.upKey = this.scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.W);
-    this.downKey = this.scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.S);
-    this.leftKey = this.scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.A);
-    this.rightKey = this.scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.D);
     this.grenadeKey = this.scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.G);
     this.drankKey = this.scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.J);
 
@@ -142,29 +120,6 @@ export class Player extends Phaser.GameObjects.Sprite {
         this.anims.play('hit');
         (this.scene as GameScene).useDrank();
       }
-
-    /*
-      if (this.x != this.x0 || this.y != this.y0 ){
-        this.setPosition( this.x0 , this.y0 );
-      }
-
-    } else {
-      if (this.movingToTarget && this.targetX != undefined && this.targetY != undefined && this.distanceToTarget!= undefined ){
-        if ( Phaser.Math.Distance.Between(this.x0,this.y0,this.x,this.y) >= this.distanceToTarget ){
-          this.movingToTarget = false;
-          this.scene.physics.moveTo( this, this.x0 , this.y0 , this.movingSpeed );
-          this.movingToOrigin = true;
-        }
-      } else if(this.movingToOrigin && this.distanceToTarget!= undefined && this.targetX != undefined && this.targetY != undefined ){
-        if ( Phaser.Math.Distance.Between(this.targetX,this.targetY,this.x,this.y) >= this.distanceToTarget ){
-          this.movingToOrigin = false;
-          (this.body as Phaser.Physics.Arcade.Body).setVelocity(0);       
-          this.setPosition( this.x0 , this.y0 );
-        }
-      }
-    }
-    */
-
     }
     
   }
@@ -185,57 +140,57 @@ export class Player extends Phaser.GameObjects.Sprite {
     return isValid
   }
 
-public animGotchiIdle = () => {
+ public animGotchiIdle = () => {
     if ( !this.isHitting && !this.isDead ){
       this.anims.play('idle', false);
     } 
-}
+ }
 
-public getDead(): boolean {
+ public getDead(): boolean {
   return this.isDead;
-}
+ }
 
-private setDead(dead: boolean): void {
+ private setDead(dead: boolean): void {
   this.isDead = dead;
-}
+ }
 
-public removeLife(){
+ public removeLife(){
   this.lives -= 1;
   if (this.lives<1){
     this.anims.play('dead');
     (this.body as Phaser.Physics.Arcade.Body).setVelocity(0);
     this.setDead(true);
   }
-}
+ }
 
-public addLife(){
+ public addLife(){
   if (this.lives<5){
     this.lives += 1;
   }
-}
+ }
 
-public setLifes( lives: number){
+ public setLifes( lives: number){
   if (this.lives <=5 ){
     this.lives = lives ;
   }
-}
+ }
 
-public getLives(): number {
+ public getLives(): number {
   return this.lives;
-}
+ }
 
-public getLivesString(): string {
+ public getLivesString(): string {
   return this.lives.toString();
-}
+ }
 
-public setGotchiTraits(nrg: number, agg: number, spk: number, brn: number, eys: number, eyc: number): void {
+ public setGotchiTraits(nrg: number, agg: number, spk: number, brn: number, eys: number, eyc: number): void {
   this.nrg = nrg;
   this.agg = agg;
   this.spk = spk;
   this.brn = brn;
   this.eys = eys;
   this.eyc = eyc;
-}
+ }
 
 
 }

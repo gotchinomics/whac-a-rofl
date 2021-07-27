@@ -1,6 +1,5 @@
 import { getGameHeight , getGameWidth } from '../helpers';
 import {  SPLASH, COMMONROFL, GRENADEROFL, DRANKROFL, HEARTROFL,  COMMONROFLDRANK, GRENADEROFLDRANK, DRANKROFLDRANK, HEARTROFLDRANK } from 'game/assets';
-import { TimeBar } from 'game/objects';
 import { GameScene  } from 'game/scenes';
 
 
@@ -25,7 +24,6 @@ export class Rofl extends Phaser.GameObjects.Sprite {
   private drkHigh?: number;
   private hrtHigh?: number;
   private oddOffset = 40;
-  //private splash?: Splash;
 
  constructor(scene: Phaser.Scene) {
    super(scene, -100, -100, COMMONROFL , 0);
@@ -51,57 +49,16 @@ export class Rofl extends Phaser.GameObjects.Sprite {
     (this.body as Phaser.Physics.Arcade.Body).setVelocityY(velocityY);
 
     // Calculating rarity type
-    this.brs =  Math.floor(Math.random() * 100);
-
-    // initializing splash 
-    //this.splash?.setCoordinates(x,y); 
+    this.brs =  Math.floor(Math.random() * 100); 
 
     // Updating Rofl type, position and lowest y coordinates (groundY)
     this.calculateRoflType(this.brs);
     this.setPosition(x - this.displayWidth/2, y - this.displayHeight);
     this.positionIndex=positionIndex;
     this.groundY = y - this.displayHeight;
-    //this.sessionID = sessionID;
     this.goneTimer = timerHandle;
 
-    // Activating goneTimer 
-    //this.scene.time.addEvent(this.goneTimer);
-
-
-    /*
-    // Adding exit animation
-    this.splashSprite = this.scene.add.sprite( x - this.displayWidth/2, y - this.displayHeight, SPLASH ,1);
-    this.splashSprite.displayHeight = getGameHeight(this.scene) * 0.15;
-    this.splashSprite.displayWidth = getGameHeight(this.scene) * 0.15;
-      */
-    //if (this.rarityTag == 'common'){
-     //this.anims.play('idle');
-   // }
   }
-
-  /*
-  private calculateRoflType(brs : number){
-
-    if ( brs >= 11 && brs <= 89){
-      this.rarityTag = 'common';
-    } else if( brs >= 5 && brs <= 7){    // 4%
-      this.rarityTag = 'uncommon';
-    } else if( brs >= 93 && brs <= 95){
-      this.rarityTag = 'uncommon';
-    } else if( brs >= 2 && brs <= 4){    // 3%
-      this.rarityTag = 'rare';   
-    } else if( brs >= 96 && brs <= 97){
-      this.rarityTag = 'rare';
-    } else if( brs >= 0 && brs <= 1){    // 2%
-      this.rarityTag = 'mythical';
-    } else if( brs >= 98 && brs <= 99){
-      this.rarityTag = 'mythical';
-    } else {
-      this.rarityTag = 'common';
-    }
-
-    this.updateRoflImage();
-  } */
 
   private calculateRoflType(brs : number){
 
@@ -118,7 +75,6 @@ export class Rofl extends Phaser.GameObjects.Sprite {
       }
 
       this.updateRoflImage();
-
     }
   }
 
@@ -249,7 +205,6 @@ export class Rofl extends Phaser.GameObjects.Sprite {
     if (this.goneTimer != undefined){
       this.goneTimer.paused = true;
     }
-
     
   }
 

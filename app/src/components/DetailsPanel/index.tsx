@@ -7,7 +7,7 @@ interface Props {
 }
 
 export const DetailsPanel = ({ selectedGotchi }: Props) => {
-  /*
+  
   const calculatePercentage = (number: number) => {
     if (number > 100) {
       return '100%';
@@ -16,9 +16,20 @@ export const DetailsPanel = ({ selectedGotchi }: Props) => {
       return '0';
     }
     return `${number}%`;
-  };*/
+  };
 
-  const calculatePercentage = (gotchiTrait: number) => {
+  const calculateInversePercentage = (number: number) => {
+    const invNumber = 100-number;
+    if (invNumber > 100) {
+      return '100%';
+    }
+    if (invNumber < 0) {
+      return '0';
+    }
+    return `${invNumber}%`;
+  };
+
+  const calculateBonusPercentage = (gotchiTrait: number) => {
   
       if (gotchiTrait <10 ){
         return `${5}%`;
@@ -35,7 +46,7 @@ export const DetailsPanel = ({ selectedGotchi }: Props) => {
        }
   };
 
-  const calculateInversePercentage = (gotchiTrait: number) => {
+  const calculateInverseBonusPercentage = (gotchiTrait: number) => {
   
     if (gotchiTrait <10 ){
       return `${100}%`;
@@ -77,8 +88,8 @@ export const DetailsPanel = ({ selectedGotchi }: Props) => {
               </p>
               <p>{selectedGotchi?.withSetsNumericTraits[0]}</p>
             </div>
-            {renderModifier('Lifes', calculatePercentage(selectedGotchi?.withSetsNumericTraits[i] as number))}
-            {renderModifier('Godlike Rofls', calculateInversePercentage(selectedGotchi?.withSetsNumericTraits[i] as number))}
+            {renderModifier('Lifes', calculateBonusPercentage(selectedGotchi?.withSetsNumericTraits[i] as number))}
+            {renderModifier('Godlike Rofls', calculateInverseBonusPercentage(selectedGotchi?.withSetsNumericTraits[i] as number))}
           </>
         );
       case 1:
@@ -92,8 +103,8 @@ export const DetailsPanel = ({ selectedGotchi }: Props) => {
               </p>
               <p>{selectedGotchi?.withSetsNumericTraits[1]}</p>
             </div>
-            {renderModifier('Grenadier Rofls', calculatePercentage(selectedGotchi?.withSetsNumericTraits[i] as number))}
-            {renderModifier('Lickquidator Frequency', calculateInversePercentage(selectedGotchi?.withSetsNumericTraits[i] as number))}
+            {renderModifier('Grenadier Rofls', calculateBonusPercentage(selectedGotchi?.withSetsNumericTraits[i] as number))}
+            {renderModifier('# Lickquidators', calculateInversePercentage(selectedGotchi?.withSetsNumericTraits[i] as number))}
           </>
         );
       case 2:
@@ -107,8 +118,8 @@ export const DetailsPanel = ({ selectedGotchi }: Props) => {
               </p>
               <p>{selectedGotchi?.withSetsNumericTraits[2]}</p>
             </div>
-            {renderModifier('Rofl Time', calculatePercentage(selectedGotchi?.withSetsNumericTraits[i] as number))}
             {renderModifier('Lickquidator Time', calculateInversePercentage(selectedGotchi?.withSetsNumericTraits[i] as number))}
+            {renderModifier('Rofl Time', calculateInversePercentage(selectedGotchi?.withSetsNumericTraits[i] as number))}
           </>
         );
       case 3:
@@ -122,7 +133,7 @@ export const DetailsPanel = ({ selectedGotchi }: Props) => {
               </p>
               <p>{selectedGotchi?.withSetsNumericTraits[3]}</p>
             </div>
-            {renderModifier('Lil Pump Rofls', calculatePercentage(selectedGotchi?.withSetsNumericTraits[i] as number))}
+            {renderModifier('Lil Pump Rofls', calculateBonusPercentage(selectedGotchi?.withSetsNumericTraits[i] as number))}
             {renderModifier('Freeze duration', calculateInversePercentage(selectedGotchi?.withSetsNumericTraits[i] as number))}
           </>
         );

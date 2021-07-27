@@ -118,7 +118,14 @@ const Home = () => {
         <div className={styles.modalContent}>
           <h1>WHAC-A-ROFL</h1>
           <p>
-            Describe game here
+          Dear Fren, we need your help! The Lickquidators have invaded Rolf Reefs causing a yuuuge migration of MEME frogs to Yield Fields. Try to be quick and get rid of the Rofls before it is too late! But be careful, Lickquidators are lurking around and they can suck the life out of your Gotchi with their disgusting tongue. Good luck on your mission, Gotchigang is stronk and together we will stop the plague!
+          <h2>Rofl types:</h2>
+          <ul>
+          <li><b>Common</b>: the most popular type of MEME frogs.</li>
+          <li><b>Grenadier</b>: these Rofls usually carry a grenade, that can be handy if the puddles get crowded.</li>
+          <li><b>Lil Pump fan</b>: rap is very popular among Rofls, being Lil Pump their greatest idol. They love to drink Lean, which gets them chill but freezes their brain.</li>
+          <li><b>Godlike</b>: the only Rofl in the Gotchiverse that can fly. If you catch one you will see how your Gotchi health increases.</li>
+          </ul>
           </p>
         </div>
       </Modal>

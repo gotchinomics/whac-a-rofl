@@ -17,6 +17,7 @@ export interface SpritesheetAsset extends Asset {
 }
 
 export const BG = 'bg';
+export const BGLOL = 'bglol';
 export const NET = 'net';
 export const DRANK = 'drank';
 export const GRENADE = 'grenade';
@@ -24,11 +25,14 @@ export const FULLSCREEN = 'fullscreen';
 export const LEFT_CHEVRON = 'left_chevron';
 export const CLICK = 'click';
 export const POP = 'pop';
+export const EXPLOSION = 'explosion';
+export const OPENCAN = 'opencan';
 export const GONE = 'gone';
 export const SQUASH = 'squash';
 export const LICKING = 'licking';
 export const GODLIKESQUASH = 'godlikesquash';
 export const GAMETUNE = 'gametune';
+export const EPICTUNE = 'epictune';
 export const GAMEOVER = 'gameover';
 export const HEART = 'heart';
 export const COMMONROFL = 'commonrofl';
@@ -49,6 +53,11 @@ export const assets: Array<Asset | SpritesheetAsset> = [
   {
     key: BG,
     src: 'assets/images/bg2.png',
+    type: 'IMAGE',
+  },
+  {
+    key: BGLOL,
+    src: 'assets/images/bg_lol.png',
     type: 'IMAGE',
   },
   {
@@ -82,6 +91,16 @@ export const assets: Array<Asset | SpritesheetAsset> = [
     type: 'AUDIO',
   },
   {
+    key: EXPLOSION,
+    src: 'assets/sounds/explosion3.mp3',
+    type: 'AUDIO',
+  },
+  {
+    key: OPENCAN,
+    src: 'assets/sounds/opencan.mp3',
+    type: 'AUDIO',
+  },
+  {
     key: GONE,
     src: 'assets/sounds/gone.mp3',
     type: 'AUDIO',
@@ -93,12 +112,17 @@ export const assets: Array<Asset | SpritesheetAsset> = [
   },
   {
     key: LICKING,
-    src: 'assets/sounds/licking.wav',
+    src: 'assets/sounds/licking.mp3',
     type: 'AUDIO',
   },
   {
     key: GAMETUNE,
     src: 'assets/sounds/gametune.mp3',
+    type: 'AUDIO',
+  },
+  {
+    key: EPICTUNE,
+    src: 'assets/sounds/epictuneshort.mp3',
     type: 'AUDIO',
   },
   {
