@@ -4,6 +4,7 @@
 
 Dear Fren, we need your help! The Lickquidators have invaded Rolf Reefs causing a yuuuge migration of MEME frogs to Yield Fields. Try to be quick and get rid of the Rofls before it is too late! But be careful, Lickquidators are lurking around and they can suck the life out of your Gotchi with their disgusting tongue. Good luck on your mission, Gotchigang is stronk and together we will stop the plague!
 
+
 ## Structure and code organization
 
 This game was based on the official Aavegotchi minigame template. This template allows you to create your own Aavegotchi minigames without any prior knowledge of web3. A basic understanding of Javascript and Typescript is necessary.
