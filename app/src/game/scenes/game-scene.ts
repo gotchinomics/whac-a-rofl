@@ -11,7 +11,7 @@ const sceneConfig: Phaser.Types.Scenes.SettingsConfig = {
 };
 
 export class GameScene extends Phaser.Scene {
-  private socket?: Socket;
+  public socket?: Socket;
   private player?: Player;
   private selectedGotchi?: AavegotchiGameObject;
   private rofls?: Phaser.GameObjects.Group;
@@ -74,6 +74,9 @@ export class GameScene extends Phaser.Scene {
   private grenadeProbability?: number;
   private drankProbability?: number;
   private heartProbability?: number;
+  private usedGrenades = 0;
+  private usedDranks = 0;
+  private addedLifes = 0;
 
   // Local states and aux  variables
   private endingGame =  false;
@@ -467,6 +470,7 @@ export class GameScene extends Phaser.Scene {
     } else if( rarityType == 'heart'){
       // Adding extra life
       this.player?.addLife();
+      this.addedLifes += 1;
       this.updateLivesCounter();
     
     }
@@ -666,6 +670,8 @@ export class GameScene extends Phaser.Scene {
 
       // Updating grenade Count
       this.grenadeCount -= 1;
+      this.usedGrenades += 1;
+      this.socket?.emit('useGrenade');
       this.grenadeText?.setText('X' + this.grenadeCount.toString());
       
        // Kill-em-all, making sure that the rofl group is empty, a single call it seems to be not enough
@@ -693,6 +699,8 @@ export class GameScene extends Phaser.Scene {
 
       // Updating drank Count
       this.drankCount -= 1;
+      this.usedDranks += 1;
+      this.socket?.emit('useDrank',this.freezeTime);
       this.drankText?.setText('X' + this.drankCount.toString());
 
       // Adding extra time to the Rofl TimeOut
@@ -779,7 +787,12 @@ export class GameScene extends Phaser.Scene {
         this.gameover?.play();
         this.endingGame = true;
         this.isGameOver = true;
-        this.socket?.emit('gameOver', {score: this.score});
+        const addedLifes = this.addedLifes ;
+        const usedDranks = this.usedDranks ;
+        const usedGrenades = this.usedGrenades;
+
+        this.socket?.emit('gameOver', {score: this.score , addedLifes, usedDranks, usedGrenades}  ,'');
+        //this.socket?.emit('gameOver', {score: this.score , bonusItems }  ,'');
 
         this.time.addEvent({
          delay: this.gameOverTime,

@@ -1,6 +1,7 @@
 import { getGameHeight , getGameWidth } from '../helpers';
 import {  SPLASH, COMMONROFL, GRENADEROFL, DRANKROFL, HEARTROFL,  COMMONROFLDRANK, GRENADEROFLDRANK, DRANKROFLDRANK, HEARTROFLDRANK } from 'game/assets';
 import { GameScene  } from 'game/scenes';
+import { Socket } from 'dgram';
 
 
 export class Rofl extends Phaser.GameObjects.Sprite {
@@ -16,6 +17,7 @@ export class Rofl extends Phaser.GameObjects.Sprite {
   public popTimer?: Phaser.Time.TimerEvent;
   public goneTimer?: Phaser.Time.TimerEvent;
   private timeBar?: Phaser.GameObjects.Graphics;
+  //private socket?: Socket;
   // odds boundaries
   private grnLow?: number;
   private drkLow?: number;
@@ -30,6 +32,9 @@ export class Rofl extends Phaser.GameObjects.Sprite {
    this.setOrigin(0, 0);
    this.displayHeight = getGameHeight(scene) * 0.08;
    this.displayWidth = getGameHeight(scene) * 0.08;
+
+   // Initializing socket
+   //this.socket = this.scene.game.registry.values.socket;
 
    // Physics
    this.scene.physics.world.enable(this);
@@ -65,7 +70,7 @@ export class Rofl extends Phaser.GameObjects.Sprite {
     if ( this.grnLow != undefined && this.grnHigh != undefined && this.drkLow != undefined && this.drkHigh != undefined && this.hrtLow != undefined && this.hrtHigh != undefined ){
     
       if ( brs >= this.grnLow && brs <= this.grnHigh ){
-        this.rarityTag = 'grenade';
+        this.rarityTag = 'grenade';        
       } else if(  brs >= this.drkLow && brs <= this.drkHigh ){   
         this.rarityTag = 'drank';
       } else if( brs >= this.hrtLow && brs <= this.hrtHigh ){
@@ -73,6 +78,8 @@ export class Rofl extends Phaser.GameObjects.Sprite {
       } else {
       this.rarityTag = 'common';
       }
+
+      (this.scene as GameScene).socket?.emit(this.rarityTag);
 
       this.updateRoflImage();
     }
