@@ -7,7 +7,7 @@ interface Props {
 }
 
 export const DetailsPanel = ({ selectedGotchi }: Props) => {
-  
+  /*
   const calculatePercentage = (number: number) => {
     if (number > 100) {
       return '100%';
@@ -17,6 +17,7 @@ export const DetailsPanel = ({ selectedGotchi }: Props) => {
     }
     return `${number}%`;
   };
+  */
 
   const calculateInversePercentage = (number: number) => {
     const invNumber = 100-number;

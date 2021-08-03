@@ -66,7 +66,7 @@ export class Player extends Phaser.GameObjects.Sprite {
     this.pointer = this.scene.input.activePointer;
     this.hitKey = this.scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
     this.grenadeKey = this.scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.G);
-    this.drankKey = this.scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.J);
+    this.drankKey = this.scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.D);
 
     this.scene.add.existing(this);
   }
@@ -78,7 +78,7 @@ export class Player extends Phaser.GameObjects.Sprite {
      // if (!this.movingToTarget && !this.movingToOrigin){
 
       // Every frame, we create a new velocity for the sprite based on what keys the player is holding down.
-      const velocity = new Phaser.Math.Vector2(0, 0);
+      //const velocity = new Phaser.Math.Vector2(0, 0);
 
       // Handling mouse input
       if (this.pointer.isDown   ){ //&& this.pointer.getDuration()<50

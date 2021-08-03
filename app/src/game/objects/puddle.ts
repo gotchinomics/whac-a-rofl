@@ -1,4 +1,4 @@
-import { getGameHeight, getGameWidth  } from '../helpers';
+import { getGameHeight  } from '../helpers';
 import {  SPLASH , HITTING  } from 'game/assets';
 
 export class Puddle extends Phaser.GameObjects.Sprite {

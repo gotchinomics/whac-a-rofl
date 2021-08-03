@@ -1,7 +1,6 @@
 import { getGameHeight , getGameWidth } from '../helpers';
 import {  SPLASH, COMMONROFL, GRENADEROFL, DRANKROFL, HEARTROFL,  COMMONROFLDRANK, GRENADEROFLDRANK, DRANKROFLDRANK, HEARTROFLDRANK } from 'game/assets';
 import { GameScene  } from 'game/scenes';
-import { Socket } from 'dgram';
 
 
 export class Rofl extends Phaser.GameObjects.Sprite {
@@ -201,18 +200,19 @@ export class Rofl extends Phaser.GameObjects.Sprite {
 
   public setStoned(state: boolean): void {
     
-    if (this.isStoned != state){
+   // if (this.isStoned != state){
       this.isStoned = state;
       this.updateRoflImage();
 
-    } else{
-      this.isStoned = state;
-    }
+//    } else{
+  //    this.isStoned = state;
+  //  }
 
     if (this.goneTimer != undefined){
       this.goneTimer.paused = true;
     }
     
   }
+  
 
 }

@@ -1,4 +1,4 @@
-import {   LEFT_CHEVRON, BG, BGLOL, CLICK , POP , EXPLOSION, OPENCAN, GONE , SQUASH, LICKING, GAMETUNE, EPICTUNE, GAMEOVER, NET , GRENADE, DRANK } from 'game/assets';
+import {   LEFT_CHEVRON, BG, BGLOL, CLICK , POP , EXPLOSION, OPENCAN, GONE , SQUASH, LICKING, GAMETUNE, EPICTUNE, GAMEOVER , GRENADE, DRANK } from 'game/assets';
 import { AavegotchiGameObject } from 'types';
 import { getGameWidth, getGameHeight, getRelative } from '../helpers';
 import { Player , Rofl, Lickquidator, HeartCounter , Puddle } from 'game/objects';
@@ -42,8 +42,8 @@ export class GameScene extends Phaser.Scene {
   private heartCounter?: HeartCounter;
 
   // Timer Settings 
-  private popRoflTimeIni = 3000;
-  private goneRoflTimeIni = 4000; //15000;
+  private popRoflTimeIni = 2200;
+  private goneRoflTimeIni = 3500; //4000;
   private popRoflTime?: number;
   private goneRoflTime?: number;
   private firstLickquidatorTime = 20000;
@@ -65,11 +65,12 @@ export class GameScene extends Phaser.Scene {
   private popLickquidatorTimer?: Phaser.Time.TimerEvent;
   private goneLickquidatorTimer?: Phaser.Time.TimerEvent;
   private gameOverTimer?: Phaser.Time.TimerEvent;
+  private freezeTimer?: Phaser.Time.TimerEvent;
 
   // Bonus variables
   private grenadeCount= 0;
   private grenadeText?: Phaser.GameObjects.Text;
-  private drankCount=0;
+  private drankCount= 2;
   private drankText?: Phaser.GameObjects.Text;
   private grenadeProbability?: number;
   private drankProbability?: number;
@@ -77,16 +78,17 @@ export class GameScene extends Phaser.Scene {
   private usedGrenades = 0;
   private usedDranks = 0;
   private addedLifes = 0;
+  private buttonTimeBar?: Phaser.GameObjects.Graphics;
 
   // Local states and aux  variables
   private endingGame =  false;
   private isGameOver =  false;
-  private allPositions= [1,2,3,4,5,6];
   private takenPositions?: number[];
   private arrayTest?: Array<number>;
   private usedPosition= [false,false,false,false,false,false]; //Array<boolean>;
   public  roflStoned = false;
-  private freezeTime = 3000; 
+  private freezeTime = 3000;
+  private pondLockedDelay = 1000; 
   private epicScore = 100 ;
   private freezeUpdateInterval = 100;
   private firstRun = true;
@@ -151,14 +153,14 @@ export class GameScene extends Phaser.Scene {
 
     // Grenade board
     this.grenadeText = this.add
-    .text(getGameWidth(this) * 0.5, getGameHeight(this) * 0.93, 'X' + this.grenadeCount.toString(), { color: '#FFFFFF',   })
+    .text(getGameWidth(this) * 0.6, getGameHeight(this) * 0.93, 'X' + this.grenadeCount.toString(), { color: '#FFFFFF',   })
     .setFontSize(getRelative(60, this))
     .setOrigin(0.5)
     .setDepth(1);
 
     // drank board
     this.drankText = this.add
-    .text(getGameWidth(this) * 0.6, getGameHeight(this) * 0.93, 'X' + this.drankCount.toString(), { color: '#FFFFFF',   })
+    .text(getGameWidth(this) * 0.5, getGameHeight(this) * 0.93, 'X' + this.drankCount.toString(), { color: '#FFFFFF',   })
     .setFontSize(getRelative(60, this))
     .setOrigin(0.5)
     .setDepth(1);
@@ -186,6 +188,9 @@ export class GameScene extends Phaser.Scene {
     this.puddleArray = [];
  
     // Creating Puddles
+    const puddle0: Puddle = this.puddles?.get();
+    puddle0.setPuddle(this.getLocationX(0),this.getLocationY(0));
+    this.puddleArray.push(puddle0);
     const puddle1: Puddle = this.puddles?.get();
     puddle1.setPuddle(this.getLocationX(1),this.getLocationY(1));
     this.puddleArray.push(puddle1);
@@ -201,17 +206,15 @@ export class GameScene extends Phaser.Scene {
     const puddle5: Puddle = this.puddles?.get();
     puddle5.setPuddle(this.getLocationX(5),this.getLocationY(5));
     this.puddleArray.push(puddle5);
-    const puddle6: Puddle = this.puddles?.get();
-    puddle6.setPuddle(this.getLocationX(6),this.getLocationY(6));
-    this.puddleArray.push(puddle6);
+
 
    // Creating buttons
-   this.grenadeButton = this.add.image( getGameWidth(this) * 0.45, getGameHeight(this) * 0.93, GRENADE ) ;
-   this.grenadeButton.displayHeight = getGameHeight(this) * 0.09 ;
-   this.grenadeButton.displayWidth = getGameHeight(this) * 0.09 ;
-   this.drankButton = this.add.image( getGameWidth(this) * 0.55, getGameHeight(this) * 0.93, DRANK ) ;
+   this.drankButton = this.add.image( getGameWidth(this) * 0.45, getGameHeight(this) * 0.93, DRANK ) ;
    this.drankButton.displayHeight = getGameHeight(this) * 0.09 ;
    this.drankButton.displayWidth = getGameHeight(this) * 0.09 ;
+   this.grenadeButton = this.add.image( getGameWidth(this) * 0.55, getGameHeight(this) * 0.93, GRENADE ) ;
+   this.grenadeButton.displayHeight = getGameHeight(this) * 0.09 ;
+   this.grenadeButton.displayWidth = getGameHeight(this) * 0.09 ;
 
    // Adding callbacks to the buttons
    this.grenadeButton.setInteractive();
@@ -279,10 +282,10 @@ export class GameScene extends Phaser.Scene {
   private calculatePosition=():number => {
     let positionIndex= 1;
     let validIndex = false;
-    let maxCount = 50;
+    let maxCount = 25;
 
     while(!validIndex && maxCount>0 ){
-      positionIndex = Math.floor(Math.random() * 6) + 1;
+      positionIndex = Math.floor(Math.random() * 6)  ;
       maxCount -= 1;
       if (this.usedPosition[positionIndex] == false) {
         validIndex = true;
@@ -352,7 +355,7 @@ export class GameScene extends Phaser.Scene {
 
     // popping animation
     if (this.puddleArray != undefined){
-      (this.puddleArray[position-1] as Puddle).splash();
+      (this.puddleArray[position] as Puddle).splash();
     }
 
     ///ALTERNATIVE TIMER DEFINITION
@@ -396,7 +399,7 @@ export class GameScene extends Phaser.Scene {
 
    // playing puddle animation
    if (this.puddleArray != undefined){
-    (this.puddleArray[position-1] as Puddle).splash();
+    (this.puddleArray[position] as Puddle).splash();
    }
    
    this.goneLickquidatorTimer = this.time.addEvent({
@@ -430,8 +433,8 @@ export class GameScene extends Phaser.Scene {
     }
   };
 
-  private stoneRofl= (rofl : Rofl) => {
-    rofl.isStoned = true;
+  private stoneRofl= (rofl : Rofl , state : boolean ) => {
+    rofl.isStoned = state;
     rofl.updateRoflImage();
   };
 
@@ -446,10 +449,11 @@ export class GameScene extends Phaser.Scene {
       
       this.squash?.play();
       
-      (this.puddleArray[rofl.positionIndex-1] as Puddle).showHitting();
+      (this.puddleArray[rofl.positionIndex] as Puddle).showHitting();
 
     if (rofl != undefined && rofl.positionIndex != undefined ){
-      this.usedPosition[rofl.positionIndex] = false;
+      //this.usedPosition[rofl.positionIndex] = false;
+      this.setPondFree(rofl.positionIndex);
     }
 
     // SPECIAL ROFL POWERS 
@@ -478,7 +482,15 @@ export class GameScene extends Phaser.Scene {
   };
 
   private disableStoned(){
+    // Setting stoned state back to normal
     this.roflStoned = false;
+    
+    // Setting all present rofls stoned
+    (this.rofls as Phaser.GameObjects.Group).getChildren().map(rofl => this.stoneRofl(rofl as Rofl, false));
+
+    this.buttonTimeBar?.destroy();
+
+    this.socket?.emit('disableDrank', this.roflStoned );
   }
 
   private squashLickquidator = (lickquidator : Lickquidator) => {
@@ -486,8 +498,9 @@ export class GameScene extends Phaser.Scene {
     this.licking?.play();
 
     if (lickquidator != undefined && this.puddleArray != undefined && lickquidator.positionIndex != undefined ){
-      this.usedPosition[lickquidator.positionIndex] = false;
-      (this.puddleArray[lickquidator.positionIndex-1] as Puddle).showHitting();
+      //this.usedPosition[lickquidator.positionIndex] = false;
+      this.setPondFree(lickquidator.positionIndex);
+      (this.puddleArray[lickquidator.positionIndex] as Puddle).showHitting();
     }
     lickquidator.setDead(true);
     if (this.player != undefined){
@@ -499,8 +512,9 @@ export class GameScene extends Phaser.Scene {
   private killLickquidator = (lickquidator : Lickquidator) => {
     if (lickquidator != undefined && this.puddleArray != undefined ){
     if (lickquidator != undefined && lickquidator.positionIndex != undefined ){
-      (this.puddleArray[lickquidator.positionIndex-1] as Puddle).showHitting();
-      this.usedPosition[lickquidator.positionIndex] = false;
+      (this.puddleArray[lickquidator.positionIndex] as Puddle).showHitting();
+      //this.usedPosition[lickquidator.positionIndex] = false;
+      this.setPondFree(lickquidator.positionIndex);
     }
     lickquidator.setDead(true);
   }
@@ -511,9 +525,14 @@ export class GameScene extends Phaser.Scene {
     if (!rofl.isDead && this.player != undefined && this.endingGame == false  ){
       
       this.player.removeLife();
+      /*
       if (rofl != undefined && rofl.positionIndex != undefined ){
         this.usedPosition[rofl.positionIndex] = false;
       }
+      */
+      // Adding event that triggers clearing the pond, temporally lock to give some time to move away
+      this.setPondFree(rofl.positionIndex);
+
       this.updateLivesCounter();
 
       this.gone?.play();
@@ -526,12 +545,28 @@ export class GameScene extends Phaser.Scene {
     } 
   };
 
+  private setPondFree = ( index : number ) => {
+    this.time.addEvent({
+      delay: this.pondLockedDelay,
+      callback: this.updatePoundArray,
+      callbackScope: this,
+      args: [ index ],
+      loop: false,
+    });
+  };
+
+  private updatePoundArray = ( index : number ) => {
+      this.usedPosition[index] = false;
+  };
+
+
   private lickquidatorTimeOut = (lickquidator : Lickquidator) => {
 
     if (!lickquidator.isDead && this.player != undefined && this.endingGame == false ){
      // this.gone?.play();
       if (lickquidator != undefined && lickquidator.positionIndex != undefined ){
-        this.usedPosition[lickquidator.positionIndex] = false;
+        //this.usedPosition[lickquidator.positionIndex] = false;
+        this.setPondFree(lickquidator.positionIndex);
       }
       lickquidator.setDead(true);
     }
@@ -599,22 +634,22 @@ export class GameScene extends Phaser.Scene {
   public getLocationX (positionIndex : number):number {
     let x=0;
     switch (true) {
-      case positionIndex == 1:
+      case positionIndex == 0:
         x = getGameWidth(this)  * ( 0.277 ); //-0.034
         break;
-      case positionIndex == 2:
+      case positionIndex == 1:
         x = getGameWidth(this)  * ( 0.145 );
         break;
-      case positionIndex == 3:
+      case positionIndex == 2:
         x = getGameWidth(this)  * ( 0.35 );
         break;
-      case positionIndex == 4:
+      case positionIndex == 3:
         x = getGameWidth(this)  * ( 0.723 );
         break;
-      case positionIndex == 5:
+      case positionIndex == 4:
         x = getGameWidth(this)  * ( 0.854 );
          break;
-      case positionIndex >= 6:
+      case positionIndex >= 5:
         x= getGameWidth(this)  * ( 0.65 );
         break;
       default:
@@ -625,22 +660,22 @@ export class GameScene extends Phaser.Scene {
   public getLocationY (positionIndex : number):number {
     let y=0;
     switch (true) {
-      case positionIndex == 1:
+      case positionIndex == 0:
         y = getGameHeight(this) * ( 0.87  ); //-0.062  
         break;
-      case positionIndex == 2:
+      case positionIndex == 1:
         y = getGameHeight(this) * ( 0.672 );
         break;
-      case positionIndex == 3:
+      case positionIndex == 2:
         y = getGameHeight(this) * ( 0.517 );
         break;
-      case positionIndex == 4:
+      case positionIndex == 3:
         y = getGameHeight(this) * ( 0.87  );
         break;
-      case positionIndex == 5:
+      case positionIndex == 4:
          y = getGameHeight(this) * ( 0.672 );
          break;
-      case positionIndex >= 6:
+      case positionIndex >= 5:
          y = getGameHeight(this) * ( 0.517 );
         break; 
         default:
@@ -697,29 +732,78 @@ export class GameScene extends Phaser.Scene {
       // Playing can sound
       this.opencan?.play();
 
-      // Updating drank Count
-      this.drankCount -= 1;
-      this.usedDranks += 1;
-      this.socket?.emit('useDrank',this.freezeTime);
-      this.drankText?.setText('X' + this.drankCount.toString());
+      // Clearing previous state in case a drank is being used
+      if (this.freezeTimer != undefined ){
+        this.freezeTimer.destroy();
+        this.buttonTimeBar?.destroy();
+        this.disableStoned;
+      }
 
       // Adding extra time to the Rofl TimeOut
       this.roflStoned = true;
 
+      // Updating drank Count
+      this.drankCount -= 1;
+      this.usedDranks += 1;
+      this.socket?.emit('useDrank',this.freezeTime );
+      this.drankText?.setText('X' + this.drankCount.toString());
+
+
       // Setting all present rofls stoned
-      (this.rofls as Phaser.GameObjects.Group).getChildren().map(rofl => this.stoneRofl(rofl as Rofl));
+      (this.rofls as Phaser.GameObjects.Group).getChildren().map(rofl => this.stoneRofl(rofl as Rofl, true));
 
       // Start event to disable stoned after certain time
-      this.time.addEvent({
+      this.freezeTimer  = new Phaser.Time.TimerEvent({
         delay: this.freezeTime ,
         callback: this.disableStoned , 
         callbackScope: this,
         loop: false,
       });
 
+      // Adding timebar to the drank button
+      this.buttonTimeBar = new Phaser.GameObjects.Graphics(this);
+      this.drawTimebar();
+      this.add.existing(this.buttonTimeBar)
+
+      // Activating goneTimer
+      this.time.addEvent(this.freezeTimer);
+
     }
   
   }
+
+    //// TIME BAR
+    public drawTimebar ()
+    {
+        const yOffset = getGameHeight(this)*0.1;
+        const barWidthBlack = getGameWidth(this)*0.045;
+        const barWidthWhite = getGameWidth(this)*0.0445;
+        const barHeightBlack = getGameWidth(this)*0.004;
+        const barHeightWhite = getGameWidth(this)*0.0035;
+        const barX = getGameWidth(this) * 0.425 ;
+        const barY = getGameHeight(this) * 0.77 ;
+  
+        this.buttonTimeBar?.clear();
+  
+        let timeLeft= 1;
+  
+        if (this.freezeTimer != undefined ){
+          timeLeft = (1-this.freezeTimer?.getOverallProgress()) * barWidthWhite ; 
+        } 
+  
+        //  BG
+        this.buttonTimeBar?.fillStyle(0x000000);
+        this.buttonTimeBar?.fillRect( barX , barY + yOffset, barWidthBlack, barHeightBlack);
+  
+        //  Remaining Time
+        this.buttonTimeBar?.fillStyle(0xffffff);
+        this.buttonTimeBar?.fillRect( barX + 2, barY + 2 + yOffset, barWidthWhite, barHeightWhite);
+  
+        this.buttonTimeBar?.fillStyle(0xff0000);
+  
+        this.buttonTimeBar?.fillRect(  barX + 2, barY + 2 + yOffset, timeLeft, barHeightWhite);
+    }
+    //// 
 
   private endGame(){
     this.time.clearPendingEvents();
@@ -778,6 +862,11 @@ export class GameScene extends Phaser.Scene {
           this.squashLickquidator(lickquidator as Lickquidator); 
         }
       )
+
+      // Updating drank progress bar if active
+      if (this.roflStoned) {
+        this.drawTimebar();
+      }
 
     } else {
       if ( this.endingGame == false ){

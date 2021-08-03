@@ -67,13 +67,13 @@ export const assets: Array<Asset | SpritesheetAsset> = [
   },
   {
     key: DRANK,
-    src: 'assets/icons/lilpumpdrank.png',
-    type: 'IMAGE',
+    src: 'assets/icons/lilpumpdrank.svg',
+    type: 'SVG',
   },
   {
     key: GRENADE,
-    src: 'assets/icons/grenade.png',
-    type: 'IMAGE',
+    src: 'assets/icons/grenade.svg',
+    type: 'SVG',
   },
   {
     key: LEFT_CHEVRON,
