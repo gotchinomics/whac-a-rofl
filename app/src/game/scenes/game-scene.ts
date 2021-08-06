@@ -282,7 +282,7 @@ export class GameScene extends Phaser.Scene {
   private calculatePosition=():number => {
     let positionIndex= 1;
     let validIndex = false;
-    let maxCount = 25;
+    let maxCount = 50;
 
     while(!validIndex && maxCount>0 ){
       positionIndex = Math.floor(Math.random() * 6)  ;
