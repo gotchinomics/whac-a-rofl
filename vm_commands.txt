@@ -1,7 +1,5 @@
-whac-a-rofl commands
-===================
-
-
+whac-a-rofl SERVER commands
+============================
 // check logs
 >> sudo journalctl -u whac-a-rofl
 
@@ -19,3 +17,11 @@ whac-a-rofl commands
 
 // fetch changes from Github server
 git pull https://github.com/gotchinomics/whac-a-rofl-server.git
+
+
+whac-a-rofl APP commands
+============================
+// build a new version
+npm run build
+// in firebase:
+firebase deploy --only hosting
