@@ -1,0 +1,20 @@
+whac-a-rofl commands
+===================
+
+
+// check logs
+>> sudo journalctl -u whac-a-rofl
+
+// check status
+>> sudo systemctl status whac-a-rofl
+
+// stop server demon service
+>> sudo systemctl stop whac-a-rofl 
+
+// start
+>> sudo systemctl start whac-a-rofl
+
+// check CPU & memory
+>> htop
+
+

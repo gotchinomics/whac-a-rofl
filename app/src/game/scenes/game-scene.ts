@@ -70,7 +70,7 @@ export class GameScene extends Phaser.Scene {
   // Bonus variables
   private grenadeCount= 0;
   private grenadeText?: Phaser.GameObjects.Text;
-  private drankCount= 2;
+  private drankCount= 0;
   private drankText?: Phaser.GameObjects.Text;
   private grenadeProbability?: number;
   private drankProbability?: number;

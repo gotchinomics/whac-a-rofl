@@ -32,7 +32,7 @@ const Main = () => {
           default: "arcade",
           arcade: {
             gravity: { y: 0 },
-            debug: process.env.NODE_ENV === "production", // development
+            debug: process.env.NODE_ENV === "development", // development or production
           },
         },
         scale: {
