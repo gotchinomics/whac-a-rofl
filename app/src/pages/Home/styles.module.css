@@ -54,6 +54,9 @@
 .errorContainer .secondaryErrorMessage {
   margin: 5.4rem 0 2.4rem;
 }
+.errorContainer button {
+  margin-top: 1.6rem;
+}
 
 
 .modalContent h1 {
