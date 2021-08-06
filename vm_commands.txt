@@ -17,4 +17,5 @@ whac-a-rofl commands
 // check CPU & memory
 >> htop
 
-
+// fetch changes from Github server
+git pull https://github.com/gotchinomics/whac-a-rofl-server.git
