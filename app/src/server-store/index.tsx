@@ -5,8 +5,8 @@ import React, {
   useState,
   useRef,
 } from "react";
-import { HighScore, AavegotchiObject } from "types";
-import { useWeb3 } from "web3";
+import { HighScore, AavegotchiObject } from "types"
+import { useWeb3 } from "web3/context";
 import fb from "firebase";
 
  const firebaseConfig = {
@@ -28,7 +28,7 @@ import fb from "firebase";
 
  export const ServerProvider = ({ children }: { children: React.ReactNode }) => {
   const {
-    state: { usersGotchis },
+    state: { usersAavegotchis },
   } = useWeb3();
   const [highscores, setHighscores] = useState<Array<HighScore>>();
   const [firebase, setFirebase] = useState<fb.app.App>();
@@ -81,11 +81,11 @@ import fb from "firebase";
   };
 
   useEffect(() => {
-    if (usersGotchis && usersGotchis.length > 0 && firebase && initiated) {
+    if (usersAavegotchis && usersAavegotchis.length > 0 && firebase && initiated) {
       const db = firebase.firestore();
       const gotchiSetArray = [];
-      for (let i = 0; i < usersGotchis.length; i += 10) {
-        gotchiSetArray.push(usersGotchis.slice(i, i + 10));
+      for (let i = 0; i < usersAavegotchis.length; i += 10) {
+        gotchiSetArray.push(usersAavegotchis.slice(i, i + 10));
       }
       const listenerArray = gotchiSetArray.map((gotchiArray) =>
         snapshotListener(db, gotchiArray)
@@ -95,7 +95,7 @@ import fb from "firebase";
         listenerArray.forEach((listener) => listener());
       };
     }
-  }, [usersGotchis, firebase]);
+  }, [usersAavegotchis, firebase]);
 
   useEffect(() => {
     const getHighscores = async (_firebase: fb.app.App) => {
