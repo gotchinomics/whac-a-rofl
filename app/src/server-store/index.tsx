@@ -107,7 +107,7 @@ import fb from "firebase";
 
       const highscoreResults: Array<HighScore> = [];
       snapshot.forEach((doc) => highscoreResults.push(doc.data()));
-      setHighscores(highscoreResults.sort(sortByScore));
+      setMyHighscores(highscoreResults.sort(sortByScore));
       setInitiated(true);
     };
 
