@@ -46,6 +46,8 @@ export const HEARTROFLDRANK = 'heartrofldrank';
 export const LICKQUIDATOR = 'lickquidator';
 export const SPLASH = 'splash';
 export const HITTING = 'hitting';
+export const SPARK = 'spark';
+export const SPARK2 = 'spark2';
 
 
 // Save all in game assets in the public folder
@@ -236,6 +238,24 @@ export const assets: Array<Asset | SpritesheetAsset> = [
     data: {
       frameWidth: 2048 / 4,
       frameHeight: 2048 / 4,
+    }
+  },
+  {
+    key: SPARK,
+    src: 'assets/sprites/spark.png',
+    type: 'SPRITESHEET',
+    data: {
+      frameWidth: 2048 / 4,
+      frameHeight: 1536 / 3,
+    }
+  },
+  {
+    key: SPARK2,
+    src: 'assets/sprites/gotchispark.png',
+    type: 'SPRITESHEET',
+    data: {
+      frameWidth: 2048 / 4,
+      frameHeight: 1536 / 3,
     }
   },
 ];

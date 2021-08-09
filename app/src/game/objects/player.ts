@@ -1,6 +1,7 @@
 import{ getGameHeight } from 'game/helpers';
 import{ getGameWidth } from 'game/helpers';
 import { GameScene  } from 'game/scenes';
+import { SPARK2 } from 'game/assets';
 
 interface Props {
   scene: Phaser.Scene;
@@ -21,6 +22,7 @@ export class Player extends Phaser.GameObjects.Sprite {
   public speed = 1000;
   private x0?: number;
   private y0?: number;
+  private spark?: Phaser.GameObjects.Sprite;
   // Player Gotchi traits
   private nrg?: number;
   private agg?: number;
@@ -39,8 +41,13 @@ export class Player extends Phaser.GameObjects.Sprite {
     this.setOrigin(0, 0);
     this.x0 = getGameWidth(this.scene)*0.5  - (getGameWidth(this.scene)*0.045);
     this.y0 = getGameHeight(this.scene)*0.6 -  (getGameWidth(this.scene)*0.045);
+
+    // creating aux sparking element
+    this.spark = new Phaser.GameObjects.Sprite(scene, this.x0, this.y0, SPARK2);
+    this.spark.displayHeight = getGameHeight(scene) * 0.2;
+    this.spark.displayWidth = getGameHeight(scene) * 0.2;
             
-    // Add animations
+    // Add player animations
     this.anims.create({
       key: 'idle',
       frames: this.anims.generateFrameNumbers(key || '', { frames: [0] }),
@@ -58,6 +65,18 @@ export class Player extends Phaser.GameObjects.Sprite {
       frames: this.anims.generateFrameNumbers(key || '', { frames: [ 4 ]}),
     });
 
+    // Add spark animation
+    this.spark.anims.create({
+      key: 'spark',
+      frames: this.spark.anims.generateFrameNumbers(SPARK2 || '', { start: 1, end: 12 }),
+      frameRate: 12,
+      repeat: -1,
+    });
+    this.spark.setVisible(false);
+
+    
+
+
     // physics
     this.scene.physics.world.enable(this);
    // (this.body as Phaser.Physics.Arcade.Body).setGravityY(getGameHeight(this.scene) * 1.5);
@@ -68,7 +87,11 @@ export class Player extends Phaser.GameObjects.Sprite {
     this.grenadeKey = this.scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.G);
     this.drankKey = this.scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.D);
 
+    
     this.scene.add.existing(this);
+    this.scene.add.existing(this.spark);
+  
+    
   }
 
   update(): void {
@@ -92,6 +115,7 @@ export class Player extends Phaser.GameObjects.Sprite {
         //  } else{
             this.setPosition( this.pointer.position.x - (getGameWidth(this.scene)*0.045) , this.pointer.position.y - (getGameWidth(this.scene)*0.045) );
         //  }
+            this.spark?.setPosition( this.pointer.position.x - (getGameWidth(this.scene)*0.01) , this.pointer.position.y ); // - (getGameWidth(this.scene)*0.01)
         }
       }
     
@@ -152,6 +176,7 @@ export class Player extends Phaser.GameObjects.Sprite {
 
  private setDead(dead: boolean): void {
   this.isDead = dead;
+  this.spark?.setVisible(false);
  }
 
  public removeLife(){
@@ -177,6 +202,11 @@ export class Player extends Phaser.GameObjects.Sprite {
 
  public getLives(): number {
   return this.lives;
+ }
+
+ public activateEpicMode(){
+  this.spark?.setVisible(true);
+  this.spark?.anims.play('spark');
  }
 
  public getLivesString(): string {

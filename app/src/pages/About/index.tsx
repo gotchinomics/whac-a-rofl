@@ -1,16 +1,18 @@
 import { Layout } from 'components/Layout';
 import globalStyles from 'theme/globalStyles.module.css';
+import styles from './styles.module.css';
 
 const About = () => {
 
   return (
     <Layout>
-      <div className={globalStyles.container}>
-      <h1>THIS IS A TEST</h1>
+      <div className={styles.container}>
+      <h1>Description</h1>
+      <img src="assets/images/yoda.png" alt="Yoda#3934" width="128" height="128" />
         <ul>
-          <li>SOMETHING</li>
-          <li>WHATEVER</li>
-          <li>CHECK</li>
+          <li>Discord: </li>
+          <li>Telegram: </li>
+          <li>Email: </li>
         </ul>
       </div>
     </Layout>

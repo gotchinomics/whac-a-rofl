@@ -427,6 +427,7 @@ export class GameScene extends Phaser.Scene {
       if (this.score == this.epicScore) {
         this.gametune?.stop();
         this.epictune?.play();
+        this.player?.activateEpicMode();
         this.backgroundImageRegular?.destroy(true);
       }
 

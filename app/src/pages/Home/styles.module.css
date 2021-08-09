@@ -77,3 +77,16 @@
     margin-top: 0;
   }
 }
+
+.imageText_Row {
+  display: flex;
+  align-items: center;
+  margin-bottom: 1.2rem;
+  margin-left: 1.2rem;
+}
+
+.descriptionText {
+  display: flex;
+  align-items: left;
+  margin-left: 1.2rem;
+}

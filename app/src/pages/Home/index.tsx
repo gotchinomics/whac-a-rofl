@@ -101,12 +101,39 @@ const Home = () => {
             Dear Fren, we need your help! The Lickquidators have invaded Rolf Reefs causing a yuuuge migration of MEME frogs to Poly Lakes. Try to be quick and get rid of the Rofls before it is too late! But be careful, Lickquidators are lurking around and they can suck the life out of your Gotchi with their disgusting tongue. Good luck on your mission, Gotchigang is stronk and together we will stop the plague!
             
             <h2>Rofl types:</h2>
-            <ul>
-            <li><b>Common</b>: the most popular type of MEME frogs.</li>
-            <li><b>Grenadier</b>: these Rofls usually carry a grenade, that can be handy if the puddles get crowded.</li>
-            <li><b>Lil Pump fan</b>: rap is very popular among Rofls, being Lil Pump their greatest idol. They love to drink Lean, which gets them chill but freezes their brain.</li>
-            <li><b>Godlike</b>: the only Rofl in the Gotchiverse that can fly. If you catch one you will see how your Gotchi health increases.</li>
-            </ul>
+
+            <div className={styles.imageText_Row} >
+              <img src="assets/sprites/commonrofl.png" alt="Common Rofl" width="64" height="64" />
+              
+              <div className={styles.descriptionText} >  
+                  <b>Common</b>: The most popular type of MEME frogs. 
+              </div>
+             </div>
+
+             <div className={styles.imageText_Row} >
+              <img src="assets/sprites/grenaderofl.png" alt="Grenadier Rofl" width="64" height="64" />
+               
+              <div className={styles.descriptionText} >  
+                <b>Grenadier</b>: these Rofls usually carry a grenade, that can be handy if the puddles get crowded.
+              </div>
+             </div>
+
+             <div className={styles.imageText_Row} >
+              <img src="assets/sprites/drankrofl.png" alt="LilPump Rofl" width="64" height="64" />
+              
+              <div className={styles.descriptionText} >  
+              <b>LilPump</b>: rap is very popular among Rofls, being Lil Pump their greatest idol. They love to drink Lean, which gets them chill but freezes their brain.
+              </div>
+             </div>
+
+             <div className={styles.imageText_Row} >
+              <img src="assets/sprites/heartrofl.png" alt="Godlike Rofl" width="64" height="64" />
+              
+              <div className={styles.descriptionText} >  
+                <b>Godlike</b>: the only Rofl in the Gotchiverse that can fly. If you catch one you will see how your Gotchi health increases.
+              </div>
+             </div>
+
             </p>
           </div>
         </Modal>
