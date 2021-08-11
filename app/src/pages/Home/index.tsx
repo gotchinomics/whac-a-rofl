@@ -12,6 +12,7 @@ import {
 import gotchiLoading from 'assets/gifs/loading.gif';
 import { playSound } from 'helpers/hooks/useSound';
 import styles from './styles.module.css';
+import { Scale } from 'phaser';
 
 const Home = () => {
   const {
@@ -147,11 +148,21 @@ const Home = () => {
               selectGotchi={handleSelect}
             />
           </div>
-          <div className={styles.gotchiContainer}>
+          
+          <div style={{ 
+            backgroundRepeat: 'no-repeat',
+            backgroundSize: "cover",
+            backgroundPosition: "center",
+            height: "100%",
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}>
+            <div className={styles.gotchiContainer}>
             {usersAavegotchis ? (
               <GotchiSVG tokenId={usersAavegotchis[selectedAavegotchiIndex].id} options={{ animate: true, removeBg: true }}  />
             ) : (
-              <img src={gotchiLoading} alt="Loading Aavegotchi" />
+              <img src={gotchiLoading} alt="Loading Aavegotchi"/>
             )}
             <h1 className={styles.highscore}>
               Highscore:
@@ -180,10 +191,20 @@ const Home = () => {
               </button>
             </div>
           </div>
+          </div>
           <div className={styles.detailsPanelContainer}>
             <DetailsPanel selectedGotchi={usersAavegotchis ? usersAavegotchis[selectedAavegotchiIndex] : undefined} />
           </div>
         </div>
+      </div>
+      <div style={{ 
+      backgroundImage: "url(assets/images/grid.png)",
+      backgroundRepeat: 'no-repeat',
+      backgroundSize: "cover",
+      height: "25vh",
+       backgroundPosition: "center",
+      }}>
+        
       </div>
     </Layout>
   );

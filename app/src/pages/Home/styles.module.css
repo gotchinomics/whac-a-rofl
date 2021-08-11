@@ -7,22 +7,25 @@
 .selectorContainer {
   display: flex;
   justify-content: center;
+  flex-direction: column;
 }
 
 .gotchiContainer {
   display: flex;
   align-items: center;
   flex-direction: column;
+  scale:1.1;
 }
 
 .highscore {
   margin: 1.6rem auto 3.2rem;
+  align-items: center;
   color: white;
 }
 
 .gotchiContainer img {
   max-height: 33rem;
-  width: 100%;
+  width: 100%;  
 }
 
 .buttonContainer {

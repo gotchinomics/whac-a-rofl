@@ -6,6 +6,7 @@ const About = () => {
   return (
     <Layout>
       <div className={styles.container}>
+
         <h1>About me</h1>
         <div className={styles.imageText_Row} >
               <img src="assets/images/yoda.png" alt="Yoda#3934" width="256" height="256" />
@@ -22,7 +23,7 @@ const About = () => {
               </div>
         </div>
 
-        <p></p>
+        <br />
 
         <h1>Ghost Squad</h1>
         <div className={styles.imageText_Row} >
