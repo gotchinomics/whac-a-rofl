@@ -7,7 +7,7 @@ import globalStyles from 'theme/globalStyles.module.css';
 const Leaderboard = () => {
   const { state: { usersAavegotchis } } = useWeb3();
   const { highscores } = useServer();
-  const endDate = new Date('August 15, 2021 16:00:00') ;
+  const endDate = new Date('August 19, 2021 16:00:00') ;
 
   const getReward = (position : number , score?:  number) => {
 

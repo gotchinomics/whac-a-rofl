@@ -29,7 +29,7 @@ interface Props {
 }
 
 export const GotchiSelector = ({
-  gotchis, selectGotchi, initialGotchiIndex = 0, maxVisible = 4,
+  gotchis, selectGotchi, initialGotchiIndex = 0, maxVisible = 3,
 }: Props) => {
   const [selected, setSelected] = useState<number>();
   const [currentIteration, setCurrentIteration] = useState(0);
