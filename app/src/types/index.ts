@@ -18,12 +18,14 @@ export interface AavegotchiContractObject {
   withSetsNumericTraits: Tuple<number, 6>;
   id: string;
   withSetsRarityScore: number;
+  owner: {
+    id: string;
+  };
   
   // collateral: string;
   name: string;
   // modifiedNumericTraits: number[];
   // numericTraits: number[];
-  // owner: string;
   // randomNumber: string;
   status: number;
   // tokenId: ethers.BigNumber;

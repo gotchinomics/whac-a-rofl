@@ -10,6 +10,9 @@ export const getDefaultGotchi = (): AavegotchiObject => {
     equippedWearables: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     status: 3,
     withSetsRarityScore: 300,
+    owner: {
+      id: '0000'
+    },
   }
 }
 
