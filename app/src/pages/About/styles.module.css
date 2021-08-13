@@ -3,6 +3,7 @@
 .container {
   max-width: 60rem;
   margin: 0 auto;
+  font-size: 1.6rem;
   padding: 5.4rem 1.2rem;
   color: white;
 }
@@ -45,3 +46,25 @@ input[type="range"]::-moz-range-progress {
   background-color: var(--color-purple_0);
 }
 
+.imageText_Row {
+  display: flex;
+  align-items: center;
+  margin-bottom: 1.2rem;
+  margin-left: 1.2rem;
+  text-align: justify;
+}
+
+.descriptionText {
+  display: flex;
+  align-items: left;
+  margin-left: 1.2rem;
+}
+
+.modalContent p {
+    line-height: 1.5;
+  font-size: 1.6rem;
+  display: flex;
+  flex-direction: column;
+  padding: 5.4rem 1.2rem;
+  color: white;
+}

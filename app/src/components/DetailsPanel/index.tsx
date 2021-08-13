@@ -144,6 +144,7 @@ export const DetailsPanel = ({ selectedGotchi }: Props) => {
 
   return (
     <div className={styles.detailsPanel}>
+      <hr />
       <h1>
         {selectedGotchi
           ? `${selectedGotchi?.name} (${selectedGotchi?.id})`
@@ -155,6 +156,7 @@ export const DetailsPanel = ({ selectedGotchi }: Props) => {
           {renderTrait(i)}
         </React.Fragment>
       ))}
+      <hr />
     </div>
   );
 };
