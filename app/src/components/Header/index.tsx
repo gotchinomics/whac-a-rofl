@@ -80,6 +80,7 @@ export const Header = () => {
         <Hamburger onClick={() => setMenuOpen((prevState) => !prevState)} />
         <SideTray open={menuOpen}>
           <nav>
+            <WalletButton />
             <NavLink
               onClick={() => playSound('click')}
               to="/"
@@ -109,7 +110,6 @@ export const Header = () => {
             >
               Settings
             </NavLink>
-            <WalletButton />
           </nav>
         </SideTray>
       </div>
