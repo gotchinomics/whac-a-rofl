@@ -3,6 +3,8 @@ import { AavegotchiGameObject } from 'types';
 import { getGameWidth, getGameHeight, getRelative } from '../helpers';
 import { Player , Rofl, Lickquidator, HeartCounter , Puddle } from 'game/objects';
 import { Socket } from 'dgram';
+import LogRocket from 'logrocket';
+
 
 const sceneConfig: Phaser.Types.Scenes.SettingsConfig = {
   active: false,
@@ -97,7 +99,8 @@ export class GameScene extends Phaser.Scene {
   private gotchiTraits?: Array<number>;
   private backgroundImageEpic?: Phaser.GameObjects.Image;
   private backgroundImageRegular?: Phaser.GameObjects.Image;
-  private roflBufferSize = 20;
+  private roflBufferSize = 60;
+  private lickquidatorBufferSize = 10;
 
 
   constructor() {
@@ -109,6 +112,9 @@ export class GameScene extends Phaser.Scene {
   };
 
   public create(): void {
+    // monitoring resources , for debugging purposes
+    LogRocket.init('qjtjwh/whac-a-rofl');
+
     // communicating gameStarted to socket
     this.socket = this.game.registry.values.socket;
     this.socket?.emit('gameStarted');
@@ -175,7 +181,7 @@ export class GameScene extends Phaser.Scene {
 
     // Add Liquidators group
     this.lickquidators = this.add.group({
-      maxSize: 6,
+      maxSize: this.lickquidatorBufferSize,
       classType: Lickquidator,
       runChildUpdate: true,
     });
@@ -398,6 +404,11 @@ export class GameScene extends Phaser.Scene {
  // Add Lickquidator
  private addLickquidator = (x: number, y: number, position: number, velocityY: number) : void =>{
    const lickquidator: Lickquidator = this.lickquidators?.get();
+   // for debugging purposes only
+   //  const lickInx = this.lickquidators?.contains.length;
+   // if (lickInx){
+   // this.scoreText?.setText(lickInx.toString());
+   // }
 
    lickquidator.activate(x, y, position, velocityY, this.sessionID);
 

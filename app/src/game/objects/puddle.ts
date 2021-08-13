@@ -13,6 +13,7 @@ export class Puddle extends Phaser.GameObjects.Sprite {
    this.anims.create({
     key: 'idle',
     frames: this.anims.generateFrameNumbers(SPLASH || '', { frames: [8] }),
+    repeat: 0,
   });
     this.anims.create({
       key: 'splash',
