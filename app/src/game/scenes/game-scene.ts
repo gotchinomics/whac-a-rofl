@@ -97,6 +97,7 @@ export class GameScene extends Phaser.Scene {
   private gotchiTraits?: Array<number>;
   private backgroundImageEpic?: Phaser.GameObjects.Image;
   private backgroundImageRegular?: Phaser.GameObjects.Image;
+  private roflBufferSize = 20;
 
 
   constructor() {
@@ -167,7 +168,7 @@ export class GameScene extends Phaser.Scene {
 
     // Add Rofl group for pooling
     this.rofls = this.add.group({
-      maxSize: 30,
+      maxSize: this.roflBufferSize,
       classType: Rofl,
       runChildUpdate: true,
     });
@@ -318,6 +319,11 @@ export class GameScene extends Phaser.Scene {
   // Add Rofl
   private addRofl = (x: number, y: number, position: number, velocityY: number) : void =>{
     const rofl: Rofl = this.rofls?.get();
+    // for debugging purposes only
+    // const roflInx = this.rofls?.contains.length;
+    //if (roflInx){
+    //this.scoreText?.setText(roflInx.toString());
+    //}
 
     //this.addScore();
 
@@ -444,8 +450,7 @@ export class GameScene extends Phaser.Scene {
     const rarityType = rofl.getRarity();
 
     this.addScore();
-    rofl.setDead(true);
-
+    
     if (rofl != undefined && this.puddleArray != undefined) {
       
       this.squash?.play();
@@ -455,6 +460,13 @@ export class GameScene extends Phaser.Scene {
     if (rofl != undefined && rofl.positionIndex != undefined ){
       //this.usedPosition[rofl.positionIndex] = false;
       this.setPondFree(rofl.positionIndex);
+    }
+
+    rofl.setDead(true);
+
+    // forcing to destroy the asset if still locked in memory
+    if (rofl){
+      rofl.destroy();
     }
 
     // SPECIAL ROFL POWERS 

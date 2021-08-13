@@ -28,7 +28,7 @@ export class Puddle extends Phaser.GameObjects.Sprite {
       repeat: 0,
     }); // hideOnComplete: true,
 
-    this.setVisible(false);
+    //this.setVisible(false);
 
    this.scene.add.existing(this);
  }
@@ -37,7 +37,7 @@ export class Puddle extends Phaser.GameObjects.Sprite {
  public setPuddle =  (x: number, y: number) => {
 
     this.setPosition( x - (this.displayWidth*0.5), y - (this.displayHeight*0.75));
-    //this.anims.play('idle');
+    this.anims.play('idle');
   }
 
   public showHitting =  () => {
@@ -47,12 +47,13 @@ export class Puddle extends Phaser.GameObjects.Sprite {
   }
 
   private animationCompleted=  () => {
-    this.setVisible(false);
+    //this.setVisible(false);
+    this.anims.play('idle');
   }
 
 
   public splash = () => {
-    this.setVisible(true);  
+    //this.setVisible(true);  
     this.anims.play('splash');
     this.on('animationcomplete', this.animationCompleted );
 
