@@ -162,7 +162,7 @@ const Home = () => {
             justifyContent: 'center',
           }}>
             <div className={styles.gotchiContainer}>
-            {usersAavegotchis ? (
+            {selectedAavegotchiId ? (
               <GotchiSVG tokenId={selectedAavegotchiId} options={{ animate: true, removeBg: true }}  />
             ) : (
               <img src={gotchiLoading} alt="Loading Aavegotchi"/>

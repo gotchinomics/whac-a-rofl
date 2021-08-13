@@ -49,7 +49,7 @@ export const GotchiSelector = ({
   gotchis,
   selectGotchi,
   initialGotchiId,
-  maxVisible = 3,
+  maxVisible = 4,
 }: Props) => {
   const [selected, setSelected] = useState<string>();
   const [currentIteration, setCurrentIteration] = useState(0);

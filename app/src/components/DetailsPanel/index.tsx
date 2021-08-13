@@ -7,7 +7,7 @@ interface Props {
 }
 
 export const DetailsPanel = ({ selectedGotchi }: Props) => {
-  /*
+  
   const calculatePercentage = (number: number) => {
     if (number > 100) {
       return '100%';
@@ -17,7 +17,7 @@ export const DetailsPanel = ({ selectedGotchi }: Props) => {
     }
     return `${number}%`;
   };
-  */
+  
 
   const calculateInversePercentage = (number: number) => {
     const invNumber = 100-number;
@@ -134,8 +134,8 @@ export const DetailsPanel = ({ selectedGotchi }: Props) => {
               </p>
               <p>{selectedGotchi?.withSetsNumericTraits[3]}</p>
             </div>
-            {renderModifier('Lil Pump Rofls', calculateBonusPercentage(selectedGotchi?.withSetsNumericTraits[i] as number))}
-            {renderModifier('Freeze duration', calculateInversePercentage(selectedGotchi?.withSetsNumericTraits[i] as number))}
+            {renderModifier('Lil Pump Rofls', calculateInverseBonusPercentage(selectedGotchi?.withSetsNumericTraits[i] as number))}
+            {renderModifier('Freeze duration', calculatePercentage(selectedGotchi?.withSetsNumericTraits[i] as number))}
           </>
         );
       default:

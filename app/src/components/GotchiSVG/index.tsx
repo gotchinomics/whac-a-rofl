@@ -16,6 +16,7 @@ export const GotchiSVG = ({ tokenId, options, lazyloadIn }: Props) => {
   const [ svg, setSvg ] = useState<string>();
 
   const fetchGotchiSvg = async (id: string, isOwner: boolean, provider: Web3Provider) => {
+    if (id != ''){
     try {
       const res = await useDiamondCall<string>(provider, { name: "getAavegotchiSvg", parameters: [id]});
       if (isOwner) {
@@ -27,13 +28,14 @@ export const GotchiSVG = ({ tokenId, options, lazyloadIn }: Props) => {
       } else {
         setSvg(options ? customiseSvg(res, options) : res)
       }
-    } catch (error) {
+    } catch (error: any | undefined) { //: any | undefined
       console.log(error);
 
       dispatch({
         type: "SET_ERROR",
         error
       })
+    }
     }
   }
 
