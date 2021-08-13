@@ -17,7 +17,7 @@ import { Scale } from 'phaser';
 const Home = () => {
   const {
     state: {
-      usersAavegotchis, address, selectedAavegotchiIndex, networkId
+      usersAavegotchis, address, selectedAavegotchiId, networkId
     },
     dispatch,
   } = useWeb3();
@@ -32,8 +32,8 @@ const Home = () => {
    * Updates global state with selected gotchi
    */
   const handleSelect = useCallback(
-    (gotchiIndex: number) => {
-      dispatch({ type: "SET_SELECTED_AAVEGOTCHI", selectedAavegotchiIndex: gotchiIndex });
+    (gotchiId: string) => {
+      dispatch({ type: "SET_SELECTED_AAVEGOTCHI", selectedAavegotchiId: gotchiId });
     },
     [dispatch],
   );
@@ -42,7 +42,11 @@ const Home = () => {
     if (process.env.REACT_APP_OFFCHAIN) return useDefaultGotchi();
 
     if (address) {
-      updateAavegotchis(dispatch, address)
+      const prevGotchis = usersAavegotchis || [];
+      if (prevGotchis.find(gotchi => gotchi.owner.id.toLowerCase() === address.toLowerCase())) return;
+
+      dispatch({ type: "SET_SELECTED_AAVEGOTCHI", selectedAavegotchiId: undefined });
+      updateAavegotchis(dispatch, address);
     }
   }, [address]);
 
@@ -143,12 +147,11 @@ const Home = () => {
         <div className={styles.homeContainer}>
           <div className={styles.selectorContainer}>
             <GotchiSelector
-              initialGotchiIndex={selectedAavegotchiIndex}
+              initialGotchiId={selectedAavegotchiId}
               gotchis={usersAavegotchis}
               selectGotchi={handleSelect}
             />
           </div>
-          
           <div style={{ 
             backgroundRepeat: 'no-repeat',
             backgroundSize: "cover",
@@ -160,14 +163,14 @@ const Home = () => {
           }}>
             <div className={styles.gotchiContainer}>
             {usersAavegotchis ? (
-              <GotchiSVG tokenId={usersAavegotchis[selectedAavegotchiIndex].id} options={{ animate: true, removeBg: true }}  />
+              <GotchiSVG tokenId={selectedAavegotchiId} options={{ animate: true, removeBg: true }}  />
             ) : (
               <img src={gotchiLoading} alt="Loading Aavegotchi"/>
             )}
             <h1 className={styles.highscore}>
               Highscore:
               {' '}
-              {usersAavegotchis && highscores?.find((score) => score.tokenId === usersAavegotchis[selectedAavegotchiIndex]?.id)
+              {usersAavegotchis && highscores?.find((score) => score.tokenId === selectedAavegotchiId)
                 ?.score || 0}
             </h1>
             <div className={styles.buttonContainer}>
@@ -193,7 +196,7 @@ const Home = () => {
           </div>
           </div>
           <div className={styles.detailsPanelContainer}>
-            <DetailsPanel selectedGotchi={usersAavegotchis ? usersAavegotchis[selectedAavegotchiIndex] : undefined} />
+            <DetailsPanel selectedGotchi={usersAavegotchis?.find(gotchi => gotchi.id === selectedAavegotchiId)} />
           </div>
         </div>
       </div>
