@@ -55,10 +55,10 @@ export const bounceAnimation = (svg: string) => {
   const style = `
     @keyframes downHands {
       from {
-        --hand_translateY: -4px;
+        --hand_translateY: -1px;
       }
       to {
-        --hand_translateY: -3.5px;
+        --hand_translateY: -0.5px;
       }
     }
     @keyframes up {
