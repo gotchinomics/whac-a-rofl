@@ -68,7 +68,7 @@ export class Player extends Phaser.GameObjects.Sprite {
     // Add spark animation
     this.spark.anims.create({
       key: 'spark',
-      frames: this.spark.anims.generateFrameNumbers(SPARK2 || '', { start: 1, end: 12 }),
+      frames: this.spark.anims.generateFrameNumbers(SPARK2 || '', { start: 1, end: 11 }),
       frameRate: 12,
       repeat: -1,
     });

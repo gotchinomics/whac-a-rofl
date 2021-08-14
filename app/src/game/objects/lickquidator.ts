@@ -57,7 +57,7 @@ export class Lickquidator extends Phaser.GameObjects.Sprite {
   public setDead(dead: boolean): void {
     this.isDead = dead;
     if (dead == true){
-      this.anims.play('dead');
+      //this.anims.play('dead');
       this.destroy(); 
     }
   }

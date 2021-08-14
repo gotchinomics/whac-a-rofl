@@ -527,6 +527,10 @@ export class GameScene extends Phaser.Scene {
       (this.puddleArray[lickquidator.positionIndex] as Puddle).showHitting();
     }
     lickquidator.setDead(true);
+    // to force destroy the asset
+    if (lickquidator){
+      lickquidator.destroy();
+    }
     if (this.player != undefined){
       this.player.removeLife();
       this.updateLivesCounter();
@@ -541,6 +545,9 @@ export class GameScene extends Phaser.Scene {
       this.setPondFree(lickquidator.positionIndex);
     }
     lickquidator.setDead(true);
+    if (lickquidator){
+      lickquidator.destroy();
+    }
   }
   };
 
@@ -565,6 +572,10 @@ export class GameScene extends Phaser.Scene {
       rofl.goneTimer?.destroy;
       
       rofl.setDead(true);
+          // forcing to destroy the asset if still locked in memory
+    if (rofl){
+      rofl.destroy();
+    }
 
     } 
   };
@@ -593,6 +604,9 @@ export class GameScene extends Phaser.Scene {
         this.setPondFree(lickquidator.positionIndex);
       }
       lickquidator.setDead(true);
+      if (lickquidator){
+        lickquidator.destroy();
+      }
     }
 
   };
