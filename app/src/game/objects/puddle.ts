@@ -10,26 +10,27 @@ export class Puddle extends Phaser.GameObjects.Sprite {
    this.displayWidth = getGameHeight(scene) * 0.15;
 
    // creating animation
-   this.anims.create({
+   /*this.anims.create({
     key: 'idle',
-    frames: this.anims.generateFrameNumbers(SPLASH || '', { frames: [8] }),
+    frames: this.anims.generateFrameNumbers(SPLASH || '', { frames: [0] }),
     repeat: 0,
-  });
+  });*/
     this.anims.create({
       key: 'splash',
-      frames: this.anims.generateFrameNumbers(SPLASH || '', { start: 1, end: 8 }),
+      frames: this.anims.generateFrameNumbers(SPLASH || '', { start: 1, end: 7 }),
       frameRate: 10,
       repeat: 0,
     });
 
+    /*
     this.anims.create({
       key: 'hitting',
       frames: this.anims.generateFrameNumbers(HITTING || '', { start: 1, end: 8 }),
       frameRate: 16,
       repeat: 0,
     }); // hideOnComplete: true,
-
-    //this.setVisible(false);
+    */
+    this.setVisible(false);
 
    this.scene.add.existing(this);
  }
@@ -38,23 +39,23 @@ export class Puddle extends Phaser.GameObjects.Sprite {
  public setPuddle =  (x: number, y: number) => {
 
     this.setPosition( x - (this.displayWidth*0.5), y - (this.displayHeight*0.75));
-    this.anims.play('idle');
+    //this.anims.play('idle');
   }
 
   public showHitting =  () => {
-    this.setVisible(true);
-    this.anims.play('hitting');
-    this.on('animationcomplete', this.animationCompleted );
+    //this.setVisible(true);
+    //this.anims.play('hitting');
+    //this.on('animationcomplete', this.animationCompleted );
   }
 
   private animationCompleted=  () => {
-    //this.setVisible(false);
-    this.anims.play('idle');
+    this.setVisible(false);
+    //this.anims.play('idle');
   }
 
 
   public splash = () => {
-    //this.setVisible(true);  
+    this.setVisible(true);  
     this.anims.play('splash');
     this.on('animationcomplete', this.animationCompleted );
 

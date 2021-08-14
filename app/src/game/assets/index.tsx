@@ -54,12 +54,12 @@ export const SPARK2 = 'spark2';
 export const assets: Array<Asset | SpritesheetAsset> = [
   {
     key: BG,
-    src: 'assets/images/bg2.png',
+    src: 'assets/images/bg3.png',
     type: 'IMAGE',
   },
   {
     key: BGLOL,
-    src: 'assets/images/bg_lol.png',
+    src: 'assets/images/bg_lol2.png',
     type: 'IMAGE',
   },
   {
@@ -215,20 +215,20 @@ export const assets: Array<Asset | SpritesheetAsset> = [
   },
   {
     key: LICKQUIDATOR,
-    src: 'assets/sprites/liquidator_sprite.png',
+    src: 'assets/sprites/liquidator_spritev2.png',
     type: 'SPRITESHEET',
     data: {
-      frameWidth: 7500 / 12,
-      frameHeight: 625 / 1,
+      frameWidth: 2048 / 4,
+      frameHeight: 2048 / 4,
     }
   },
   {
     key: SPLASH,
-    src: 'assets/sprites/splash_spritev2.png',
+    src: 'assets/sprites/splash_spritev3.png',
     type: 'SPRITESHEET',
     data: {
-      frameWidth: 4977 / 9,
-      frameHeight: 553 / 1,
+      frameWidth: 2048 / 4,
+      frameHeight: 1024 / 2,
     }
   },
   {

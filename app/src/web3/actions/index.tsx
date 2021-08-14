@@ -13,7 +13,7 @@ export const useSubgraph = async <T extends unknown>(
   try {
     const data = await request<T>(uri || coreURI, query);
     return data;
-  } catch (err) {
+  } catch (err: any | undefined) {
     throw {
       status: 400,
       name: "Subgraph error",
@@ -33,7 +33,7 @@ export const useDiamondCall = async <R extends unknown>(
     const { name, parameters } = method;
     const res = await contract[name](...parameters);
     return res;
-  } catch (err) {
+  } catch (err: any | undefined) {
     throw { status: 400, name: "Diamond contract error", message: err.message, stack: err.stack };
   }
 };
