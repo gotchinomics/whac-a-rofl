@@ -9,12 +9,12 @@ const Settings = () => {
 
   const handleSEVolumeChange = () => {
     window.localStorage.setItem('seVolume', seVolume);
-    playSound('click');
+    //playSound('click');
   };
 
   const handleMusicVolumeChange = () => {
     window.localStorage.setItem('musicVolume', musicVolume);
-    playSound('click');
+    //playSound('click');
   };
 
   return (

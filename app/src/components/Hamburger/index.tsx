@@ -10,7 +10,7 @@ export const Hamburger = (props: Props) => {
   const [open, setOpen] = useState(false);
 
   const handleClick = () => {
-    playSound('click');
+    //playSound('click');
     setOpen(!open);
     props.onClick();
   };

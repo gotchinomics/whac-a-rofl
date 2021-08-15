@@ -22,14 +22,14 @@ export class Puddle extends Phaser.GameObjects.Sprite {
       repeat: 0,
     });
 
-    /*
+    
     this.anims.create({
       key: 'hitting',
       frames: this.anims.generateFrameNumbers(HITTING || '', { start: 1, end: 8 }),
       frameRate: 16,
       repeat: 0,
     }); // hideOnComplete: true,
-    */
+    
     this.setVisible(false);
 
    this.scene.add.existing(this);
@@ -43,9 +43,9 @@ export class Puddle extends Phaser.GameObjects.Sprite {
   }
 
   public showHitting =  () => {
-    //this.setVisible(true);
-    //this.anims.play('hitting');
-    //this.on('animationcomplete', this.animationCompleted );
+    this.setVisible(true);
+    this.anims.play('hitting');
+    this.on('animationcomplete', this.animationCompleted );
   }
 
   private animationCompleted=  () => {

@@ -185,7 +185,7 @@ const Home = () => {
               </Link>
               <button
                 onClick={() => {
-                  playSound('click');
+                  //playSound('click');
                   setShowRulesModal(true);
                 }}
                 className={`${globalStyles.secondaryButton} ${globalStyles.circleButton}`}

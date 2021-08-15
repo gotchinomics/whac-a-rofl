@@ -100,7 +100,7 @@ export const Leaderboard = ({
           <button
             className={styles.toggle}
             onClick={() => {
-              playSound("click");
+              //playSound("click");
               setOnlyMine((prevState) => !prevState);
             }}
           >
@@ -147,7 +147,7 @@ export const Leaderboard = ({
                   i === currentPage ? `${styles.selected}` : ""
                 }`}
                 onClick={() => {
-                  playSound("click");
+                  //playSound("click");
                   setCurrentPage(i);
                 }}
               >

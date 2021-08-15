@@ -90,7 +90,7 @@ export const GotchiSelector = ({
     const nextIteration = currentIteration + i;
     if (nextIteration > maxIterations || nextIteration < 0) return;
 
-    playSound(click);
+    //playSound(click);
     setCurrentIteration(nextIteration);
   };
 
@@ -213,7 +213,7 @@ export const GotchiSelector = ({
                       }`}
                       key={i}
                       onClick={() => {
-                        playSound(click);
+                        //playSound(click);
                         handleSelect(gotchi.id);
                       }}
                     >
