@@ -9,6 +9,7 @@ import styles from "./styles.module.css";
 import { GotchiSVG } from "components/GotchiSVG";
 import { SearchToggle } from "components/SearchToggle";
 import { SortToggle, Sort } from "components/SortToggle";
+import { useServer } from "server-store";
 
 const sortOptions = [
   {
@@ -20,8 +21,8 @@ const sortOptions = [
     value: "gotchiId",
   },
   {
-    name: "Name",
-    value: "name",
+    name: "Score",
+    value: "highscore",
   },
 ];
 
@@ -51,6 +52,8 @@ export const GotchiSelector = ({
   initialGotchiId,
   maxVisible = 3,
 }: Props) => {
+  const { highscores } = useServer();
+
   const [selected, setSelected] = useState<string>();
   const [currentIteration, setCurrentIteration] = useState(0);
   const [initGotchis, setInitGotchis] = useState<Array<AavegotchiObject>>();
@@ -108,6 +111,9 @@ export const GotchiSelector = ({
     options: Sort
   ) => {
     const { val, dir } = options;
+    const getScore = (id: string) => {
+      return highscores?.find((score) => score.tokenId === id)?.score || 0;
+    }
 
     switch (val) {
       case "withSetsRarityScore":
@@ -117,8 +123,8 @@ export const GotchiSelector = ({
         );
       case "name":
         return (dir === "asc" ? 1 : -1) * (a.name < b.name ? -1 : 1);
-      case "gotchiId":
-        return (dir === "asc" ? 1 : -1) * (a.id < b.id ? -1 : 1);
+      case "highscore":
+        return (dir === "asc" ? 1 : -1) * (getScore(a.id) - getScore(b.id));
       default:
         return 0;
     }
