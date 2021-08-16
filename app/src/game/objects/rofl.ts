@@ -15,6 +15,7 @@ export class Rofl extends Phaser.GameObjects.Sprite {
   public sessionID?:number
   public popTimer?: Phaser.Time.TimerEvent;
   public goneTimer?: Phaser.Time.TimerEvent;
+  public bornTimer?: Phaser.Time.TimerEvent;
   private timeBar?: Phaser.GameObjects.Graphics;
   //private socket?: Socket;
   // odds boundaries

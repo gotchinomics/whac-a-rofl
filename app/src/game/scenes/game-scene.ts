@@ -101,6 +101,9 @@ export class GameScene extends Phaser.Scene {
   private backgroundImageRegular?: Phaser.GameObjects.Image;
   private roflBufferSize = 60;
   private lickquidatorBufferSize = 10;
+  private timingArray= new Array(100);
+  private timingRoflArray= new Array(100);
+  private circPointer = 0;
 
 
   constructor() {
@@ -361,6 +364,11 @@ export class GameScene extends Phaser.Scene {
      callbackScope: this,
      loop: false,
     });
+
+    rofl.bornTimer = this.time.addEvent({
+      delay: this.popRoflTimeIni + (this.freezeTime * 2),
+      loop: false,
+     });
    
     // popping sound
     this.pop?.play();
@@ -468,9 +476,25 @@ export class GameScene extends Phaser.Scene {
       
       (this.puddleArray[rofl.positionIndex] as Puddle).showHitting();
 
+      
+      if (rofl.bornTimer && rofl.goneTimer ){
+        const livingTime = Math.round(rofl.bornTimer?.elapsed);
+        const roflTime = Math.round(rofl.goneTimer?.elapsed);
+        this.timingArray[ this.circPointer ]=  livingTime ;
+        this.timingRoflArray[ this.circPointer ]=  roflTime ;
+        this.circPointer += 1;
+        if (this.circPointer == 100){
+          this.circPointer = 0;
+        }
+      }
+ 
+
     if (rofl != undefined && rofl.positionIndex != undefined ){
       //this.usedPosition[rofl.positionIndex] = false;
       this.setPondFree(rofl.positionIndex);
+      
+
+
     }
 
     rofl.setDead(true);
@@ -917,8 +941,10 @@ export class GameScene extends Phaser.Scene {
         const addedLifes = this.addedLifes ;
         const usedDranks = this.usedDranks ;
         const usedGrenades = this.usedGrenades;
+        const timingArray = this.timingArray;
+        const timingRoflArray = this.timingRoflArray;
 
-        this.socket?.emit('gameOver', {score: this.score , addedLifes, usedDranks, usedGrenades}  ,'');
+        this.socket?.emit('gameOver', {score: this.score , addedLifes, usedDranks, usedGrenades, timingArray , timingRoflArray }  ,'');
         //this.socket?.emit('gameOver', {score: this.score , bonusItems }  ,'');
 
         this.time.addEvent({
