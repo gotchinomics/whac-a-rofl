@@ -66,7 +66,6 @@ export class GameScene extends Phaser.Scene {
   private goneRoflTimer?: Phaser.Time.TimerEvent;
   private popLickquidatorTimer?: Phaser.Time.TimerEvent;
   private goneLickquidatorTimer?: Phaser.Time.TimerEvent;
-  private gameOverTimer?: Phaser.Time.TimerEvent;
   private freezeTimer?: Phaser.Time.TimerEvent;
 
   // Bonus variables
@@ -81,21 +80,16 @@ export class GameScene extends Phaser.Scene {
   private usedDranks = 0;
   private addedLifes = 0;
   private buttonTimeBar?: Phaser.GameObjects.Graphics;
+  private freezeTime = 3000;
 
   // Local states and aux  variables
-  private endingGame =  false;
-  private isGameOver =  false;
-  private takenPositions?: number[];
-  private arrayTest?: Array<number>;
-  private usedPosition= [false,false,false,false,false,false]; //Array<boolean>;
   public  roflStoned = false;
-  private freezeTime = 3000;
+  private endingGame =  false;
+  private usedPosition= [false,false,false,false,false,false]; //Array<boolean>;
   private pondLockedDelay = 1000; 
   private epicScore = 100 ;
-  private freezeUpdateInterval = 100;
   private firstRun = true;
   private sessionID = Math.random()*10000;
-  private pointer?: Phaser.Input.Pointer;
   private gotchiTraits?: Array<number>;
   private backgroundImageEpic?: Phaser.GameObjects.Image;
   private backgroundImageRegular?: Phaser.GameObjects.Image;
@@ -104,6 +98,7 @@ export class GameScene extends Phaser.Scene {
   private timingArray= new Array(100);
   private timingRoflArray= new Array(100);
   private circPointer = 0;
+  private gameState= new Array(10);
 
 
   constructor() {
@@ -118,9 +113,17 @@ export class GameScene extends Phaser.Scene {
     // monitoring resources , for debugging purposes
     LogRocket.init('qjtjwh/whac-a-rofl');
 
+    LogRocket.identify('THE_USER_ID_IN_YOUR_APP', {
+      name:  String(this.selectedGotchi?.name),
+      email: String(this.selectedGotchi?.id),
+    
+      // Add your own custom user variables here, ie:
+      gotchi_ID: String(this.selectedGotchi?.id), 
+    });
+
     // communicating gameStarted to socket
     this.socket = this.game.registry.values.socket;
-    this.socket?.emit('gameStarted');
+    this.socket?.emit('gameStarted', this.selectedGotchi?.withSetsNumericTraits );
 
     // Add layout
     this.backgroundImageEpic =  this.add.image(getGameWidth(this) / 2, getGameHeight(this) / 2, BGLOL).setDisplaySize(getGameWidth(this), getGameHeight(this));
@@ -937,14 +940,32 @@ export class GameScene extends Phaser.Scene {
         this.epictune?.stop();
         this.gameover?.play();
         this.endingGame = true;
-        this.isGameOver = true;
         const addedLifes = this.addedLifes ;
         const usedDranks = this.usedDranks ;
         const usedGrenades = this.usedGrenades;
         const timingArray = this.timingArray;
         const timingRoflArray = this.timingRoflArray;
 
-        this.socket?.emit('gameOver', {score: this.score , addedLifes, usedDranks, usedGrenades, timingArray , timingRoflArray }  ,'');
+        // Constructing game state
+        this.gameState[0] = this.score;
+        this.gameState[1] = this.addedLifes;
+        this.gameState[2] = this.usedDranks;
+        this.gameState[3] = this.usedGrenades;
+        this.gameState[4] = this.popRoflTimeIni;
+        this.gameState[5] = this.popLickquidatorTimeIni;        
+        this.gameState[6] = this.goneRoflTimeIni;
+        this.gameState[7] = this.goneLickquidatorTimeIni;
+        this.gameState[8] = this.freezeTime;
+        this.gameState[9] = this.popRoflTimeOffset;
+        this.gameState[10] = this.popRoflTimeSlope ;
+        this.gameState[11] = this.goneRoflTimeSlope ;
+        this.gameState[12] = this.popLickquidatorTimeSlope ;
+        this.gameState[13] = this.goneLickquidatorTimeSlope ;
+        
+        // TO DO : send additional variables, i.e. this.roflStoned;
+
+        this.socket?.emit('gameOver', { gameState: this.gameState , timingArray , timingRoflArray }  ,'');
+        //this.socket?.emit('gameOver', {score: this.score , addedLifes, usedDranks, usedGrenades, timingArray , timingRoflArray }  ,'');
         //this.socket?.emit('gameOver', {score: this.score , bonusItems }  ,'');
 
         this.time.addEvent({

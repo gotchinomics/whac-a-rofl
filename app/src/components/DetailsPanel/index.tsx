@@ -139,7 +139,7 @@ export const DetailsPanel = ({ selectedGotchi }: Props) => {
               </p>
               <p>{selectedGotchi?.withSetsNumericTraits[0]}</p>
             </div>
-            {renderModifier('Lifes', livesPercentage , getLivesLabel() )  }
+            {renderModifier('Lives', livesPercentage , getLivesLabel() )  }
             {renderModifier('Godlike Rofls', godlikePercentage ,  getPercentageLabel(godlikePercentage)  )}
           </>
         );

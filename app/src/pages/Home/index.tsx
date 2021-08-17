@@ -103,7 +103,7 @@ const Home = () => {
           <div className={styles.modalContent}>
             <h1>WHAC-A-ROFL</h1>
             <p>
-            Dear Fren, we need your help! The Lickquidators have invaded Rolf Reefs causing a yuuuge migration of MEME frogs to Poly Lakes. Try to be quick and get rid of the Rofls before it is too late! But be careful, Lickquidators are lurking around and they can suck the life out of your Gotchi with their disgusting tongue. Good luck on your mission, Gotchigang is stronk and together we will stop the plague!
+            Dear Fren, we need your help! The Lickquidators have invaded Rolf Reefs causing a yuuuge migration of MEME frogs. Try to be quick and get rid of the Rofls before it is too late! But be careful, Lickquidators are lurking around and they can suck the life out of your Gotchi with their disgusting tongue. Good luck on your mission, Gotchigang is stronk and together we will stop the plague!
             
             <h2>Rofl types:</h2>
 
