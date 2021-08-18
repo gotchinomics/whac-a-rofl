@@ -123,7 +123,7 @@ export class GameScene extends Phaser.Scene {
 
     // communicating gameStarted to socket
     this.socket = this.game.registry.values.socket;
-    this.socket?.emit('gameStarted', this.selectedGotchi?.withSetsNumericTraits );
+    this.socket?.emit('gameStarted');
 
     // Add layout
     this.backgroundImageEpic =  this.add.image(getGameWidth(this) / 2, getGameHeight(this) / 2, BGLOL).setDisplaySize(getGameWidth(this), getGameHeight(this));
@@ -965,8 +965,8 @@ export class GameScene extends Phaser.Scene {
         // TO DO : send additional variables, i.e. this.roflStoned;
 
         this.socket?.emit('gameOver', { gameState: this.gameState , timingArray , timingRoflArray }  ,'');
+        // previous server call
         //this.socket?.emit('gameOver', {score: this.score , addedLifes, usedDranks, usedGrenades, timingArray , timingRoflArray }  ,'');
-        //this.socket?.emit('gameOver', {score: this.score , bonusItems }  ,'');
 
         this.time.addEvent({
          delay: this.gameOverTime,

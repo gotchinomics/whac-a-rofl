@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { HighScore } from "types";
-import { playSound } from "helpers/hooks/useSound";
+//import { playSound } from "helpers/hooks/useSound";
 import styles from "./styles.module.css";
 
 interface Props {

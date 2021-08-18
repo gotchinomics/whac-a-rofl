@@ -74,6 +74,8 @@ export class BootScene extends Phaser.Scene {
     this.loadNextFile(0);
   };
 
+
+
   /**
    * Submits gotchi data to the server and attempts to start game
    */
@@ -83,7 +85,8 @@ export class BootScene extends Phaser.Scene {
     this.socket?.emit("setGotchiData", {
       name: gotchi.name,
       tokenId: gotchi.id,
-    });
+      //withSetsNumericTraits: gotchi.withSetsNumericTraits,
+    }, gotchi.withSetsNumericTraits );
 
     this.startGame();
   };

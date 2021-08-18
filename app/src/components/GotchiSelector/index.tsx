@@ -1,6 +1,6 @@
 import { AavegotchiObject } from "types";
-import { ChevronUp, ChevronDown, click } from "assets";
-import { playSound } from "helpers/hooks/useSound";
+import { ChevronUp, ChevronDown } from "assets"; //, click
+//import { playSound } from "helpers/hooks/useSound";
 import globalStyles from "theme/globalStyles.module.css";
 import { useEffect, useState, useCallback } from "react";
 import gotchiLoading from "assets/gifs/loading.gif";

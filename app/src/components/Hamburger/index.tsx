@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { playSound } from 'helpers/hooks/useSound';
+//import { playSound } from 'helpers/hooks/useSound';
 import styles from './styles.module.css';
 
 interface Props {

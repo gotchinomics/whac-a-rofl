@@ -12,7 +12,7 @@ import {
 import gotchiLoading from 'assets/gifs/loading.gif';
 import { playSound } from 'helpers/hooks/useSound';
 import styles from './styles.module.css';
-import { Scale } from 'phaser';
+//import { Scale } from 'phaser';
 
 const Home = () => {
   const {

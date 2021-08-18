@@ -6,7 +6,7 @@ import { smartTrim } from 'helpers/functions';
 import { networkIdToName } from 'helpers/vars';
 import Jazzicon, { jsNumberForAddress } from 'react-jazzicon';
 import { Hamburger, SideTray } from 'components';
-import { playSound } from 'helpers/hooks/useSound';
+//import { playSound } from 'helpers/hooks/useSound';
 import styles from './styles.module.css';
 
 const WalletButton = () => {
