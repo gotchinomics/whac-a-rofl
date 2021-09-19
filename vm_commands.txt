@@ -18,6 +18,12 @@ whac-a-rofl SERVER commands
 // fetch changes from Github server
 git pull https://github.com/gotchinomics/whac-a-rofl-server.git
 
+// save current log file
+journalctl -u yourunitname > yourlogfile_for_yourunitname
+
+// check Dropbox file status
+dropbox filestatus somefile.txt
+
 
 whac-a-rofl APP commands
 ============================

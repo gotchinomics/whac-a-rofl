@@ -29,10 +29,12 @@ const Leaderboard = () => {
   return (
     <Layout>
       <div className={globalStyles.container}>
-        <LeaderboardComponent highscores={highscores} ownedGotchis={usersAavegotchis?.map((gotchi) => gotchi.id)} competition={competition} />
+        <LeaderboardComponent highscores={highscores} ownedGotchis={usersAavegotchis?.map((gotchi) => gotchi.id)} />
       </div>
     </Layout>
   );
+  // if there is a competition replace line 32 by:
+  //<LeaderboardComponent highscores={highscores} ownedGotchis={usersAavegotchis?.map((gotchi) => gotchi.id)}  competition={competition}/> 
 };
 
 export default Leaderboard;
