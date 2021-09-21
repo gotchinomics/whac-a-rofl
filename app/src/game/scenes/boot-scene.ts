@@ -86,7 +86,7 @@ export class BootScene extends Phaser.Scene {
       name: gotchi.name,
       tokenId: gotchi.id,
       //withSetsNumericTraits: gotchi.withSetsNumericTraits,
-    }, gotchi.withSetsNumericTraits );
+    }, gotchi.withSetsNumericTraits, gotchi.owner.id );
 
     this.startGame();
   };

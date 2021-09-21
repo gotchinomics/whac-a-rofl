@@ -1,0 +1,11 @@
+.leaderboardHead {
+  display: flex;
+  align-items: left;
+  flex-direction: column;
+  color: white;
+  font-size: 1.6rem;
+  max-width: var(--container-width-xl);
+  padding: 0 1.6rem;
+  margin: 0 auto;
+  padding-top: 2rem;
+}

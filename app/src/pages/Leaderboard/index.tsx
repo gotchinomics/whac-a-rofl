@@ -3,14 +3,16 @@ import { useServer } from 'server-store';
 import { useWeb3 } from 'web3/context';
 import { Leaderboard as LeaderboardComponent } from 'components/Leaderboard';
 import globalStyles from 'theme/globalStyles.module.css';
+import styles from './styles.module.css';
 
 const Leaderboard = () => {
   const { state: { usersAavegotchis } } = useWeb3();
   const { highscores } = useServer();
-  const endDate = new Date('August 19, 2021 16:00:00') ;
+  //const endDate = new Date('August 19, 2021 16:00:00') ;
+  const endDate = new Date('September 25, 2021 22:00:00 UTC+2') ;
 
   const getReward = (position : number , score?:  number) => {
-
+    /*
     if (position == 1) {
       return "15 XP + 1 XP Potion"
     } else if (position <= 100 ) {
@@ -22,14 +24,37 @@ const Leaderboard = () => {
     } else {
       return ""
     }
+    */
+    if (position == 1) {
+      return "1 x MYTHICAL TICKET"
+    } else if (position <= 3 ) {
+      return "1 x LEGENDARY TICKET"
+    } else if (position <= 5 ) {
+      return "1 x RARE TICKET"
+    } else if (position <= 10 ) {
+      return "1 x UNCOMMON TICKET"
+    } else {
+      return ""
+    }
   }
 
   const competition = { endDate , rewards:getReward };
 
   return (
     <Layout>
+      <div className={styles.leaderboardHead}>
+        <h1>Get ready for Raffle#5!</h1> 
+        Our GotchiGang &apos;Ghost Squad&apos; has launched a contest between our guild members to win raffle tickets. Secure a position in the top 10 to win a prize! 
+        <br />
+        <br />
+        Make sure to join our Discord and/or Telegram to receive your reward:
+          <ul>
+              <li><a href="https://discord.gg/HA6qkpDPCY" rel="noreferrer"> <b>Discord</b> </a> </li>
+              <li> <a href="https://t.me/gotchisquad" rel="noreferrer"> <b>Telegram</b> </a> </li>
+          </ul>
+        </div>
       <div className={globalStyles.container}>
-        <LeaderboardComponent highscores={highscores} ownedGotchis={usersAavegotchis?.map((gotchi) => gotchi.id)} />
+        <LeaderboardComponent highscores={highscores} ownedGotchis={usersAavegotchis?.map((gotchi) => gotchi.id)} competition={competition}/>
       </div>
     </Layout>
   );

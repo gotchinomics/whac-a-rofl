@@ -1,5 +1,8 @@
 whac-a-rofl SERVER commands
 ============================
+// connecting to the machine
+cloud compute ssh --zone europe-west4-a tuxvm
+
 // check logs
 >> sudo journalctl -u whac-a-rofl
 
