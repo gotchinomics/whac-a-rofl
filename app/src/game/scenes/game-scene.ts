@@ -597,6 +597,7 @@ export class GameScene extends Phaser.Scene {
       
       rofl.popTimer?.destroy;
       rofl.goneTimer?.destroy;
+      this.socket?.emit('goneRofl');
       
       rofl.setDead(true);
           // forcing to destroy the asset if still locked in memory
